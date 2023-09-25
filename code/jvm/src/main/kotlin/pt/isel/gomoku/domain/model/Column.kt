@@ -18,9 +18,9 @@ class Column private constructor(var symbol: Char) {
 /**
  * Transforms column's symbol into row
  */
-fun Char.toColumnOrNull(): Column? {
+fun Char.charToColumn(): Column {
     val colIdx = this.toColumnIdx()
-    require(colIdx != -1) { return null }
+    require(colIdx != -1)
     return Column.values[colIdx]
 }
 
@@ -28,7 +28,7 @@ fun Char.toColumnOrNull(): Column? {
  * Transforms column's index into row
  */
 fun Int.indexToColumn(): Column {
-    require(this in 0 until BOARD_DIM) { throw IndexOutOfBoundsException("This index is out of bounds!") }
+    require(this in 0 until BOARD_DIM)
     return Column.values[this]
 }
 

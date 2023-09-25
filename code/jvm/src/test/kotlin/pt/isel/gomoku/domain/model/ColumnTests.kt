@@ -9,9 +9,9 @@ class ColumnTests {
 
     @Test
     fun symbolToColumn() {
-        val column = 'c'.toColumnOrNull()
+        val column = 'c'.charToColumn()
         assertNotNull(column)
-        assertEquals(2, column!!.index)
+        assertEquals(2, column.index)
     }
 
     @Test
@@ -22,22 +22,23 @@ class ColumnTests {
 
     @Test
     fun invalidIndexToColumn() {
-        assertThrows<IndexOutOfBoundsException> {
+        assertThrows<IllegalArgumentException> {
             BOARD_DIM.indexToColumn()
         }
     }
 
     @Test
     fun invalidSymbolToColumnResultsNull() {
-        val column = 'x'.toColumnOrNull()
-        assertNull(column)
+        assertThrows<IllegalArgumentException> {
+            'x'.charToColumn()
+        }
     }
 
     @Test
     fun allValidSymbolsToColumns() {
         assertEquals(
             List(BOARD_DIM) { it },
-            ('a'..'z').mapNotNull { it.toColumnOrNull()?.index }
+            ('a' until('a' + BOARD_DIM)).map { it.charToColumn().index }
         )
     }
 
@@ -48,16 +49,9 @@ class ColumnTests {
     }
 
     @Test
-    fun allInvalidColumns() {
-        val invalidChars = (0..255).map { it.toChar() } - ('a'..('a' + BOARD_DIM))
-        val invalidColumns = invalidChars.mapNotNull { it.toColumnOrNull() }
-        assertEquals(0, invalidColumns.size)
-    }
-
-    @Test
     fun equalsAndIdentityOfColumns() {
         val column = Column('a')
-        val col1 = 'a'.toColumnOrNull()
+        val col1 = 'a'.charToColumn()
         assertNotNull(col1)
         val col2 = 0.indexToColumn()
         assertEquals(col1, col2)
