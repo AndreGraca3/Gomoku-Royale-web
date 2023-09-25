@@ -1,7 +1,7 @@
-package pt.isel.gomoku.data
+package pt.isel.gomoku.server.data
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.structs.dto.outbound.UserDTO
+import pt.isel.gomoku.server.structs.dto.outbound.UserDTO
 
 @Component
 class UserData: IUserData {

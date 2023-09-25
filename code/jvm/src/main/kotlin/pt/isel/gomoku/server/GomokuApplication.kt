@@ -1,4 +1,4 @@
-package pt.isel.gomoku
+package pt.isel.gomoku.server
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

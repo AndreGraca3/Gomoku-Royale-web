@@ -1,4 +1,4 @@
-package pt.isel.gomoku.services
+package pt.isel.gomoku.server.services
 
 import org.springframework.stereotype.Component
 

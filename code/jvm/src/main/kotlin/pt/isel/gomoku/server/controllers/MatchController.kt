@@ -1,8 +1,8 @@
-package pt.isel.gomoku.controllers
+package pt.isel.gomoku.server.controllers
 
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.gomoku.services.MatchService
+import pt.isel.gomoku.server.services.MatchService
 
 @RestController
 @RequestMapping("/matches")
