@@ -9,6 +9,14 @@ sealed class Board(val moves: List<Move>, val turnPlayer: Player) {
         return moves.find { it.dot == dot }
     }
 
+    // Swap after 1st move TODO
+//    fun swapBoard(): Board {
+//        if(turnPlayer == Player.WHITE){
+//            val newMoves = moves.map { Move(it.player, it.dot) }
+//            return BoardRun(newMoves, Player.WHITE)
+//        }
+//    }
+
     // Graphic representation of the moves
     companion object {
         fun printBoard(moves: List<Move>) {
@@ -101,9 +109,6 @@ class BoardRun(moves: List<Move> = emptyList(), turn: Player) : Board(moves, tur
 
         return count
     }
-
-
-
 
     private fun checkDraw(m: Move): Boolean { //haven't played final move
         return moves.count { it.player == m.player } == MAX_DOTS
