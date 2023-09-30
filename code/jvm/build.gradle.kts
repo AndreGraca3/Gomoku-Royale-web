@@ -19,12 +19,18 @@ repositories {
 }
 
 dependencies {
-	implementation(group = "org.http4k", name = "http4k-core", version = "4.40.+")
-	implementation(group = "org.http4k", name = "http4k-server-jetty", version = "4.40.+")
+	implementation("org.jdbi:jdbi3-core:3.32.0")
+	implementation("org.jdbi:jdbi3-kotlin:3.28.0")
+	implementation("org.jdbi:jdbi3-postgres:3.32.0")
+	implementation("org.postgresql:postgresql:42.5.0")
+
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 }
 
 tasks.withType<KotlinCompile> {
