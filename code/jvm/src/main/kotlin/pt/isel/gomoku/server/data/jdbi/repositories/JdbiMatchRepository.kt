@@ -6,7 +6,6 @@ import pt.isel.gomoku.domain.model.Board
 import pt.isel.gomoku.server.data.interfaces.IMatchData
 import pt.isel.gomoku.server.structs.dto.outbound.MatchIn
 import pt.isel.gomoku.server.structs.dto.outbound.MatchOUT
-import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
 
 @Component
 class JdbiMatchRepository(private val jdbi: Jdbi): IMatchData {
