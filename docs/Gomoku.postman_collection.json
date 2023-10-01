@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "0aa31e8e-84fc-4d4f-adac-1c71d8a23ab0",
+		"name": "Gomoku",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24285462",
+		"_collection_link": "https://planetary-comet-685379.postman.co/workspace/Trello~75b18d6b-f901-4dd7-95e5-f92c7e3f6468/collection/24285462-0aa31e8e-84fc-4d4f-adac-1c71d8a23ab0?action=share&source=collection_link&creator=24285462"
+	},
+	"item": [
+		{
+			"name": "/users",
+			"item": [
+				{
+					"name": "addUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Daniel\",\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"456\",\r\n    \"avatar\" : null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "token12",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/users/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeName",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "André",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/matches",
+			"item": [
+				{
+					"name": "getMatch",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

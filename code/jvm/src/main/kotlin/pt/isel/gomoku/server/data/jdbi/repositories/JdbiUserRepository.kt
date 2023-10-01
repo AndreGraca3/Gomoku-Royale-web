@@ -12,7 +12,7 @@ import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
  * **/
 @Component
 class JdbiUserRepository(private val jdbi: Jdbi) : IUserData {
-    override fun addUser(userIn: UserIn): Int {
+    override fun insertUser(userIn: UserIn): Int {
         var id = 0
         jdbi.useHandle<Exception> { handle ->
             id = handle.createUpdate(
@@ -53,5 +53,24 @@ class JdbiUserRepository(private val jdbi: Jdbi) : IUserData {
                 .bind("id", id)
                 .execute()
         }
+    }
+
+    override fun getUserByEmail(email: String): UserOUT {
+        return jdbi.withHandle<UserOUT?, Exception> { handle ->
+            handle.createQuery("select name, email, password, avatar, rank, numberOfGames from users where email = :email")
+                .bind("email", email)
+                .map { rs, _, _ ->
+                    UserOUT(
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        rs.getString("avatar"),
+                        rs.getInt("rank"),
+                        rs.getInt("numberOfGames")
+                    )
+                }
+                /*.mapToBean(UserOUT::class.java)*/
+                .singleOrNull()
+        } ?: throw Exception("User already exists!")
     }
 }

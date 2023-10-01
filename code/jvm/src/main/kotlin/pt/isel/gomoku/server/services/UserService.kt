@@ -8,10 +8,10 @@ import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
 
 @Component
 class UserService(private val data: IUserData, private val dataExecutor: DataExecutor) {
-    fun addUser(userIn: UserIn): Int {
+    fun createUser(userIn: UserIn): Int {
         return dataExecutor.execute {
-            if (data.getUserById(3) != null) throw Exception("User does not exist!")
-            data.addUser(userIn)
+            data.getUserByEmail(userIn.email) // email probably is unique.
+            data.insertUser(userIn)
         }
     }
 

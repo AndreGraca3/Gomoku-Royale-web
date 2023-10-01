@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.controllers
 
+import org.apache.tomcat.util.http.parser.Authorization
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.services.UserService
@@ -12,7 +13,7 @@ class UserController(private val service: UserService) {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun addUser(@RequestBody userIn: UserIn): Int = service.addUser(userIn)
+    fun addUser(@RequestBody userIn: UserIn): Int = service.createUser(userIn)
 
     @GetMapping("/{id}")
     fun getUser(@PathVariable id: Int): UserOUT? = service.getUser(id)

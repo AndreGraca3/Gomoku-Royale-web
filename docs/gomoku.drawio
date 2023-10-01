@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-09-30T10:35:02.125Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="pakSuHZcdN5FbYdhM0DB" version="22.0.0" type="device">
+<mxfile host="app.diagrams.net" modified="2023-09-30T13:02:46.838Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="kdGGyIBE6apvY10mmZ75" version="22.0.0" type="device">
   <diagram name="Página-1" id="cOyWgmGHMXO5VJ9zmdlT">
-    <mxGraphModel dx="1621" dy="1601" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1663" dy="1624" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -54,7 +54,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="dx6zvSsTpxAph52ySE3O-22" value="-&gt; Obtain information about the system, such as the system authors and the system version, by an     unauthenticated user.&#xa;-&gt; Obtain statistical and ranking information, such as number of played games and users ranking, by an     unauthenticated user. (Check)&#xa;-&gt; Register a new user. (Check)&#xa;-&gt; Allow an user to express their desire to start a new game - users will enter a waiting lobby, where a     matchmaking algorithm will select pairs of users and start games with them.&#xa;-&gt; Allow an user to observe the game state. (Check)&#xa;-&gt; Allow an user to play a round. (Check)" style="text;whiteSpace=wrap;" parent="1" vertex="1">
-          <mxGeometry x="160" y="-110" width="560" height="150" as="geometry" />
+          <mxGeometry x="-46" y="-120" width="560" height="150" as="geometry" />
         </mxCell>
         <mxCell id="dx6zvSsTpxAph52ySE3O-31" value="variants" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="605" y="100" width="70" height="30" as="geometry" />
