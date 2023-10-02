@@ -4,6 +4,6 @@ import pt.isel.gomoku.domain.model.Board
 
 data class Match(
     val id: Int,
-    val variants: String,
+    val variant: String,
     val board: Board
 )

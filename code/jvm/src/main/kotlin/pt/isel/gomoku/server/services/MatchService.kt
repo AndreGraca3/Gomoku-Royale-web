@@ -2,12 +2,12 @@ package pt.isel.gomoku.server.services
 
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.server.data.interfaces.IMatchData
-import pt.isel.gomoku.server.data.transactionManager.DataExecutor
-import pt.isel.gomoku.server.structs.dto.outbound.MatchIn
-import pt.isel.gomoku.server.structs.dto.outbound.MatchOUT
+import pt.isel.gomoku.server.data.transactions.TransactionCtx
+import pt.isel.gomoku.server.structs.dto.inbound.MatchIn
+import pt.isel.gomoku.server.structs.dto.outbound.MatchOut
 
 @Component
-class MatchService(private val data: IMatchData, private val dataExecutor: DataExecutor) {
+class MatchService(private val data: IMatchData, private val dataExecutor: TransactionCtx) {
 
     fun createMatch(matchIn: MatchIn): Int {
         return dataExecutor.execute {
@@ -15,7 +15,7 @@ class MatchService(private val data: IMatchData, private val dataExecutor: DataE
         }
     }
 
-    fun getMatch(id: Int): MatchOUT? {
+    fun getMatch(id: Int): MatchOut {
         return dataExecutor.execute {
             data.getMatchById(id)
         }

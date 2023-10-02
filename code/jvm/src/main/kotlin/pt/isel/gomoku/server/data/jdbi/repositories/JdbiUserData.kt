@@ -3,7 +3,7 @@ package pt.isel.gomoku.server.data.jdbi.repositories
 import org.jdbi.v3.core.Jdbi
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.server.data.interfaces.IUserData
-import pt.isel.gomoku.server.structs.dto.outbound.UserIn
+import pt.isel.gomoku.server.structs.dto.inbound.UserIn
 import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
 
 /** Question:
@@ -11,7 +11,7 @@ import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
  * couldn't I just give it a Handle?
  * **/
 @Component
-class JdbiUserRepository(private val jdbi: Jdbi) : IUserData {
+class JdbiUserData(private val jdbi: Jdbi) : IUserData {
     override fun insertUser(userIn: UserIn): Int {
         var id = 0
         jdbi.useHandle<Exception> { handle ->

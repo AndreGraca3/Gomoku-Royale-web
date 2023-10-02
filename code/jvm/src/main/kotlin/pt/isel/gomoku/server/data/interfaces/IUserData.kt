@@ -1,6 +1,6 @@
 package pt.isel.gomoku.server.data.interfaces
 
-import pt.isel.gomoku.server.structs.dto.outbound.UserIn
+import pt.isel.gomoku.server.structs.dto.inbound.UserIn
 import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
 
 interface IUserData {

@@ -1,4 +1,4 @@
-package pt.isel.gomoku.server.Filter
+package pt.isel.gomoku.server.filter
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletRequest

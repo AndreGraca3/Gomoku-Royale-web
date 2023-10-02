@@ -5,7 +5,6 @@ import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
-import pt.isel.gomoku.server.data.transactionManager.DataExecutor
 
 @SpringBootApplication
 class GomokuApplication {
@@ -13,16 +12,10 @@ class GomokuApplication {
 	@Bean
 	fun jdbi(): Jdbi {
 		val jdbiDatabaseURL =
-			 System.getenv("JDBI_DATABASE_URL") ?:  /** for tests just change the JDBC_DATABASE_URL **/
-				"jdbc:postgresql://localhost:5432/daw?user=postgres&password=ISEL123"
+			 System.getenv("JDBI_DATABASE_URL")  /** for tests just change to JDBI_TEST_DATABASE_URL **/
 		val dataSource = PGSimpleDataSource()
 		dataSource.setURL(jdbiDatabaseURL)
 		return Jdbi.create(dataSource)
-	}
-
-	@Bean
-	fun dataExecutor(): DataExecutor {
-		return DataExecutor(jdbi())
 	}
 }
 

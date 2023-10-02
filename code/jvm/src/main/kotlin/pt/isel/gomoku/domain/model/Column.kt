@@ -1,42 +1,34 @@
 package pt.isel.gomoku.domain.model
 
-import pt.isel.gomoku.domain.config.A_CHAR_CODE
-import pt.isel.gomoku.domain.config.BOARD_DIM
+class Column private constructor(val symbol: Char) {
 
-class Column private constructor(var symbol: Char) {
-
-    var index = symbol.toColumnIdx()
+    val index = symbol - 'a'
 
     companion object {
-        val values = (0 until BOARD_DIM).map { Column((it + A_CHAR_CODE).toChar()) }
+        private val values = mutableMapOf<Char, Column>()
+
         operator fun invoke(symbol: Char): Column {
-            return values[symbol.toColumnIdx()]
+            return values.getOrPut(symbol) { Column(symbol) }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if(other is Column)
+            return this.symbol == other.symbol
+        return super.equals(other)
     }
 }
 
 /**
- * Transforms column's symbol into row
+ * Transforms column's symbol into column
  */
-fun Char.charToColumn(): Column {
-    val colIdx = this.toColumnIdx()
-    require(colIdx != -1)
-    return Column.values[colIdx]
+fun Char.toColumn(): Column {
+    return Column(this)
 }
 
 /**
- * Transforms column's index into row
+ * Transforms column's index into column
  */
 fun Int.indexToColumn(): Column {
-    require(this in 0 until BOARD_DIM)
-    return Column.values[this]
-}
-
-/**
- * Transforms column's symbol into index
- */
-fun Char.toColumnIdx(): Int {
-    val result = this.code - A_CHAR_CODE
-    if (this.code !in 'a'.code..('a' + BOARD_DIM - 1).code) return -1
-    return result
+    return Column('a' + this)
 }

@@ -3,7 +3,7 @@ package pt.isel.gomoku.server.controllers
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.services.UserService
-import pt.isel.gomoku.server.structs.dto.outbound.UserIn
+import pt.isel.gomoku.server.structs.dto.inbound.UserIn
 import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
 
 @RestController

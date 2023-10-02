@@ -1,40 +1,35 @@
 package pt.isel.gomoku.domain.model
 
-import pt.isel.gomoku.domain.config.BOARD_DIM
-import java.lang.IllegalArgumentException
-
 class Row private constructor(val number: Int) {
 
-    val index = number.toRowIdx()
+    val index = number - 1
 
     companion object {
-        val values = (1..BOARD_DIM).map { Row(it) }
-        operator fun invoke(idx: Int): Row {
-            return values[idx]
+        private val values = mutableMapOf<Int, Row>()
+
+        operator fun invoke(number: Int): Row {
+            return values.getOrPut(number) { Row(number) }
         }
+
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is Row)
+            return this.number == other.number
+        return super.equals(other)
     }
 }
 
 /**
  * Transforms row's number into row
  */
-fun Int.numberToRow(): Row {
-    require(this in 1..BOARD_DIM)
-    return Row.values[this.toRowIdx()]
+fun Int.toRow(): Row {
+    return Row(this)
 }
 
 /**
  * Transforms row's index into row
  */
 fun Int.indexToRow(): Row {
-    require(this in 0 until BOARD_DIM)
-    return Row.values[this]
-}
-
-/**
- * Transforms row's number into index
- */
-fun Int.toRowIdx(): Int {
-    require(this in 1..BOARD_DIM)
-    return this - 1
+    return Row(this + 1)
 }
