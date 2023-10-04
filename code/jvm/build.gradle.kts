@@ -24,12 +24,12 @@ dependencies {
 	implementation("org.jdbi:jdbi3-postgres:3.32.0")
 	implementation("org.postgresql:postgresql:42.5.0")
 
-
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.security:spring-security-core:6.0.2")
 
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webflux")
 }
 

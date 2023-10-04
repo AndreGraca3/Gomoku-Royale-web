@@ -5,20 +5,50 @@ import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import pt.isel.gomoku.domain.SystemDomain
+import pt.isel.gomoku.domain.UserDomain
+import pt.isel.gomoku.server.pipeline.authorization.AuthenticationInterceptor
+import pt.isel.gomoku.server.repository.jdbi.configureWithAppRequirements
+import java.time.Duration
 
 @SpringBootApplication
 class GomokuApplication {
 
-	@Bean
-	fun jdbi(): Jdbi {
-		val jdbiDatabaseURL =
-			 System.getenv("JDBI_DATABASE_URL")  /** for tests just change to JDBI_TEST_DATABASE_URL **/
-		val dataSource = PGSimpleDataSource()
-		dataSource.setURL(jdbiDatabaseURL)
-		return Jdbi.create(dataSource)
-	}
+    @Bean
+    fun userDomainConfig() =
+        UserDomain(
+            Duration.ofDays(1),
+            1,
+            256/8,
+            BCryptPasswordEncoder()
+        )
+
+    @Bean
+    fun systemDomainConfig() =
+        SystemDomain(0.1f, "GOMOKU_SECRET")
+
+    @Bean
+    fun jdbi(): Jdbi {
+        val jdbiDatabaseURL = System.getenv("JDBI_DATABASE_URL")
+        /** for tests just change to JDBI_TEST_DATABASE_URL **/
+
+        val dataSource = PGSimpleDataSource()
+        dataSource.setURL(jdbiDatabaseURL)
+        return Jdbi.create(dataSource).configureWithAppRequirements()
+    }
+}
+
+@Component
+class DemoConfigure : WebMvcConfigurer {
+    override fun addInterceptors(registry: InterceptorRegistry) {
+        registry.addInterceptor(AuthenticationInterceptor())
+    }
 }
 
 fun main(args: Array<String>) {
-	runApplication<GomokuApplication>(*args)
+    runApplication<GomokuApplication>(*args)
 }

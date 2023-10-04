@@ -1,21 +1,46 @@
 package pt.isel.gomoku.server.services
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.server.data.interfaces.IUserData
-import pt.isel.gomoku.server.data.transactions.TransactionCtx
-import pt.isel.gomoku.server.structs.dto.inbound.UserIn
-import pt.isel.gomoku.server.structs.dto.outbound.UserOUT
+import pt.isel.gomoku.domain.UserDomain
+import pt.isel.gomoku.server.http.model.user.UserOut
+import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
+import pt.isel.gomoku.server.services.error.UserCreationError
+import pt.isel.gomoku.server.utils.Either
+import pt.isel.gomoku.server.utils.failure
+import pt.isel.gomoku.server.utils.success
 
 @Component
-class UserService(private val data: IUserData, private val dataExecutor: TransactionCtx) {
-    fun createUser(userIn: UserIn): Int {
-        return dataExecutor.execute {
-            data.getUserByEmail(userIn.email) // email probably is unique.
-            data.insertUser(userIn)
+class UserService(private val trManager: TransactionManager, private val userDomain: UserDomain) {
+
+    fun createUser(
+        name: String,
+        email: String,
+        password: String,
+        avatar: String?
+    ): Either<UserCreationError, Int> {
+        if (!userDomain.isSafePassword(password))
+            return failure(UserCreationError.InsecurePassword(password))
+
+        return trManager.run {
+            val usersRepository = it.userRepository
+            if (usersRepository.getUserByName(name) != null) {
+                failure(UserCreationError.UserAlreadyExists(name))
+            } else {
+                val id = usersRepository.createUser(name, email, password, avatar)
+                success(id)
+            }
         }
     }
 
-    fun getUser(id: Int): UserOUT? = dataExecutor.execute { data.getUserById(id) }
+    fun getUsers(role: String? = null) = trManager.run { it.userRepository.getUsers(role) }
 
-    fun changeName(id: Int, newName: String) = dataExecutor.execute { data.changeName(id, newName) }
+    fun getUser(id: Int): UserOut? = trManager.run { it.userRepository.getUserById(id) }
+
+    fun updateUser(id: Int, newName: String, newAvatar: String?): UserOut {
+        TODO()
+    }
+
+    fun createToken(username: String, password: String): String {
+        TODO()
+    }
 }
