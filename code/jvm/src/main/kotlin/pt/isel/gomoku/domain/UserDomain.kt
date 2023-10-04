@@ -1,6 +1,5 @@
 package pt.isel.gomoku.domain
 
-import org.springframework.stereotype.Component
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.security.SecureRandom
 import java.time.Duration
@@ -9,7 +8,6 @@ import java.util.*
 
 class UserDomain(
     val tokenTtl: Duration,
-    val maxTokensPerUser: Int,
     private val tokenSizeInBytes: Int,
     private val passwordEncoder: PasswordEncoder
 ) {
@@ -38,6 +36,4 @@ class UserDomain(
     }
 
     fun isSafePassword(password: String) = password.length > 4 && password.contains(Regex("[0-9]"))
-
-    val maxNumberOfTokensPerUser = maxTokensPerUser
 }

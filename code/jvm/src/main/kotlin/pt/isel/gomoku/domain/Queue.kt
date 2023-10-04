@@ -1,6 +1,6 @@
 package pt.isel.gomoku.domain
 
 class Queue {
-    // code -> matchId
+    // code -> playerId
     val queue = hashMapOf<Int, Int>()
 }

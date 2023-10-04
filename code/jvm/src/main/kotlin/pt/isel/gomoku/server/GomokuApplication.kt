@@ -22,7 +22,6 @@ class GomokuApplication {
     fun userDomainConfig() =
         UserDomain(
             Duration.ofDays(1),
-            1,
             256/8,
             BCryptPasswordEncoder()
         )
@@ -43,9 +42,9 @@ class GomokuApplication {
 }
 
 @Component
-class DemoConfigure : WebMvcConfigurer {
+class PipelineConfigure(val authenticationInterceptor: AuthenticationInterceptor) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(AuthenticationInterceptor())
+        registry.addInterceptor(authenticationInterceptor)
     }
 }
 

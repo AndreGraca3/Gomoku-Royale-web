@@ -1,8 +1,8 @@
 package pt.isel.gomoku.server.http.model.user
 
-data class UserOut(
+data class UserNameAndAvatar(
     val id: Int,
     val name: String,
-    val avatar: String?,
+    val avatarUrl: String?,
     val role: String,
 )

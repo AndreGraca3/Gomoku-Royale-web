@@ -1,6 +1,6 @@
 package pt.isel.gomoku.server.http.model.user
 
-data class UserCreateTokenInputModel(
-    val username: String,
+data class UserCredentialsInputModel(
+    val email: String,
     val password: String
 )

@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity
 
 open class Problem(
     subType: String,
-    val title: String? = null,
+    val status: Int,
+    val title: String,
     val detail: String? = null,
     val data: Any? = null
 ) {
@@ -16,7 +17,7 @@ open class Problem(
         private val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")
     }
 
-    fun response(status: Int) = ResponseEntity
+    fun response() = ResponseEntity
         .status(status)
         .contentType(MEDIA_TYPE)
         .body<Any>(this)

@@ -6,7 +6,7 @@ data class User(
     val email: String,
     val password: String,
     val role: Role = Role.USER,
-    val avatar: String?,
+    val avatarUrl: String?,
     val rank: String
 )
 

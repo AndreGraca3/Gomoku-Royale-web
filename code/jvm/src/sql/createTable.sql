@@ -19,17 +19,17 @@ create table if not exists "user"
     password   varchar(30),
     role       varchar(5)          not null check ( role in ('user', 'dev') ) default 'user',
     mmr        int                                                            default 0 not null check ( mmr >= 0 ),
-    avatar     TEXT,
+    avatar_url TEXT,
     created_at timestamp           not null                                   default now(),
     rank_id    int references rank (id)
 );
 
 create table if not exists token
 (
-    value        VARCHAR(256) primary key,
-    created_at   timestamp not null default now(),
-    last_used_at timestamp not null default now(),
-    user_id      int references "user" (id)
+    value      VARCHAR(256) primary key,
+    created_at timestamp not null default now(),
+    last_used  timestamp not null default now(),
+    user_id    int references "user" (id)
 );
 
 create table if not exists match
