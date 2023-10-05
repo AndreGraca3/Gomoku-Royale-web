@@ -11,18 +11,18 @@ data class UserAndToken(
     val password: String,
     val role: String,
     val avatarUrl: String?,
-    val token: String,
+    val tokenValue: String,
     val createdAt: LocalDateTime,
-    val lastUsedAt: LocalDateTime
+    val lastUsed: LocalDateTime
 ) {
     val userAndToken: Pair<User, Token>
         get() = Pair(
             User(id, name, email, password, role, avatarUrl),
             Token(
-                token,
+                tokenValue,
                 id,
                 createdAt,
-                lastUsedAt
+                lastUsed
             )
         )
 }

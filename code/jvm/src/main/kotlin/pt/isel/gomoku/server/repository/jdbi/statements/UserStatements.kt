@@ -18,7 +18,7 @@ object UserStatements {
 
     const val UPDATE_USER =
         """
-                update "user" 
+                update "user"
                 set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url), role = coalesce(:role, role)
                 where id = :id
         """
@@ -31,10 +31,16 @@ object UserStatements {
 
     const val GET_USER_AND_TOKEN_BY_TOKEN_VALUE =
         """
-                select id, username, password, token_value, created_at, last_used_at
-                from "user" 
-                inner join token 
-                on users.id = tokens.user_id
+                select id, name, email, password, role, avatar_url, t.token_value, t.created_at, t.last_used
+                from "user" u
+                inner join token as t
+                on u.id = t.user_id
                 where token_value = :token_value
         """
+
+    const val UPDATE_TOKEN_LAST_USED =
+        "update token set last_used = :last_used where token_value = :token_value"
+
+    const val DELETE_TOKEN =
+        "delete from token where token_value = :token_value"
 }

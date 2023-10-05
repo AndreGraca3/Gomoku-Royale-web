@@ -37,7 +37,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(Exception::class)
     fun handleAll(e: Exception): ResponseEntity<Unit> {
-        log.info("Handling Internal Exception: {}", e.message)
+        log.error("Handling Internal Exception: ", e)
         return ResponseEntity.status(500).build()
     }
 

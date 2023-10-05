@@ -59,13 +59,13 @@ class UserService(
         id: Int,
         newName: String?,
         newAvatar: String?,
-        roleChange: UserRoleChangeRequest
+        roleChange: UserRoleChangeRequest?
     ): Either<UserUpdateError.InvalidValues, Unit> {
 
         if (newName?.isBlank() == true || newAvatar?.isBlank() == true)
             return failure(UserUpdateError.InvalidValues)
 
-        val newRole = when (roleChange.apiSecret) {
+        val newRole = when (roleChange?.apiSecret) {
             systemDomain.apiSecret -> roleChange.role
             else -> null
         }

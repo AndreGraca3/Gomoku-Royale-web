@@ -44,8 +44,7 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
         return handle.createQuery(UserStatements.GET_USER_BY_EMAIL)
             .bind("email", email)
             .mapTo(User::class.java)
-            .findFirst()
-            .orElse(null)
+            .singleOrNull()
     }
 
     override fun getUsers(role: String?): List<UserIdAndName> {
@@ -88,11 +87,16 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
     }
 
     override fun updateTokenLastUsed(token: Token, now: LocalDateTime) {
-        TODO("Not yet implemented")
+        handle.createUpdate(UserStatements.UPDATE_TOKEN_LAST_USED)
+            .bind("token_value", token.tokenValue)
+            .bind("last_used", now)
+            .execute()
     }
 
     override fun deleteToken(token: String) {
-        TODO("Not yet implemented")
+        handle.createUpdate(UserStatements.DELETE_TOKEN)
+            .bind("token_value", token)
+            .execute()
     }
 
 }

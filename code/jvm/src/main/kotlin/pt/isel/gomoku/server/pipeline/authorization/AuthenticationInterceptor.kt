@@ -28,7 +28,6 @@ class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) :
                 AuthenticatedUserArgumentResolver.addUserTo(user, request)
                 true
             }
-            println("This method is protected.")
         }
         return true
     }

@@ -35,12 +35,13 @@ class UserController(private val service: UserService) {
         }
     }
 
+    // TODO: each prop of the user should be in a Model to prevent currrent behaviour
     @PutMapping("")
     fun updateUser(
         authenticatedUser: AuthenticatedUser,
         @RequestBody name: String,
-        @RequestBody avatarUrl: String,
-        @RequestBody roleChangeRequest: UserRoleChangeRequest
+        @RequestBody avatarUrl: String?,
+        @RequestBody roleChangeRequest: UserRoleChangeRequest?
     ): ResponseEntity<*> {
         return when (val res =
             service.updateUser(authenticatedUser.user.id, name, avatarUrl, roleChangeRequest)) {
