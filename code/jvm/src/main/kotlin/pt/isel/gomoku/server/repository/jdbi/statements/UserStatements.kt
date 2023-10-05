@@ -17,11 +17,24 @@ object UserStatements {
         "select id, name from \"user\" where role = :role OR :role IS NULL"
 
     const val UPDATE_USER =
-        "update \"user\" set avatar_url = :avatar, role = :role where name = :name"
+        """
+                update "user" 
+                set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url), role = coalesce(:role, role)
+                where id = :id
+        """
 
     const val DELETE_USER =
         "delete from \"user\" where id = :id"
 
     const val CREATE_TOKEN =
         "insert into token (token_value, user_id, created_at, last_used) values (:token_value, :user_id, :created_at, :last_used)"
+
+    const val GET_USER_AND_TOKEN_BY_TOKEN_VALUE =
+        """
+                select id, username, password, token_value, created_at, last_used_at
+                from "user" 
+                inner join token 
+                on users.id = tokens.user_id
+                where token_value = :token_value
+        """
 }

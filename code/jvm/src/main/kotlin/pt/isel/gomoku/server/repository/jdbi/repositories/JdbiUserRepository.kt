@@ -3,6 +3,8 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
+import pt.isel.gomoku.server.http.model.user.UserAndToken
+import pt.isel.gomoku.server.http.model.user.UserCredentialsOutput
 import pt.isel.gomoku.server.http.model.user.UserIdAndName
 import pt.isel.gomoku.server.http.model.user.UserNameAndAvatar
 import pt.isel.gomoku.server.repository.interfaces.UserRepository
@@ -53,11 +55,12 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
             .list()
     }
 
-    override fun updateUser(name: String, avatarUrl: String?, role: String?) {
+    override fun updateUser(id: Int, name: String?, avatarUrl: String?, role: String?) {
         handle.createUpdate(UserStatements.UPDATE_USER)
+            .bind("id", id)
+            .bind("name", name)
             .bind("avatar_url", avatarUrl)
             .bind("role", role)
-            .bind("name", name)
             .execute()
     }
 
@@ -69,7 +72,7 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
 
     override fun createToken(token: Token) {
         handle.createUpdate(UserStatements.CREATE_TOKEN)
-            .bind("value", token.tokenValue)
+            .bind("token_value", token.tokenValue)
             .bind("created_at", token.createdAt)
             .bind("last_used", token.lastUsed)
             .bind("user_id", token.userId)
@@ -77,7 +80,11 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
     }
 
     override fun getUserAndTokenByTokenValue(token: String): Pair<User, Token>? {
-        TODO("Not yet implemented")
+        return handle.createQuery(UserStatements.GET_USER_AND_TOKEN_BY_TOKEN_VALUE)
+            .bind("token_value", token)
+            .mapTo(UserAndToken::class.java)
+            .singleOrNull()
+            ?.userAndToken
     }
 
     override fun updateTokenLastUsed(token: Token, now: LocalDateTime) {

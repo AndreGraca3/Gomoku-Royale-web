@@ -18,7 +18,7 @@ interface UserRepository {
 
     fun getUsers(role: String? = null): List<UserIdAndName>
 
-    fun updateUser(name: String, avatarUrl: String?, role: String?)
+    fun updateUser(id: Int, name: String?, avatarUrl: String?, role: String?)
 
     fun deleteUser(id: Int)
 

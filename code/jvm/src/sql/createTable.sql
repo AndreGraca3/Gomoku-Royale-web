@@ -26,7 +26,7 @@ create table if not exists "user"
 
 create table if not exists token
 (
-    value      VARCHAR(256) primary key,
+    token_value      VARCHAR(256) primary key,
     created_at timestamp not null default now(),
     last_used  timestamp not null default now(),
     user_id    int references "user" (id)

@@ -3,6 +3,7 @@ package pt.isel.gomoku.server.http.model.problem
 import pt.isel.gomoku.server.services.error.user.TokenCreationError
 import pt.isel.gomoku.server.services.error.user.UserCreationError
 import pt.isel.gomoku.server.services.error.user.UserFetchingError
+import pt.isel.gomoku.server.services.error.user.UserUpdateError
 
 sealed class UserProblem(
     status: Int,
@@ -36,6 +37,13 @@ sealed class UserProblem(
         401,
         "invalid-credentials",
         "Email or password are incorrect",
+        data
+    )
+
+    class InvalidValues(data: UserUpdateError.InvalidValues) : UserProblem(
+        400,
+        "invalid-values",
+        "The values for user fields are invalid",
         data
     )
 }

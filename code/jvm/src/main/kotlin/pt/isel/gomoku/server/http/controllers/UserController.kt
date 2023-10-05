@@ -4,11 +4,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.problem.UserProblem
-import pt.isel.gomoku.server.http.model.user.UserCreateInputModel
-import pt.isel.gomoku.server.http.model.user.UserCredentialsInputModel
-import pt.isel.gomoku.server.http.model.user.UserTokenCreateOutputModel
+import pt.isel.gomoku.server.http.model.user.*
 import pt.isel.gomoku.server.services.UserService
 import pt.isel.gomoku.server.services.error.user.UserCreationError
+import pt.isel.gomoku.server.services.error.user.UserFetchingError
+import pt.isel.gomoku.server.services.error.user.UserUpdateError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
 
@@ -17,7 +17,7 @@ import pt.isel.gomoku.server.utils.Success
 class UserController(private val service: UserService) {
 
     @PostMapping("")
-    fun createUser(@RequestBody input: UserCreateInputModel): ResponseEntity<*> {
+    fun createUser(@RequestBody input: UserCreateInput): ResponseEntity<*> {
         return when (val res = service.createUser(input.name, input.email, input.password, input.avatarUrl)) {
             is Success -> ResponseEntity.status(201).body(res.value)
             is Failure -> when (res.value) {
@@ -35,17 +35,26 @@ class UserController(private val service: UserService) {
         }
     }
 
-    @PutMapping(Uris.ID)
-    fun updateUser(@PathVariable id: Int, @RequestBody name: String, @RequestBody avatarUrl: String) {
-        service.updateUser(id, name, avatarUrl)
+    @PutMapping("")
+    fun updateUser(
+        authenticatedUser: AuthenticatedUser,
+        @RequestBody name: String,
+        @RequestBody avatarUrl: String,
+        @RequestBody roleChangeRequest: UserRoleChangeRequest
+    ): ResponseEntity<*> {
+        return when (val res =
+            service.updateUser(authenticatedUser.user.id, name, avatarUrl, roleChangeRequest)) {
+            is Success -> ResponseEntity.status(200).build<Unit>()
+            is Failure -> UserProblem.InvalidValues(res.value).response()
+        }
     }
 
     @PostMapping(Uris.Users.TOKEN)
-    fun createToken(@RequestBody input: UserCredentialsInputModel): ResponseEntity<*> {
+    fun createToken(@RequestBody input: UserCredentialsInput): ResponseEntity<*> {
         return when (val res = service.createToken(input.email, input.password)) {
             is Success ->
                 ResponseEntity.status(200)
-                    .body(UserTokenCreateOutputModel(res.value.tokenValue))
+                    .body(UserTokenCreateOutput(res.value.tokenValue))
 
             is Failure -> UserProblem.InvalidCredentials(res.value).response()
         }
