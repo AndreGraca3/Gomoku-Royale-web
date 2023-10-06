@@ -17,7 +17,7 @@ VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1', NOW(), NOW(), 2),
        ('9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf', NOW(), NOW(), 3);
 
-INSERT INTO match (visibility, board, created_at, player1_id, player2_id, winner_id)
-VALUES ('public', 'match_board_1', NOW(), 1, 2, 1),
-       ('private', 'match_board_2', NOW(), 2, 3, 3),
-       ('public', 'match_board_3', NOW(), 1, 3, 1);
+INSERT INTO match (visibility, board, variant, created_at, player1_id, player2_id, winner_id)
+VALUES ('public', 'match_board_1', 'freestyle', NOW(), 1, 2, 1),
+       ('private', 'match_board_2', 'freestyle', NOW(), 2, 3, 3),
+       ('public', 'match_board_3', 'freestyle', NOW(), 1, 3, 1);

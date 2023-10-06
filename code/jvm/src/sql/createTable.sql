@@ -37,8 +37,10 @@ create table if not exists match
     id         uuid               default gen_random_uuid() primary key,
     visibility varchar(7) check ( visibility in ('public', 'private') ),
     board      VARCHAR(256),
+    variant    VARCHAR(256),
     created_at timestamp not null default now(),
     player1_id int references "user" (id),
     player2_id int references "user" (id),
     winner_id  int references "user" (id) check ( winner_id in (player1_id, player2_id) )
 );
+

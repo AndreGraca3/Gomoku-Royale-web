@@ -2,6 +2,7 @@ package pt.isel.gomoku.server
 
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
+import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -35,7 +36,6 @@ class GomokuApplication {
     @Bean
     fun jdbi(): Jdbi {
         val jdbiDatabaseURL = System.getenv("JDBI_DATABASE_URL")
-
         /** for tests just change to JDBI_TEST_DATABASE_URL **/
 
         val dataSource = PGSimpleDataSource()
