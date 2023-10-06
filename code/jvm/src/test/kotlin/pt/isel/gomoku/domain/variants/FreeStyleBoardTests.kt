@@ -7,6 +7,8 @@ import pt.isel.gomoku.domain.game.variants.FreeStyleBoard
 
 class FreeStyleBoardTests {
 
+    val size = 15
+
     @Test
     fun `checkWinner function HORIZONTAL`() {
         // Setup
@@ -20,7 +22,7 @@ class FreeStyleBoardTests {
             Stone(Player.BLACK, Dot(1, 'd')), //4
             Stone(Player.WHITE, Dot(2, 'e')),
         )
-        val board = FreeStyleBoard(stones, Player.BLACK) // Adjust the player and game state accordingly
+        val board = FreeStyleBoard(stones, Player.BLACK, size) // Adjust the player and game state accordingly
 
         // Winning Play
         val winningBoard = board.play(Dot(1, 'e'), Player.BLACK)
@@ -41,7 +43,7 @@ class FreeStyleBoardTests {
             Stone(Player.BLACK, Dot(4, 'a')), //4
             Stone(Player.WHITE, Dot(4, 'c')),
         )
-        val board = FreeStyleBoard(stones, Player.BLACK)
+        val board = FreeStyleBoard(stones, Player.BLACK, size)
 
         // Winning Play
         val winningBoard = board.play(Dot(5, 'a'), Player.BLACK)
@@ -62,7 +64,7 @@ class FreeStyleBoardTests {
             Stone(Player.BLACK, Dot(4, 'a')), //4
             Stone(Player.WHITE, Dot(5, 'b')),
         )
-        val board = FreeStyleBoard(stones, Player.BLACK)
+        val board = FreeStyleBoard(stones, Player.BLACK, size)
 
         // Winning Play
         val winningBoard = board.play(Dot(5, 'a'), Player.BLACK)
@@ -83,7 +85,7 @@ class FreeStyleBoardTests {
             Stone(Player.BLACK, Dot(4, 'e')), //4
             Stone(Player.WHITE, Dot(5, 'd')),
         )
-        val board = FreeStyleBoard(stones, Player.BLACK)
+        val board = FreeStyleBoard(stones, Player.BLACK, size)
 
         // Winning Play
         val winningBoard = board.play(Dot(5, 'e'), Player.BLACK)

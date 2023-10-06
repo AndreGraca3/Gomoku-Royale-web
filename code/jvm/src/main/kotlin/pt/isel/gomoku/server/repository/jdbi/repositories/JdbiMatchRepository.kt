@@ -8,6 +8,7 @@ import pt.isel.gomoku.server.http.model.match.MatchOut
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
 
@@ -25,7 +26,7 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .one()
     }
 
-    override fun getMatchById(id: Int): MatchOut? {
+    override fun getMatchById(id: UUID): MatchOut? {
         return handle.createQuery(MatchStatements.GET_MATCH_BY_ID)
             .bind("id", id)
             .mapTo(MatchOut::class.java)
