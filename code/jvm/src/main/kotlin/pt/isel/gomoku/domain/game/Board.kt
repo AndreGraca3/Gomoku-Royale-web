@@ -7,8 +7,8 @@ abstract class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
     companion object {
         fun deserialize(input: String): Board {
             val lines = input.split("\n")
-            val size = lines[0].toInt()
-            val kind = lines[1]
+            val kind = lines[0]
+            val size = lines[1].toInt()
             val turn = lines[2][0].toPlayer()
             val stones = lines.drop(3).map { Stone.deserialize(it) }
             return when (kind) {
@@ -23,7 +23,7 @@ abstract class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
     }
 
     fun serialize() =
-        "${this::class.simpleName}\n${turn.symbol}\n${stones.joinToString("\n") { it.serialize() }}"
+        "${this::class.simpleName}\n${size}\n${turn.symbol}\n${stones.joinToString("\n") { it.serialize() }}"
 
     fun getStoneOrNull(dot: Dot, stones: List<Stone> = this.stones): Stone? {
         return stones.find { it.dot == dot }

@@ -7,6 +7,7 @@ import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.services.MatchService
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.problem.MatchProblem
+import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.services.error.match.MatchCreationError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
@@ -18,19 +19,28 @@ class MatchController(private val service: MatchService) {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createMatch(@RequestBody input: MatchCreateInputModel): ResponseEntity<*> {
-        return when(val res = service.createMatch(input)){
+    fun createMatch(
+        @RequestBody input: MatchCreateInputModel,
+        authenticatedUser: AuthenticatedUser,
+    ): ResponseEntity<*> {
+        return when (val res = service.createMatch(input)) {
             is Success -> ResponseEntity.status(201).body(res.value)
-            is Failure -> when(res.value){
+            is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()
                 is MatchCreationError.InvalidPlayerInMatch -> MatchProblem.InvalidPlayerInMatch(res.value).response()
             }
         }
     }
 
+    // Qualquer auth user pode aceder a qualquer match, mesmo que não seja dele?
+    // Response: Interceptor
+
     @GetMapping(Uris.ID)
-    fun getMatchById(@PathVariable id: UUID): ResponseEntity<*> {
-        return when(val res = service.getMatchById(id)) {
+    fun getMatchById(
+        @PathVariable id: UUID,
+        authenticatedUser: AuthenticatedUser,
+    ): ResponseEntity<*> {
+        return when (val res = service.getMatchById(id)) {
             is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> MatchProblem.InvalidMatchId(res.value).response()
         }

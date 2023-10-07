@@ -6,6 +6,7 @@ import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
 import pt.isel.gomoku.domain.UserDomain
 import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
+import pt.isel.gomoku.server.http.model.user.UserCreationOut
 import pt.isel.gomoku.server.http.model.user.UserNameAndAvatar
 import pt.isel.gomoku.server.http.model.user.UserRoleChangeRequest
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
@@ -30,7 +31,7 @@ class UserService(
         email: String,
         password: String,
         avatar: String?
-    ): Either<UserCreationError, Int> {
+    ): Either<UserCreationError, UserCreationOut> {
         if (!userDomain.isSafePassword(password))
             return failure(UserCreationError.InsecurePassword(password))
 
@@ -40,7 +41,7 @@ class UserService(
                 failure(UserCreationError.EmailAlreadyInUse(email))
             } else {
                 val id = usersRepository.createUser(name, email, password, avatar)
-                success(id)
+                success(UserCreationOut(id))
             }
         }
     }
