@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
+import pt.isel.gomoku.server.http.annotations.AuthUserMatch
 import pt.isel.gomoku.server.services.MatchService
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.match.MatchUpdateInput
@@ -41,7 +42,7 @@ class MatchController(private val service: MatchService) {
         @PathVariable id: UUID,
         authenticatedUser: AuthenticatedUser,
     ): ResponseEntity<*> {
-        return when (val res = service.getMatchById(id)) {
+        return when (val res = service.getMatchById(id, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> MatchProblem.InvalidMatchId(res.value).response()
         }
@@ -53,12 +54,25 @@ class MatchController(private val service: MatchService) {
         authenticatedUser: AuthenticatedUser,
         @RequestBody matchInput: MatchUpdateInput
     ): ResponseEntity<*> {
-        return when ( val res =
-            service.updateMatch(matchInput.id, matchInput.visibility, matchInput.winner)) {
+        return when (val res =
+            service.updateMatch(matchInput.id, matchInput.visibility, matchInput.winner, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(200).build<Unit>()
             is Failure -> MatchProblem.InvalidValues(res.value).response()
         }
     }
+
+//    @PostMapping(Uris.ID)
+//    fun playMove(
+//        authenticatedUser: AuthenticatedUser,
+//        @PathVariable idMatch: UUID,
+//        @RequestBody move: String
+//    ): ResponseEntity<*> {
+//        return when (val res =
+//            service.playMove(authenticatedUser.user.id, idMatch, move)) {
+//            is Success -> ResponseEntity.status(200).build<Unit>()
+//            is Failure -> MatchProblem.InvalidValues(res.value).response()
+//        }
+//    }
 
 //    @GetMapping(Uris.ID+"/all")
 //    fun getMatchesFromUser(

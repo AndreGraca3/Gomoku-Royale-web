@@ -5,6 +5,7 @@ import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.match.MatchCreationOut
 import pt.isel.gomoku.server.http.model.match.MatchOut
+import pt.isel.gomoku.server.http.model.match.MatchOutDev
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
 import java.util.UUID
 
@@ -32,6 +33,15 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .orElse(null)
     }
 
+    // DEV OPERATION
+    override fun getMatchDev(id: UUID): MatchOutDev? {
+        return handle.createQuery(MatchStatements.GET_MATCH_BY_ID)
+            .bind("id", id)
+            .mapTo(MatchOutDev::class.java)
+            .findFirst()
+            .orElse(null)
+    }
+
     override fun updateMatch(id: UUID, newVisibility: String?, newWinner: Int?) {
         handle.createUpdate(MatchStatements.UPDATE_MATCH)
             .bind("id", id)
@@ -39,6 +49,8 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .bind("winner_id", newWinner)
             .execute()
     }
+
+
 
 
 }

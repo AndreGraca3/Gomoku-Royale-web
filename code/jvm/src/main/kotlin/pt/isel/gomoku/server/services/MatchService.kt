@@ -1,12 +1,16 @@
 package pt.isel.gomoku.server.services
 
 import org.springframework.stereotype.Component
+import pt.isel.gomoku.domain.Match
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.match.MatchCreationOut
 import pt.isel.gomoku.server.http.model.match.MatchOut
+import pt.isel.gomoku.server.http.model.match.MatchOutDev
+import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.services.error.match.MatchCreationError
 import pt.isel.gomoku.server.services.error.match.MatchFetchingError
+import pt.isel.gomoku.server.services.error.match.MatchPlayError
 import pt.isel.gomoku.server.services.error.match.MatchUpdateError
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
@@ -40,13 +44,13 @@ class MatchService(private val trManager: TransactionManager) {
 
     fun getMatchesFromUser(idUser: Int) {
         trManager.run {
-            //TODO()
+            TODO()
         }
     }
 
-    fun getMatchById(id: UUID): Either<MatchFetchingError.MatchByIdNotFound, MatchOut> {
+    fun getMatchById(id: UUID, userId: Int): Either<MatchFetchingError.MatchByIdNotFound, MatchOutDev> {
         return trManager.run {
-            val match = it.matchRepository.getMatchById(id)
+            val match = checkIfUserInMatch(userId, id)
             if (match != null) success(match)
             else failure(MatchFetchingError.MatchByIdNotFound(id))
         }
@@ -55,14 +59,17 @@ class MatchService(private val trManager: TransactionManager) {
     fun updateMatch(
         id: UUID,
         newVisibility: String?,
-        newWinner: Int?
+        newWinner: Int?,
+        userId: Int
     ): Either<MatchUpdateError.InvalidValues, Unit> {
 
         // TODO() -> Check this condition, || or &&
-        if(newVisibility?.isBlank() == true || newWinner == null)
+        if (newVisibility?.isBlank() == true || newWinner == null)
             return failure(MatchUpdateError.InvalidValues)
 
         return trManager.run {
+            if (checkIfUserInMatch(userId, id) == null)
+                failure(MatchUpdateError.InvalidValues)
             success(
                 it.matchRepository.updateMatch(
                     id,
@@ -72,6 +79,45 @@ class MatchService(private val trManager: TransactionManager) {
             )
         }
     }
+
+    // Verifies if the user is in the match
+    private fun checkIfUserInMatch(idUser: Int, idMatch: UUID): MatchOutDev? {
+        return trManager.run {
+            val match = it.matchRepository.getMatchDev(idMatch)
+            if (match == null) null
+            else if (match.player1Id != idUser && match.player2Id != idUser)
+                null
+            else match
+
+        }
+    }
+
+//    fun playMove(
+//        idUser: Int,
+//        idMatch: UUID,
+//        move: String
+//    ): Either<MatchPlayError, Unit> {
+//        return trManager.run {
+//
+//            // Check if match exists
+//            val match = it.matchRepository.getMatchDev(idMatch)
+//            if (match == null) failure(MatchPlayError.MatchNotStarted(idMatch))
+//
+//            val isPlayerBlack = true
+//
+//            // Check if auth player is present in the match
+//            if (match.player1Id != idUser) {
+//                failure(MatchPlayError.MatchNotStartedByPlayer(idUser))
+//            } else if (match.player2Id != idUser) {
+//                failure(MatchPlayError.MatchNotStartedByPlayer(idUser))
+//            }
+//
+//            // Check if is the user turn
+//            // TODO()
+//
+//
+//        }
+//    }
 
 
 }
