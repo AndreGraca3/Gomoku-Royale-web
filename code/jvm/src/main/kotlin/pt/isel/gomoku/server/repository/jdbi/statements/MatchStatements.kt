@@ -12,4 +12,10 @@ object MatchStatements {
         FROM match
         WHERE id = :id
     """
+
+    const val UPDATE_MATCH = """
+        UPDATE match
+        SET visibility = coalesce(:visibility, visibility), winner_id = coalesce(:winner_id, winner_id)
+        WHERE id = :id
+    """
 }

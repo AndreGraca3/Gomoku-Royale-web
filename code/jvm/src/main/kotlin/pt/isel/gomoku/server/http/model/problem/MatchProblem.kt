@@ -2,6 +2,7 @@ package pt.isel.gomoku.server.http.model.problem
 
 import pt.isel.gomoku.server.services.error.match.MatchCreationError
 import pt.isel.gomoku.server.services.error.match.MatchFetchingError
+import pt.isel.gomoku.server.services.error.match.MatchUpdateError
 
 sealed class MatchProblem(
     status: Int,
@@ -28,6 +29,13 @@ sealed class MatchProblem(
         400,
         "invalid-variant",
         "The variant ${data.variant} is invalid",
+        data
+    )
+
+    class InvalidValues(data: MatchUpdateError.InvalidValues) : MatchProblem(
+        400,
+        "invalid-values",
+        "The values for match fields are invalid",
         data
     )
 }

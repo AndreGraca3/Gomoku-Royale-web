@@ -54,11 +54,24 @@ class MatchService(private val trManager: TransactionManager) {
 
     fun updateMatch(
         id: UUID,
-        newVisibility: String,
-        newWinner: Int
+        newVisibility: String?,
+        newWinner: Int?
     ): Either<MatchUpdateError.InvalidValues, Unit> {
-        if(newVisibility?.isBlank() == true && newWinner == null){
 
+        // TODO() -> Check this condition, || or &&
+        if(newVisibility?.isBlank() == true || newWinner == null)
+            return failure(MatchUpdateError.InvalidValues)
+
+        return trManager.run {
+            success(
+                it.matchRepository.updateMatch(
+                    id,
+                    newVisibility,
+                    newWinner
+                )
+            )
         }
     }
+
+
 }

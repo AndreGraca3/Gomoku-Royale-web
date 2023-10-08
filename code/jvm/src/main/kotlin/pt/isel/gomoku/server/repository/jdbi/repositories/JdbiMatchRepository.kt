@@ -31,4 +31,14 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .findFirst()
             .orElse(null)
     }
+
+    override fun updateMatch(id: UUID, newVisibility: String?, newWinner: Int?) {
+        handle.createUpdate(MatchStatements.UPDATE_MATCH)
+            .bind("id", id)
+            .bind("visibility", newVisibility)
+            .bind("winner_id", newWinner)
+            .execute()
+    }
+
+
 }

@@ -8,4 +8,5 @@ import java.util.*
 interface MatchRepository {
     fun createMatch(visibility: String, board: String, variant: String, player1_id: Int): MatchCreationOut
     fun getMatchById(id: UUID): MatchOut?
+    fun updateMatch(id: UUID, newVisibility: String?, newWinner: Int?) : Unit
 }

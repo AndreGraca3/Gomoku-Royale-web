@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.services.MatchService
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
+import pt.isel.gomoku.server.http.model.match.MatchUpdateInput
 import pt.isel.gomoku.server.http.model.problem.MatchProblem
 import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.services.error.match.MatchCreationError
@@ -45,4 +46,25 @@ class MatchController(private val service: MatchService) {
             is Failure -> MatchProblem.InvalidMatchId(res.value).response()
         }
     }
+
+    // TODO() -> Can only update match winner only if the match has 2 players
+    @PutMapping("")
+    fun updateMatch(
+        authenticatedUser: AuthenticatedUser,
+        @RequestBody matchInput: MatchUpdateInput
+    ): ResponseEntity<*> {
+        return when ( val res =
+            service.updateMatch(matchInput.id, matchInput.visibility, matchInput.winner)) {
+            is Success -> ResponseEntity.status(200).build<Unit>()
+            is Failure -> MatchProblem.InvalidValues(res.value).response()
+        }
+    }
+
+//    @GetMapping(Uris.ID+"/all")
+//    fun getMatchesFromUser(
+//        @PathVariable id: Int,
+//        authenticatedUser: AuthenticatedUser,
+//    ): ResponseEntity<*> {
+//        return ResponseEntity.status(200).body(service.getMatchesFromUser(id))
+//    }
 }
