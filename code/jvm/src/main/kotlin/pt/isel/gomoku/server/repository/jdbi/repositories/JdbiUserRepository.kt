@@ -86,6 +86,13 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
             ?.userAndToken
     }
 
+    override fun getTokenByUserId(userId: Int): Token? {
+        return handle.createQuery(UserStatements.GET_TOKEN_BY_USER_ID)
+            .bind("user_id", userId)
+            .mapTo(Token::class.java)
+            .singleOrNull()
+    }
+
     override fun updateTokenLastUsed(token: Token, now: LocalDateTime) {
         handle.createUpdate(UserStatements.UPDATE_TOKEN_LAST_USED)
             .bind("token_value", token.tokenValue)

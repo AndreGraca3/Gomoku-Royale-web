@@ -43,4 +43,7 @@ object UserStatements {
 
     const val DELETE_TOKEN =
         "delete from token where token_value = :token_value"
+
+    const val GET_TOKEN_BY_USER_ID =
+        "select token_value, user_id, created_at, last_used from token where user_id = :user_id"
 }

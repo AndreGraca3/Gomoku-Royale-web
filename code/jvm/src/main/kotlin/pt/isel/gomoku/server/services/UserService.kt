@@ -94,6 +94,10 @@ class UserService(
             if (password != user.password) {
                 return@run failure(TokenCreationError.InvalidCredentials(email, password))
             }
+            val token = it.userRepository.getTokenByUserId(user.id)
+            if(token != null && userDomain.isTokenTimeValid(token)){
+                success(token)
+            }
             val tokenValue = userDomain.generateTokenValue()
             val now = LocalDateTime.now()
             val newToken = Token(

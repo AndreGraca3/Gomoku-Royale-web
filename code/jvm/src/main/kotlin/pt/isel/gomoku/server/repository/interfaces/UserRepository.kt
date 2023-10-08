@@ -26,6 +26,8 @@ interface UserRepository {
 
     fun getUserAndTokenByTokenValue(token: String): Pair<User, Token>?
 
+    fun getTokenByUserId(userId: Int): Token?
+
     fun updateTokenLastUsed(token: Token, now: LocalDateTime)
 
     fun deleteToken(token: String)
