@@ -26,21 +26,28 @@ create table if not exists "user"
 
 create table if not exists token
 (
-    token_value      VARCHAR(256) primary key,
-    created_at timestamp not null default now(),
-    last_used  timestamp not null default now(),
-    user_id    int references "user" (id)
+    token_value VARCHAR(256) primary key,
+    created_at  timestamp not null default now(),
+    last_used   timestamp not null default now(),
+    user_id     int references "user" (id)
 );
 
 create table if not exists match
 (
-    id         uuid               default gen_random_uuid() primary key,
-    visibility varchar(7) check ( visibility in ('public', 'private') ) not null,
-    board      VARCHAR(256) not null,
-    variant    VARCHAR(256) check ( variant in ('freestyle', 'swap1move')) not null,
-    created_at timestamp not null default now(),
-    player1_id int references "user" (id) not null,
-    player2_id int references "user" (id),
-    winner_id  int references "user" (id) check ( winner_id in (player1_id, player2_id) )
+    id           uuid primary key,
+    isPrivate    Boolean                    not null,
+    board        VARCHAR(256)               not null,
+    created_at   timestamp                  not null default now(),
+    player_black int references "user" (id) not null,
+    player_white int references "user" (id),
+    winner_id    int references "user" (id) check ( winner_id in (player_black, player_white) )
 );
 
+create table if not exists queue
+(
+    match_id  uuid                 default gen_random_uuid() primary key,
+    player_id int references "user" (id) unique,
+    isPrivate Boolean     not null default false,
+    size      int         not null default 15,
+    variant   VARCHAR(20) not null default 'FreeStyle'
+);

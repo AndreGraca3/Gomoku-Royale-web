@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
-import pt.isel.gomoku.server.http.annotations.AuthUserMatch
 import pt.isel.gomoku.server.services.MatchService
 import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.match.MatchUpdateInput

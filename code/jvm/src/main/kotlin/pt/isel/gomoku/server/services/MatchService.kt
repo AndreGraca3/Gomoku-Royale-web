@@ -88,7 +88,6 @@ class MatchService(private val trManager: TransactionManager) {
             else if (match.player1Id != idUser && match.player2Id != idUser)
                 null
             else match
-
         }
     }
 

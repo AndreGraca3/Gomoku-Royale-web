@@ -7,8 +7,6 @@ import pt.isel.gomoku.server.http.model.problem.UserProblem
 import pt.isel.gomoku.server.http.model.user.*
 import pt.isel.gomoku.server.services.UserService
 import pt.isel.gomoku.server.services.error.user.UserCreationError
-import pt.isel.gomoku.server.services.error.user.UserFetchingError
-import pt.isel.gomoku.server.services.error.user.UserUpdateError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
 
@@ -30,7 +28,7 @@ class UserController(private val service: UserService) {
     @GetMapping(Uris.ID)
     fun getUser(@PathVariable id: Int): ResponseEntity<*> {
         return when (val res = service.getUserById(id)) {
-            is Success -> ResponseEntity.status(201).body(res.value)
+            is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> UserProblem.UserByIdNotFound(res.value).response()
         }
     }
