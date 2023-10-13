@@ -1,3 +1,4 @@
+drop table if exists queue;
 drop table if exists match;
 drop table if exists token;
 drop table if exists "user";
@@ -51,3 +52,5 @@ create table if not exists queue
     size      int         not null default 15,
     variant   VARCHAR(20) not null default 'FreeStyle'
 );
+
+insert into queue (match_id, player_id, isPrivate, size, variant) VALUES

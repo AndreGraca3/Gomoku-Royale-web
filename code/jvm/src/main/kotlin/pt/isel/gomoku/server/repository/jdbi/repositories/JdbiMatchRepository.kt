@@ -1,24 +1,29 @@
 package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
-import pt.isel.gomoku.server.repository.interfaces.MatchRepository
-import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
 import pt.isel.gomoku.server.http.model.match.MatchCreationOut
 import pt.isel.gomoku.server.http.model.match.MatchOut
 import pt.isel.gomoku.server.http.model.match.MatchOutDev
+import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
-import java.util.UUID
+import java.util.*
 
 class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
 
-    override fun createMatch(visibility: String, board: String, variant: String, player1_id: Int): MatchCreationOut {
+    override fun createMatch(
+        id: UUID,
+        isPrivate: Boolean,
+        board: String,
+        player1_id: Int,
+        player2_id: Int
+    ): MatchCreationOut {
         return handle.createUpdate(MatchStatements.CREATE_MATCH)
-            .bind("visibility", visibility)
+            .bind("id", id)
+            .bind("isPrivate", isPrivate)
             .bind("board", board)
-            .bind("variant", variant)
             //.bind("created_at", LocalDateTime.now())
-            .bind("player1_id", player1_id)
-            //.bind("player2_id", input.player2_id)
+            .bind("player_black", player1_id)
+            .bind("player_white", player2_id)
             //.bind("winner_id", input.winner_id)
             .executeAndReturnGeneratedKeys("id")
             .mapTo(MatchCreationOut::class.java)
@@ -49,8 +54,6 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .bind("winner_id", newWinner)
             .execute()
     }
-
-
 
 
 }

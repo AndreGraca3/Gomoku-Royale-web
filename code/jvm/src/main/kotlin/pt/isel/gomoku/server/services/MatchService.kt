@@ -1,16 +1,12 @@
 package pt.isel.gomoku.server.services
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.domain.Match
-import pt.isel.gomoku.server.http.model.match.MatchCreateInputModel
+import pt.isel.gomoku.domain.game.Player
 import pt.isel.gomoku.server.http.model.match.MatchCreationOut
-import pt.isel.gomoku.server.http.model.match.MatchOut
 import pt.isel.gomoku.server.http.model.match.MatchOutDev
-import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.services.error.match.MatchCreationError
 import pt.isel.gomoku.server.services.error.match.MatchFetchingError
-import pt.isel.gomoku.server.services.error.match.MatchPlayError
 import pt.isel.gomoku.server.services.error.match.MatchUpdateError
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
@@ -20,31 +16,40 @@ import java.util.*
 @Component
 class MatchService(private val trManager: TransactionManager) {
 
-    fun createMatch(input: MatchCreateInputModel): Either<MatchCreationError, MatchCreationOut> {
-
-        // validate input ??
+    fun createMatch(
+        playerId: Int,
+        isPrivate: Boolean,
+        size: Int,
+        variant: String
+    ): Either<MatchCreationError, MatchCreationOut> {
         return trManager.run {
             val userRepository = it.userRepository
             val matchRepository = it.matchRepository
+            val queueRepository = it.queueRepository
 
-            if (userRepository.getUserById(input.player1_id) == null)
-                failure(MatchCreationError.InvalidPlayerInMatch(playerId = input.player1_id))
-
-            // TODO() -> Implementar a Queue
-
-            val id = matchRepository.createMatch(
-                input.visibility,
-                input.boardSpecs.toString(),
-                input.variant,
-                input.player1_id
-            )
-            success(id)
+            if (userRepository.getUserById(playerId) == null)
+                failure(MatchCreationError.InvalidPlayerInMatch(playerId = playerId))
+            // else??
+            // retornar failure se tentar adicionar a queue outra vez.
+            // colocar a null para identificar o utilizador quer jogar um jogo qualquer
+            val queue = queueRepository.getQueueByPreferences(isPrivate, size, variant)
+            if (queue != null && queue.playerId != playerId) {
+                val serializedBoard = "$variant\n$size\n${Player.BLACK.symbol}\n[]\n"
+                queueRepository.removeFromQueue(queue.matchId)
+                success(
+                    matchRepository.createMatch(
+                        queue.matchId, isPrivate, serializedBoard, playerId, queue.playerId
+                    )
+                )
+            } else {
+                success(MatchCreationOut(queueRepository.createQueue(playerId, isPrivate, size, variant)))
+            }
         }
     }
 
     fun getMatchesFromUser(idUser: Int) {
         trManager.run {
-            TODO()
+            TODO("Not yet implemented")
         }
     }
 

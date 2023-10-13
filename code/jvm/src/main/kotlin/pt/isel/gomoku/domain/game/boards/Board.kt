@@ -1,8 +1,13 @@
-package pt.isel.gomoku.domain.game
+package pt.isel.gomoku.domain.game.boards
 
-import pt.isel.gomoku.domain.game.variants.FreeStyleBoard
+import pt.isel.gomoku.domain.game.Dot
+import pt.isel.gomoku.domain.game.Player
+import pt.isel.gomoku.domain.game.Stone
+import pt.isel.gomoku.domain.game.toPlayer
+import kotlin.random.Random
+import kotlin.reflect.full.primaryConstructor
 
-abstract class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
+sealed class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
 
     companion object {
         fun deserialize(input: String): Board {
@@ -11,14 +16,16 @@ abstract class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
             val size = lines[1].toInt()
             val turn = lines[2][0].toPlayer()
             val stones = lines.drop(3).map { Stone.deserialize(it) }
-            return when (kind) {
-                FreeStyleBoard::class.simpleName -> FreeStyleBoard(stones, turn, size)
-                BoardDraw::class.simpleName -> BoardDraw(stones, turn, size)
-                BoardWinner::class.simpleName -> BoardWinner(stones, turn, size)
-                else -> {
-                    throw IllegalArgumentException("There is no board type for input $kind")
-                }
-            }
+            val boardVariant = Board::class.sealedSubclasses.find { it.simpleName == kind }
+            return boardVariant?.primaryConstructor?.call(stones, turn, size)
+                ?: throw Exception("There is no board type for input $kind")
+        }
+
+        fun getRandomVariant(): Board {
+            val randomSize = if (Random.nextInt(0, 1) == 0) 15 else 19
+            val implementations = Board::class.sealedSubclasses
+            val randomVariant = implementations[Random.nextInt(0, implementations.size)].primaryConstructor
+            return randomVariant!!.call(emptyList<Stone>(), Player.BLACK, randomSize)
         }
     }
 

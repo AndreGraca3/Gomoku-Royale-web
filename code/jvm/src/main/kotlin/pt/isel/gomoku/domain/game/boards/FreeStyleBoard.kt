@@ -1,6 +1,8 @@
-package pt.isel.gomoku.domain.game.variants
+package pt.isel.gomoku.domain.game.boards
 
-import pt.isel.gomoku.domain.game.*
+import pt.isel.gomoku.domain.game.Dot
+import pt.isel.gomoku.domain.game.Player
+import pt.isel.gomoku.domain.game.Stone
 
 class FreeStyleBoard(stones: List<Stone> = emptyList(), turn: Player, size: Int) : Board(stones, turn, size) {
 

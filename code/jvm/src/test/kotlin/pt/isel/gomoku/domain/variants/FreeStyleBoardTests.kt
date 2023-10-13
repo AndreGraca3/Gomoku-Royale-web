@@ -3,7 +3,9 @@ package pt.isel.gomoku.domain.variants
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.gomoku.domain.game.*
-import pt.isel.gomoku.domain.game.variants.FreeStyleBoard
+import pt.isel.gomoku.domain.game.boards.FreeStyleBoard
+import pt.isel.gomoku.domain.game.boards.BoardWinner
+import pt.isel.gomoku.domain.game.boards.print
 
 class FreeStyleBoardTests {
 

@@ -24,7 +24,7 @@ class MatchController(private val service: MatchService) {
         @RequestBody input: MatchCreateInputModel,
         authenticatedUser: AuthenticatedUser,
     ): ResponseEntity<*> {
-        return when (val res = service.createMatch(input)) {
+        return when (val res = service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)) {
             is Success -> ResponseEntity.status(201).body(res.value)
             is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()

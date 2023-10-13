@@ -1,6 +1,6 @@
 package pt.isel.gomoku.domain
 
-import pt.isel.gomoku.domain.game.Board
+import pt.isel.gomoku.domain.game.boards.Board
 import pt.isel.gomoku.domain.game.Dot
 import pt.isel.gomoku.domain.game.Player
 
