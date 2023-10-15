@@ -6,6 +6,6 @@ data class Queue(
     val matchId: UUID,
     val playerId: Int,
     val isPrivate: Boolean,
-    val size: Int,
-    val variant: String
+    val size: Int?,
+    val variant: String?
 )

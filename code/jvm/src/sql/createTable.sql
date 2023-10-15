@@ -49,8 +49,6 @@ create table if not exists queue
     match_id  uuid                 default gen_random_uuid() primary key,
     player_id int references "user" (id) unique,
     isPrivate Boolean     not null default false,
-    size      int         not null default 15,
-    variant   VARCHAR(20) not null default 'FreeStyle'
+    size      int,
+    variant   VARCHAR(20)
 );
-
-insert into queue (match_id, player_id, isPrivate, size, variant) VALUES

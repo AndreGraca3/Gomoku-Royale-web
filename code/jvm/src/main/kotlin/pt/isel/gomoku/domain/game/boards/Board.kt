@@ -21,11 +21,16 @@ sealed class Board(val stones: List<Stone>, val turn: Player, val size: Int) {
                 ?: throw Exception("There is no board type for input $kind")
         }
 
-        fun getRandomVariant(): Board {
-            val randomSize = if (Random.nextInt(0, 1) == 0) 15 else 19
-            val implementations = Board::class.sealedSubclasses
+        fun getRandomSize(): Int {
+            return if (Random.nextInt(0, 1) == 0) 15 else 19
+        }
+
+        fun getRandomBoard(size: Int): Board {
+            val implementations = Board::class.sealedSubclasses.filter {
+                it != BoardDraw::class && it != BoardWinner::class
+            }
             val randomVariant = implementations[Random.nextInt(0, implementations.size)].primaryConstructor
-            return randomVariant!!.call(emptyList<Stone>(), Player.BLACK, randomSize)
+            return randomVariant!!.call(emptyList<Stone>(), Player.BLACK, size)
         }
     }
 

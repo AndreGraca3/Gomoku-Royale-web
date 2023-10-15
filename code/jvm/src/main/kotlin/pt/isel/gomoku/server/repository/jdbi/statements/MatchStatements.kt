@@ -8,14 +8,26 @@ object MatchStatements {
     """
 
     const val GET_MATCH_BY_ID = """
-        SELECT id, isPrivate, board, variant, created_at, player1_id, player2_id, winner_id
+        SELECT id, isPrivate, board, player_black, player_white
         FROM match
         WHERE id = :id
     """
 
+    const val GET_MATCHES_BY_USER_ID = """
+        SELECT id, isPrivate, board, player_black, player_white 
+        FROM match
+        where player_black = :idUser or player_white = :idUser
+    """
+
     const val UPDATE_MATCH = """
         UPDATE match
-        SET visibility = coalesce(:isPrivate, isPrivate), winner_id = coalesce(:winner_id, winner_id)
+        SET winner_id = coalesce(:winner_id, winner_id)
         WHERE id = :id
+    """
+
+    const val PLAY_MOVE = """
+        UPDATE match
+        SET board = :board
+        where id = :id
     """
 }

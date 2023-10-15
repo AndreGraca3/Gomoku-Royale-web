@@ -38,4 +38,18 @@ sealed class MatchProblem(
         "The values for match fields are invalid",
         data
     )
+
+    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue): MatchProblem(
+        403,
+        "already-in-queue",
+        "User is already in queue",
+        data
+    )
+
+    class UserNotInMatch(data: MatchFetchingError.UserNotInMatch): MatchProblem(
+        404,
+        "user-not-found-in-match",
+        "The user with id ${data.id} was not found in match",
+        data
+    )
 }
