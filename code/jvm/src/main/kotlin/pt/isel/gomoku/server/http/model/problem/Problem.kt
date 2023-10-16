@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.http.model.problem
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
@@ -8,7 +9,7 @@ open class Problem(
     val status: Int,
     val title: String,
     val detail: String? = null,
-    val data: Any? = null
+    @JsonInclude(JsonInclude.Include.NON_NULL) val data: Any? = null
 ) {
 
     val type = "https://gomokyroyale.pt/probs/$subType"

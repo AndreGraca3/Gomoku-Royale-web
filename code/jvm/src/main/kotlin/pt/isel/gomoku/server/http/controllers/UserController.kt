@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.problem.UserProblem
 import pt.isel.gomoku.server.http.model.user.*
-import pt.isel.gomoku.server.services.UserService
-import pt.isel.gomoku.server.services.error.user.UserCreationError
+import pt.isel.gomoku.server.service.UserService
+import pt.isel.gomoku.server.service.error.user.UserCreationError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
 
@@ -14,7 +14,7 @@ import pt.isel.gomoku.server.utils.Success
 @RequestMapping(Uris.Users.BASE)
 class UserController(private val service: UserService) {
 
-    @PostMapping("")
+    @PostMapping()
     fun createUser(@RequestBody input: UserCreateInput): ResponseEntity<*> {
         return when (val res = service.createUser(input.name, input.email, input.password, input.avatarUrl)) {
             is Success -> ResponseEntity.status(201).body(res.value)
@@ -33,13 +33,13 @@ class UserController(private val service: UserService) {
         }
     }
 
-    @PutMapping("")
+    @PatchMapping()
     fun updateUser(
         authenticatedUser: AuthenticatedUser,
         @RequestBody userInput: UserUpdateInput
     ): ResponseEntity<*> {
         return when (val res =
-            service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl, userInput.roleChangeRequest)) {
+            service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
             is Success -> ResponseEntity.status(200).build<Unit>()
             is Failure -> UserProblem.InvalidValues(res.value).response()
         }
@@ -48,10 +48,7 @@ class UserController(private val service: UserService) {
     @PostMapping(Uris.Users.TOKEN)
     fun createToken(@RequestBody input: UserCredentialsInput): ResponseEntity<*> {
         return when (val res = service.createToken(input.email, input.password)) {
-            is Success ->
-                ResponseEntity.status(200)
-                    .body(UserTokenCreateOutput(res.value.tokenValue))
-
+            is Success -> ResponseEntity.status(200).body(TokenCreateOutput(res.value.tokenValue))
             is Failure -> UserProblem.InvalidCredentials(res.value).response()
         }
     }

@@ -21,13 +21,10 @@ object MatchStatements {
 
     const val UPDATE_MATCH = """
         UPDATE match
-        SET winner_id = coalesce(:winner_id, winner_id)
+        SET board = coalesce(:board, board),
+        player_black = coalesce(:player_black, player_black),
+        player_white = coalesce(:player_white, player_white),
+        winner_id = coalesce(:winner_id, winner_id)
         WHERE id = :id
-    """
-
-    const val PLAY_MOVE = """
-        UPDATE match
-        SET board = :board
-        where id = :id
     """
 }

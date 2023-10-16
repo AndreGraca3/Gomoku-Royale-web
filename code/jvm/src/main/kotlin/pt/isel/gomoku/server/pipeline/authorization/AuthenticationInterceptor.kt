@@ -8,7 +8,6 @@ import org.springframework.web.servlet.HandlerInterceptor
 import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_AUTHORIZATION_HEADER
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_WWW_AUTHENTICATE_HEADER
-import pt.isel.gomoku.server.services.UserService
 
 @Component
 class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) :

@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import pt.isel.gomoku.domain.game.exception.GomokuGameException
 import pt.isel.gomoku.server.http.model.problem.BadRequestProblem
 
 @RestControllerAdvice
@@ -19,9 +21,9 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         headers: HttpHeaders,
         status: HttpStatusCode,
         request: WebRequest
-    ): ResponseEntity<Any>? {
+    ): ResponseEntity<Any> {
         log.info("Handling MethodArgumentNotValidException: {}", ex.message)
-        return BadRequestProblem.InvalidRequestContent().response()
+        return BadRequestProblem.InvalidMethod().response()
     }
 
     override fun handleHttpMessageNotReadable(
@@ -31,6 +33,12 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any> {
         log.info("Handling HttpMessageNotReadableException: {}", ex.message)
+        return BadRequestProblem.InvalidRequestContent().response()
+    }
+
+    @ExceptionHandler(GomokuGameException::class)
+    fun handleGomokuGameException(ex: GomokuGameException): ResponseEntity<Any> {
+        log.info("Handling GomokuGameException: {}", ex.message)
         return BadRequestProblem.InvalidRequestContent().response()
     }
 

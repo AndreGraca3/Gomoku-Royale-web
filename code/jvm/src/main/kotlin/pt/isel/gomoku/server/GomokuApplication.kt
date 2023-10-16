@@ -31,7 +31,7 @@ class GomokuApplication {
 
     @Bean
     fun systemDomainConfig() =
-        SystemDomain(0.1f, "GOMOKU_SECRET")
+        SystemDomain(0.1f)
 
     @Bean
     fun jdbi(): Jdbi {

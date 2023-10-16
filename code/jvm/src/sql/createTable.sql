@@ -1,4 +1,4 @@
-drop table if exists queue;
+drop table if exists lobby;
 drop table if exists match;
 drop table if exists token;
 drop table if exists "user";
@@ -6,10 +6,9 @@ drop table if exists rank;
 
 create table if not exists rank
 (
-    id       int generated always as identity primary key,
-    name     varchar(20) unique not null,
-    icon_url TEXT unique        not null,
-    min_mmr  int                not null
+    name     varchar(20) primary key,
+    icon_url TEXT unique not null,
+    min_mmr  int         not null
 );
 
 create table if not exists "user"
@@ -22,7 +21,7 @@ create table if not exists "user"
     mmr        int                                                            default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
     created_at timestamp           not null                                   default now(),
-    rank_id    int references rank (id)
+    rank       varchar(20) references rank (name)
 );
 
 create table if not exists token
@@ -35,8 +34,9 @@ create table if not exists token
 
 create table if not exists match
 (
-    id           uuid primary key,
+    id           VARCHAR(256) primary key,
     isPrivate    Boolean                    not null,
+    variant      VARCHAR(20)                not null,
     board        VARCHAR(256)               not null,
     created_at   timestamp                  not null default now(),
     player_black int references "user" (id) not null,
@@ -44,11 +44,11 @@ create table if not exists match
     winner_id    int references "user" (id) check ( winner_id in (player_black, player_white) )
 );
 
-create table if not exists queue
+create table if not exists lobby
 (
-    match_id  uuid                 default gen_random_uuid() primary key,
+    id        uuid             default gen_random_uuid() primary key,
     player_id int references "user" (id) unique,
-    isPrivate Boolean     not null default false,
+    isPrivate Boolean not null default false,
     size      int,
     variant   VARCHAR(20)
 );

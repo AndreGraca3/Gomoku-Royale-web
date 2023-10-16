@@ -1,55 +1,45 @@
 package pt.isel.gomoku.server.http.model.problem
 
-import pt.isel.gomoku.server.services.error.match.MatchCreationError
-import pt.isel.gomoku.server.services.error.match.MatchFetchingError
-import pt.isel.gomoku.server.services.error.match.MatchUpdateError
+import pt.isel.gomoku.server.service.error.match.MatchCreationError
+import pt.isel.gomoku.server.service.error.match.MatchFetchingError
 
 sealed class MatchProblem(
     status: Int,
     subType: String,
+    title: String,
     detail: String,
     data: Any? = null
-) : Problem(subType, status,"Match Problem", detail, data) {
+) : Problem(subType, status,title, detail, data) {
 
-    class InvalidMatchId(data: MatchFetchingError.MatchByIdNotFound) : MatchProblem(
+    class MatchNotFound(data: MatchFetchingError.MatchByIdNotFound) : MatchProblem(
         404,
         "board-id-not-found",
-        "The board with id ${data.id} was not found in match",
+        "Match not found",
+        "The match with id ${data.id} was not found",
         data
     )
 
-    class InvalidPlayerInMatch(data: MatchCreationError.InvalidPlayerInMatch) : MatchProblem(
-        404,
+    class UserNotInMatch(data: MatchFetchingError.UserNotInMatch): MatchProblem(
+        403,
         "user-not-found-in-match",
-        "The user with id ${data.playerId} was not found in match",
+        "User not found in match",
+        "The user with id ${data.playerId} was not found in match with id ${data.matchId}",
         data
     )
 
     class InvalidVariant(data: MatchCreationError.InvalidVariant) : MatchProblem(
         400,
         "invalid-variant",
-        "The variant ${data.variant} is invalid",
-        data
-    )
-
-    class InvalidValues(data: MatchUpdateError.InvalidValues) : MatchProblem(
-        400,
-        "invalid-values",
-        "The values for match fields are invalid",
+        "Invalid variant",
+        "The variant ${data.variant} doesn't exist",
         data
     )
 
     class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue): MatchProblem(
-        403,
+        409,
         "already-in-queue",
-        "User is already in queue",
-        data
-    )
-
-    class UserNotInMatch(data: MatchFetchingError.UserNotInMatch): MatchProblem(
-        404,
-        "user-not-found-in-match",
-        "The user with id ${data.id} was not found in match",
+        "User already in queue",
+        "User with id ${data.playerId} is already waiting in queue, exit to join another",
         data
     )
 }

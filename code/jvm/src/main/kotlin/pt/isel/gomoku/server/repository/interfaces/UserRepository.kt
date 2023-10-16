@@ -18,11 +18,11 @@ interface UserRepository {
 
     fun getUsers(role: String? = null): List<UserIdAndName>
 
-    fun updateUser(id: Int, name: String?, avatarUrl: String?, role: String?)
+    fun updateUser(id: Int, name: String?, avatarUrl: String?)
 
     fun deleteUser(id: Int)
 
-    fun createToken(token: Token)
+    fun createToken(tokenValue: String, userId: Int): Token
 
     fun getUserAndTokenByTokenValue(token: String): Pair<User, Token>?
 
