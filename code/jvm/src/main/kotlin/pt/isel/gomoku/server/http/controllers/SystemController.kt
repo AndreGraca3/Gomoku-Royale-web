@@ -12,5 +12,5 @@ import pt.isel.gomoku.server.service.UserService
 class SystemController(val systemDomain: SystemDomain, val userService: UserService) {
 
     @GetMapping("")
-    fun getSystemInfo() = SystemInfo(systemDomain.version, userService.getUsers("dev"))
+    fun getSystemInfo() = SystemInfo(systemDomain.version, userService.getUsers("admin"))
 }

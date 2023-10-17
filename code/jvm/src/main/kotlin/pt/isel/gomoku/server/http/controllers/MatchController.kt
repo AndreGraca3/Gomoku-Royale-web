@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.server.http.Uris
-import pt.isel.gomoku.server.http.model.match.MatchCreateInput
+import pt.isel.gomoku.server.http.model.match.MatchCreationInput
 import pt.isel.gomoku.server.http.model.problem.MatchProblem
 import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
 import pt.isel.gomoku.server.service.MatchService
@@ -21,12 +21,10 @@ class MatchController(private val service: MatchService) {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    fun createMatch(
-        @RequestBody input: MatchCreateInput,
-        authenticatedUser: AuthenticatedUser,
-    ): ResponseEntity<*> {
+    fun createMatch(@RequestBody input: MatchCreationInput, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         return when (val res =
-            service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)) {
+            service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)
+        ) {
             is Success -> ResponseEntity.status(201).body(res.value)
             is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()
@@ -36,10 +34,7 @@ class MatchController(private val service: MatchService) {
     }
 
     @GetMapping(Uris.ID)
-    fun getMatchById(
-        @PathVariable id: String,
-        authenticatedUser: AuthenticatedUser,
-    ): ResponseEntity<*> {
+    fun getMatchById(@PathVariable id: String, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         return when (val res = service.getMatchById(id, authenticatedUser.user.id)) {
             is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> when (res.value) {

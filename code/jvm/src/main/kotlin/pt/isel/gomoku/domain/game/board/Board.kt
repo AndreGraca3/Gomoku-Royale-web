@@ -17,13 +17,13 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
             val turn = lines[2][0].toPlayer()
             val stones = lines.drop(3).map { Stone.deserialize(it) }
             return Board::class.sealedSubclasses.find { it.simpleName == kind }
-                ?.primaryConstructor?.call(stones, turn, size)
+                ?.primaryConstructor?.call(size, stones, turn)
                 ?: throw IllegalArgumentException("There is no board type for input $kind")
         }
     }
 
     fun serialize() =
-        "${this::class.simpleName}\n${size}\n${turn.symbol}\n${stones.joinToString("\n") { it.serialize() }}"
+        "${this::class.simpleName}\n${size}\n${turn.symbol}${stones.joinToString("\n") { it.serialize() }}"
 
     fun getStoneOrNull(dot: Dot, stones: List<Stone> = this.stones): Stone? {
         return stones.find { it.dot == dot }

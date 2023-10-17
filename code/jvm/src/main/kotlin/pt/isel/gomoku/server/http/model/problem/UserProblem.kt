@@ -45,6 +45,13 @@ sealed class UserProblem(
         data
     )
 
+    object InvalidToken : UserProblem(
+        401,
+        "invalid-token",
+        "Invalid token",
+        "Request's token is missing, invalid or expired"
+    )
+
     class InvalidValues(data: UserUpdateError.InvalidValues) : UserProblem(
         400,
         "invalid-values",

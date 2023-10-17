@@ -15,7 +15,7 @@ open class Problem(
     val type = "https://gomokyroyale.pt/probs/$subType"
 
     companion object {
-        private val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")
+        val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")
     }
 
     fun response() = ResponseEntity

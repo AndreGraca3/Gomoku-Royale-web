@@ -13,17 +13,17 @@ VALUES ('Bronze', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-
        ('Champion', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-16.png', 250),
        ('Grand Champion', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank19.png', 300);
 
-INSERT INTO "user" (name, email, password, role, mmr, avatar_url, created_at)
-VALUES ('Daniel', 'daniel@gmail.com', 'password123', 'user', 120, 'daniel_avatar_url', NOW()),
-       ('Diogo', 'diogo@gmail.com', 'password123', 'user', 80, 'diogo_avatar_url', NOW()),
-       ('Andre', 'andre@gmail.com', 'password', 'dev', 210, 'andre_avatar_url', NOW());
+INSERT INTO "user" (name, email, password, role, mmr, avatar_url, created_at, rank)
+VALUES ('Daniel', 'daniel@gmail.com', 'password123', 'user', 120, 'daniel_avatar_url', NOW(), 'Bronze'),
+       ('Diogo', 'diogo@gmail.com', 'password123', 'user', 80, 'diogo_avatar_url', NOW(), 'Silver'),
+       ('Andre', 'andre@gmail.com', 'password', 'admin', 210, 'andre_avatar_url', NOW(), 'Grand Champion');
 
 INSERT INTO token (token_value, created_at, last_used, user_id)
 VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1', NOW(), NOW(), 2),
        ('9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf', NOW(), NOW(), 3);
 
-INSERT INTO match (id, isprivate, board, created_at, player_black, player_white, winner_id)
-VALUES (gen_random_uuid(), false, 'match_board_1', NOW(), 1, 2, 1),
-       (gen_random_uuid(), true, 'match_board_2', NOW(), 2, 3, 3),
-       (gen_random_uuid(), false, 'match_board_3', NOW(), 1, 3, 1);
+INSERT INTO match (id, isprivate, variant, board, created_at, black_id, white_id, winner_id)
+VALUES (gen_random_uuid(), false, 'Freestyle','match_board_1', NOW(), 1, 2, 1),
+       (gen_random_uuid(), true, 'Freestyle','match_board_2', NOW(), 2, 3, 3),
+       (gen_random_uuid(), false, 'Freestyle', 'match_board_3', NOW(), 1, 3, 1);

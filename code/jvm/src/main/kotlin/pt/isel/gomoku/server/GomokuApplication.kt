@@ -2,7 +2,6 @@ package pt.isel.gomoku.server
 
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
-import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
@@ -17,6 +16,7 @@ import pt.isel.gomoku.server.pipeline.authorization.AuthenticatedUserArgumentRes
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationInterceptor
 import pt.isel.gomoku.server.repository.jdbi.configureWithAppRequirements
 import java.time.Duration
+
 
 @SpringBootApplication
 class GomokuApplication {

@@ -40,7 +40,7 @@ class UserController(private val service: UserService) {
     ): ResponseEntity<*> {
         return when (val res =
             service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
-            is Success -> ResponseEntity.status(200).build<Unit>()
+            is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> UserProblem.InvalidValues(res.value).response()
         }
     }

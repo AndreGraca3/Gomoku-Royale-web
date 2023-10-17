@@ -1,6 +1,6 @@
 package pt.isel.gomoku.server.http.model.match
 
-class MatchCreateInput(
+class MatchCreationInput(
     val isPrivate: Boolean,
     val size: Int?,
     val variant: String?

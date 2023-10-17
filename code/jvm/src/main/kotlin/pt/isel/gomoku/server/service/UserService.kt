@@ -1,12 +1,11 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.domain.SystemDomain
 import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
 import pt.isel.gomoku.domain.UserDomain
 import pt.isel.gomoku.server.http.model.user.UserIdOutput
-import pt.isel.gomoku.server.http.model.user.UserNameAndAvatar
+import pt.isel.gomoku.server.http.model.user.UserInfo
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.user.TokenCreationError
 import pt.isel.gomoku.server.service.error.user.UserCreationError
@@ -43,15 +42,15 @@ class UserService(
 
     fun getUsers(role: String? = null) = trManager.run { it.userRepository.getUsers(role) }
 
-    fun getUserById(id: Int): Either<UserFetchingError.UserByIdNotFound, UserNameAndAvatar> {
+    fun getUserById(id: Int): Either<UserFetchingError.UserByIdNotFound, UserInfo> {
         return trManager.run {
-            val user: UserNameAndAvatar? = it.userRepository.getUserById(id)
+            val user: UserInfo? = it.userRepository.getUserById(id)
             if (user != null) success(user)
             else failure(UserFetchingError.UserByIdNotFound(id))
         }
     }
 
-    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, Unit> {
+    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, UserInfo> {
         if (newName?.isBlank() == true || newAvatar?.isBlank() == true)
             return failure(UserUpdateError.InvalidValues)
 

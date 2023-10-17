@@ -12,16 +12,16 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
         isPrivate: Boolean,
         serializedVariant: String,
         serializedBoard: String,
-        playerBlackId: Int,
-        playerWhiteId: Int
+        blackId: Int,
+        whiteId: Int
     ): String {
         return handle.createUpdate(MatchStatements.CREATE_MATCH)
             .bind("id", id)
             .bind("isPrivate", isPrivate)
-            .bind("board", serializedBoard)
             .bind("variant", serializedVariant)
-            .bind("player_black", playerBlackId)
-            .bind("player_white", playerWhiteId)
+            .bind("board", serializedBoard)
+            .bind("black_id", blackId)
+            .bind("white_id", whiteId)
             .executeAndReturnGeneratedKeys("id")
             .mapTo(String::class.java)
             .one()
@@ -31,23 +31,22 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
         return handle.createQuery(MatchStatements.GET_MATCH_BY_ID)
             .bind("id", id)
             .mapTo(Match::class.java)
-            .findFirst()
-            .orElse(null)
+            .singleOrNull()
     }
 
     override fun getMatchesFromUser(userId: Int): List<Match> {
         return handle.createQuery(MatchStatements.GET_MATCHES_BY_USER_ID)
-            .bind("idUser", userId)
+            .bind("userId", userId)
             .mapTo(Match::class.java)
             .list()
     }
 
-    override fun updateMatch(id: String, serializedBoard: String?, playerBlackId: Int?, playerWhiteId: Int?, winnerId: Int?) {
+    override fun updateMatch(id: String, serializedBoard: String?, blackId: Int?, whiteId: Int?, winnerId: Int?) {
         handle.createUpdate(MatchStatements.UPDATE_MATCH)
             .bind("id", id)
             .bind("board", serializedBoard)
-            .bind("player_black", playerBlackId)
-            .bind("player_white", playerWhiteId)
+            .bind("black_id", blackId)
+            .bind("white_id", whiteId)
             .bind("winner_id", winnerId)
             .execute()
     }

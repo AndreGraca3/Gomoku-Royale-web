@@ -3,13 +3,12 @@ package pt.isel.gomoku.server.service
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.domain.game.Variant
+import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot
-import pt.isel.gomoku.domain.game.exception.GomokuGameException
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
 import pt.isel.gomoku.server.service.error.match.MatchFetchingError
-import pt.isel.gomoku.server.service.error.match.MatchPlayError
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
 import pt.isel.gomoku.server.utils.success
@@ -81,11 +80,17 @@ class MatchService(private val trManager: TransactionManager) {
                 return@run failure(MatchFetchingError.UserNotInMatch(userId, match.id))
 
             val player = match.getPlayer(userId)
-            val newBoard = match.board.play(dot, player).serialize()
-            success(it.matchRepository.updateMatch(id, serializedBoard = newBoard))
+            val newMatch = match.play(dot, player)
+            success(
+                it.matchRepository.updateMatch(
+                    id,
+                    serializedBoard = newMatch.board.serialize(),
+                    winnerId = if (newMatch.board is BoardWinner) userId else null
+                )
+            )
         }
     }
 
     private fun isUserInMatch(idUser: Int, match: Match) =
-        match.blackUserId == idUser || match.whiteUserId == idUser
+        match.blackId == idUser || match.whiteId == idUser
 }

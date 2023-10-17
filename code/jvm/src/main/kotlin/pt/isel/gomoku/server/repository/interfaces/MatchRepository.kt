@@ -9,8 +9,8 @@ interface MatchRepository {
         isPrivate: Boolean,
         serializedVariant: String,
         serializedBoard: String,
-        playerBlackId: Int,
-        playerWhiteId: Int
+        blackId: Int,
+        whiteId: Int
     ): String
 
     fun getMatchesFromUser(userId: Int): List<Match>
@@ -23,8 +23,8 @@ interface MatchRepository {
     fun updateMatch(
         id: String,
         serializedBoard: String? = null,
-        playerBlackId: Int? = null,
-        playerWhiteId: Int? = null,
+        blackId: Int? = null,
+        whiteId: Int? = null,
         winnerId: Int? = null
     )
 }

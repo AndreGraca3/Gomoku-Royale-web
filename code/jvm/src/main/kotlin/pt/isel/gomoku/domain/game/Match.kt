@@ -8,11 +8,11 @@ data class Match(
     val isPrivate: Boolean,
     val variant: Variant,
     val board: Board,
-    val blackUserId: Int,
-    val whiteUserId: Int,
-    val winnerUserId: Int?,
+    val blackId: Int,
+    val whiteId: Int,
+    val winnerId: Int?,
 ) {
     fun play(dst: Dot, player: Player): Match = copy(board = board.play(dst, player))
 
-    fun getPlayer(userId: Int) = if(blackUserId == userId) Player.BLACK else Player.WHITE
+    fun getPlayer(userId: Int) = if(blackId == userId) Player.BLACK else Player.WHITE
 }
