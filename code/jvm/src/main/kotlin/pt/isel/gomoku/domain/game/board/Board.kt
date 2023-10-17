@@ -23,7 +23,7 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
     }
 
     fun serialize() =
-        "${this::class.simpleName}\n${size}\n${turn.symbol}${stones.joinToString("\n") { it.serialize() }}"
+        "${this::class.simpleName}\n${size}\n${turn.symbol}${stones.joinToString(prefix = "\n") { it.serialize() }}"
 
     fun getStoneOrNull(dot: Dot, stones: List<Stone> = this.stones): Stone? {
         return stones.find { it.dot == dot }

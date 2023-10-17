@@ -18,9 +18,9 @@ create table if not exists "user"
     email      varchar(200) unique not null,
     password   varchar(30),
     role       varchar(5)          not null check ( role in ('user', 'admin') ) default 'user',
-    mmr        int                                                            default 0 not null check ( mmr >= 0 ),
+    mmr        int                                                              default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
-    created_at timestamp           not null                                   default now(),
+    created_at timestamp           not null                                     default now(),
     rank       varchar(20)         not null references rank (name)
 );
 
@@ -34,19 +34,19 @@ create table if not exists token
 
 create table if not exists match
 (
-    id           VARCHAR(256) primary key,
-    isPrivate    Boolean                    not null,
-    variant      VARCHAR(20)                not null,
-    board        VARCHAR(256)               not null,
-    created_at   timestamp                  not null default now(),
-    black_id int references "user" (id) not null,
-    white_id int references "user" (id),
-    winner_id    int references "user" (id) check ( winner_id in (black_id, white_id) )
+    id         VARCHAR(256) primary key,
+    isPrivate  Boolean                    not null,
+    variant    VARCHAR(20)                not null,
+    board      VARCHAR(256)               not null,
+    created_at timestamp                  not null default now(),
+    black_id   int references "user" (id) not null,
+    white_id   int references "user" (id),
+    winner_id  int references "user" (id) check ( winner_id in (black_id, white_id) )
 );
 
 create table if not exists lobby
 (
-    id        VARCHAR(256)             default gen_random_uuid() primary key,
+    id        VARCHAR(256)     default gen_random_uuid() primary key,
     player_id int references "user" (id) unique,
     isPrivate Boolean not null default false,
     size      int,
