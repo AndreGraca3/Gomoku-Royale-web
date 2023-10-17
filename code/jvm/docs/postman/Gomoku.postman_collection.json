@@ -141,7 +141,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
 									"type": "string"
 								}
 							]
@@ -150,7 +150,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"isPrivate\": false\r\n}",
+							"raw": "{\r\n    \"isPrivate\": false,\r\n    \"size\": 15,\r\n    \"variant\": \"Freestyle\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -170,8 +170,53 @@
 					"response": []
 				},
 				{
+					"name": "Join Private Match",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id/join",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id",
+								"join"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e26ec8ad-1eac-4ddc-9500-4e75552c7f47"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Match",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {

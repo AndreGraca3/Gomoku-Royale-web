@@ -8,7 +8,7 @@ object LobbyStatements {
     const val GET_LOBBY_BY_ID =
         "select * from lobby where id = :id"
 
-    const val GET_LOBBY_BY_PREFERENCES =
+    const val GET_PUBLIC_LOBBY_BY_PREFERENCES =
         "select * from lobby where isPrivate = false and size = :size or size is null and variant = :variant or variant is null;"
 
     const val GET_LOBBIES_BY_USER =

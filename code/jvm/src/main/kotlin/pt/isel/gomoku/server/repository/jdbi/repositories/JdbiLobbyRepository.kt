@@ -26,9 +26,8 @@ class JdbiLobbyRepository(private val handle: Handle) : LobbyRepository {
             .orElse(null)
     }
 
-    override fun getLobbyByPreferences(isPrivate: Boolean, size: Int?, variant: String?): Lobby? {
-        return handle.createQuery(LobbyStatements.GET_LOBBY_BY_PREFERENCES)
-            .bind("isPrivate", isPrivate)
+    override fun getPublicLobbyByPreferences(size: Int?, variant: String?): Lobby? {
+        return handle.createQuery(LobbyStatements.GET_PUBLIC_LOBBY_BY_PREFERENCES)
             .bind("size", size)
             .bind("variant", variant)
             .mapTo(Lobby::class.java)

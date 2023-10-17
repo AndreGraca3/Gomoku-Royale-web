@@ -23,7 +23,10 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
     }
 
     fun serialize() =
-        "${this::class.simpleName}\n${size}\n${turn.symbol}${stones.joinToString(prefix = "\n") { it.serialize() }}"
+        "${this::class.simpleName}\n${size}\n${turn.symbol}${
+            stones.joinToString(separator = "\n", prefix = "\n") { it.serialize() }.takeIf { stones.isNotEmpty() }
+                .orEmpty()
+        }"
 
     fun getStoneOrNull(dot: Dot, stones: List<Stone> = this.stones): Stone? {
         return stones.find { it.dot == dot }
@@ -58,13 +61,13 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
 
 class BoardWinner(size: Int, stones: List<Stone>, val winner: Player) : Board(size, stones, winner) {
     override fun play(dst: Dot, player: Player): Board {
-        throw GomokuGameException.InvalidPlay(dst) { "Player $winner has already won this game." }
+        throw GomokuGameException.AlreadyFinished { "Player $winner has already won this game." }
     }
 }
 
 class BoardDraw(size: Int, stones: List<Stone>, turn: Player) : Board(size, stones, turn) {
     override fun play(dst: Dot, player: Player): Board {
-        throw GomokuGameException.InvalidPlay(dst) { "This game has already finished with a draw." }
+        throw GomokuGameException.AlreadyFinished { "This game has already finished with a draw." }
     }
 }
 

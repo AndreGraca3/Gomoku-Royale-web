@@ -2,6 +2,8 @@ package pt.isel.gomoku.server.http.model.problem
 
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
 import pt.isel.gomoku.server.service.error.match.MatchFetchingError
+import pt.isel.gomoku.server.service.error.match.MatchJoiningError
+import pt.isel.gomoku.server.service.error.match.MatchPlayError
 
 sealed class MatchProblem(
     status: Int,
@@ -9,7 +11,7 @@ sealed class MatchProblem(
     title: String,
     detail: String,
     data: Any? = null
-) : Problem(subType, status,title, detail, data) {
+) : Problem(subType, status, title, detail, data) {
 
     class MatchNotFound(data: MatchFetchingError.MatchByIdNotFound) : MatchProblem(
         404,
@@ -19,7 +21,7 @@ sealed class MatchProblem(
         data
     )
 
-    class UserNotInMatch(data: MatchFetchingError.UserNotInMatch): MatchProblem(
+    class UserNotInMatch(data: MatchFetchingError.UserNotInMatch) : MatchProblem(
         403,
         "user-not-found-in-match",
         "User not found in match",
@@ -31,15 +33,62 @@ sealed class MatchProblem(
         400,
         "invalid-variant",
         "Invalid variant",
-        "The variant ${data.variant} doesn't exist",
+        "Invalid variant ${data.variant}",
         data
     )
 
-    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue): MatchProblem(
+    class InvalidBoardSize(data: MatchCreationError.InvalidBoardSize) : MatchProblem(
+        400,
+        "invalid-board-size",
+        "Invalid board size",
+        "Invalid board size for variant ${data.variant}, valid sizes are ${data.sizes}",
+        data
+    )
+
+    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue) : MatchProblem(
         409,
         "already-in-queue",
         "User already in queue",
         "User with id ${data.playerId} is already waiting in queue, exit to join another",
         data
+    )
+
+    class InvalidPrivateMatch(data: MatchCreationError.InvalidPrivateMatch) : MatchProblem(
+        400,
+        "invalid-private-match",
+        "Invalid private match values",
+        "Size and variant must be specified in private matches",
+        data
+    )
+
+    class MatchIsNotPrivate(data: MatchJoiningError.MatchIsNotPrivate) : MatchProblem(
+        400,
+        "match-is-not-private",
+        "Match is not private",
+        "Match with id ${data.matchId} is not private",
+        data
+    )
+
+    class InvalidPlay(reason: String, data: MatchPlayError.InvalidPlay) : MatchProblem(
+        403,
+        "invalid-play",
+        "Invalid play",
+        reason,
+        data
+    )
+
+    class InvalidTurn(reason: String, data: MatchPlayError.InvalidTurn) : MatchProblem(
+        403,
+        "invalid-turn",
+        "Invalid turn",
+        reason,
+        data
+    )
+
+    class AlreadyFinished(reason: String) : MatchProblem(
+        409,
+        "match-finished",
+        "Match already finished",
+        reason
     )
 }

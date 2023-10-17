@@ -12,6 +12,9 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import pt.isel.gomoku.domain.game.exception.GomokuGameException
 import pt.isel.gomoku.server.http.model.problem.BadRequestProblem
+import pt.isel.gomoku.server.http.model.problem.MatchProblem
+import pt.isel.gomoku.server.service.error.match.MatchCreationError
+import pt.isel.gomoku.server.service.error.match.MatchPlayError
 
 @RestControllerAdvice
 class CustomExceptionHandler : ResponseEntityExceptionHandler() {
@@ -39,7 +42,27 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(GomokuGameException::class)
     fun handleGomokuGameException(ex: GomokuGameException): ResponseEntity<Any> {
         log.info("Handling GomokuGameException: {}", ex.message)
-        return BadRequestProblem.InvalidRequestContent().response()
+        return when (ex) {
+            is GomokuGameException.InvalidPlay -> MatchProblem.InvalidPlay(
+                ex.message,
+                MatchPlayError.InvalidPlay(ex.dst)
+            ).response()
+
+            is GomokuGameException.InvalidTurn -> MatchProblem.InvalidTurn(
+                ex.message,
+                MatchPlayError.InvalidTurn(ex.turn)
+            ).response()
+
+            is GomokuGameException.AlreadyFinished -> MatchProblem.AlreadyFinished(ex.message).response()
+
+            is GomokuGameException.InvalidBoardSize -> MatchProblem.InvalidBoardSize(
+                MatchCreationError.InvalidBoardSize(ex.variant, ex.size, ex.sizes)
+            ).response()
+
+            is GomokuGameException.InvalidVariant -> MatchProblem.InvalidVariant(
+                MatchCreationError.InvalidVariant(ex.variant)
+            ).response()
+        }
     }
 
     companion object {

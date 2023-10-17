@@ -8,7 +8,7 @@ interface LobbyRepository {
 
     fun getLobbyById(id: String): Lobby?
 
-    fun getLobbyByPreferences(isPrivate: Boolean, size: Int?, variant: String?): Lobby?
+    fun getPublicLobbyByPreferences(size: Int?, variant: String?): Lobby?
 
     fun getLobbiesByUser(userId: Int): List<Lobby>
 

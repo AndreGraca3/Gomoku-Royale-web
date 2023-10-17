@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 open class Problem(
     subType: String,
     val status: Int,
     val title: String,
     val detail: String? = null,
-    @JsonInclude(JsonInclude.Include.NON_NULL) val data: Any? = null
+    val data: Any? = null
 ) {
 
     val type = "https://gomokyroyale.pt/probs/$subType"

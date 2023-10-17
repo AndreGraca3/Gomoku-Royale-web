@@ -46,9 +46,10 @@ create table if not exists match
 
 create table if not exists lobby
 (
-    id        VARCHAR(256)     default gen_random_uuid() primary key,
-    player_id int references "user" (id) unique,
-    isPrivate Boolean not null default false,
-    size      int,
-    variant   VARCHAR(20)
+    id         VARCHAR(256)       default gen_random_uuid() primary key,
+    player_id  int references "user" (id) unique,
+    isPrivate  Boolean   not null default false,
+    size       int,
+    variant    VARCHAR(20),
+    created_at timestamp not null default now()
 );
