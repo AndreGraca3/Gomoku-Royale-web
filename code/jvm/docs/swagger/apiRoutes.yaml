@@ -1,0 +1,512 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Gomoku application API
+  description: This is a simple Gomoku application API
+  contact:
+    email: you@your-company.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+paths:
+  /system:
+    get:
+      summary: GET system
+      operationId: getSystemInfo
+      description:
+        obtains the information about the system and it's authors.
+      tags:
+        - System
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Information about the system and it's authors.
+          schema:
+            $ref: "#/definitions/SystemInfo"
+
+  /users:
+    post:
+      summary: POST users
+      operationId: createUser
+      description:
+        creates a user and returns user's identifier.
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: name, email, password, avatar url.
+          description: user's name, email, password and avatar url.
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreateInput'
+      responses:
+        201:
+          description: user created successfully.
+          schema:
+            $ref: '#/definitions/UserCreationOut'
+        400:
+          description: invalid or missing parameters in body.
+        409:
+          description: Email already exists.
+
+    put:
+      summary: PUT users/
+      operationId: updateUser
+      description:
+        modifies user's name, avatar or role.
+      tags:
+        - User
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user name, avatar or role.
+          description: user's new name, avatar or role.
+          required: true
+          schema:
+            $ref: '#/definitions/UserUpdateInput'
+      responses:
+        200:
+          description: user's information updated successfully.
+        400:
+          description: invalid or missing parameters in body.
+        401:
+          description: invalid token.
+
+  /users/{id}:
+    get:
+      summary: GET users/{id}
+      operationId: getUser
+      description:
+        obtains information from a user by it's identifier.
+      tags:
+        - User
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: User's identifier.
+          type: integer
+          format: id
+          required: true
+      responses:
+        200:
+          description: user's name and avatar.
+          schema:
+            $ref: '#/definitions/UserNameAndAvatar'
+        400:
+          description: invalid parameters in path
+        404:
+          description: user with the given identifier not found..
+
+  /users/token:
+    post:
+      summary: POST users/token
+      operationId: createToken
+      description:
+        creates a token for the user.
+      tags:
+        - Token
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user's name and passowrd.
+          description: user's name and password.
+          schema:
+            $ref: '#/definitions/UserCredentialsInput'
+          required: true
+      responses:
+        200:
+          description: token created successfully.
+          schema:
+            $ref: '#/definitions/Token'
+        400:
+          description: invalid parameter in header?.
+        401:
+          description: invalid token.
+
+  /matches:
+    post:
+      summary: POST matches
+      operationId: createMatch
+      description:
+        creates a match and returns match's identifier.
+      tags:
+        - Match
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: isPrivate, size, variant.
+          description: player preferences.
+          required: true
+          schema:
+            $ref: '#/definitions/MatchCreateInputModel'
+      responses:
+        201:
+          description: match created successfully.
+          schema:
+            $ref: '#/definitions/MatchCreationOut'
+        400:
+          description: missing or invalid parameters in body.
+        401:
+          description: invalid token.
+        403:
+          description: already in queue.
+
+  /matches/{id}:
+    get:
+      summary: GET matches/{id}
+      operationId: getMatchById
+      description:
+        obtains a match by the given id.
+      tags:
+        - Match
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: match's identifier.
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: match with given id was found.
+          schema:
+            $ref: '#/definitions/Match'
+        400:
+          description: missing or invalid parameters in path.
+        401:
+          description: invalid token.
+        404:
+          description: match with a given id not found.
+
+  /matches/all:
+    get:
+      summary: GET matches/all
+      operationId: getMatchesFromUser
+      description:
+        obtains all matches from the user.
+      tags:
+        - Match
+      produces:
+        - application/json
+      responses:
+        200:
+          description: every match from the authenticated user.
+        400:
+          description: invalid parameters in header.
+        401:
+          description: invalid token.
+
+  /match:
+    patch:
+      summary: PATCH matches
+      operationId: updateMatch
+      description:
+        modifies match's state by a given identifier.
+      tags:
+        - Match
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: id, winner.
+          description: match identifier and new winner of the match.
+          required: true
+          schema:
+            $ref: '#/definitions/MatchUpdateInput'
+      responses:
+        200:
+          description: successfully modifier match's state.
+        400:
+          description: invalid parameters in body
+        401:
+          description: invalid token.
+        404:
+          description: match with the given identifier not found.
+
+  /match/{id}:
+    post:
+      summary: POST matches/{id}
+      operationId: playMove
+      description:
+        makes a move in a given match.
+      tags:
+        - Match
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: match's identifier.
+          type: string
+          format: uuid
+          required: true
+        - in: body
+          name: Dot
+          description: new dot to add to given match.
+          schema:
+            $ref: '#/definitions/Dot'
+      responses:
+        201:
+          description: move was successful.
+        400:
+          description: invalid parameters in body.
+        401:
+          description: invalid token.
+        404:
+          description: Match not found or user doesn't have access to given match.
+
+definitions:
+  SystemInfo:
+    type: array
+    items:
+      type: object
+      example: [
+        {
+          "id": 1,
+          "name": "Diogo"
+        },
+        {
+          "idList": 2,
+          "name": "André"
+        },
+        {
+          "idList": 3,
+          "name": "Daniel"
+        } ]
+
+  UserCreateInput:
+    type: object
+    required:
+      - name
+      - email
+      - password
+      - avatarUrl
+    properties:
+      name:
+        type: string
+        example: "André"
+      email:
+        type: string
+        example: "André@gmail.com"
+      password:
+        type: string
+        example: "password123"
+      avatarUrl:
+        type: string
+        example: "image_profile_pic_url"
+
+  UserCreationOut:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+        example: 1
+
+  UserNameAndAvatar:
+    type: object
+    required:
+      - id
+      - name
+      - avatarUrl
+      - role
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "André"
+      avatarUrl:
+        type: string
+        example: "image_profile_pic_url"
+      role:
+        type: string
+        example: "user"
+
+  UserUpdateInput:
+    type: object
+    required:
+      - name
+      - avatarUrl
+      - roleChangeRequest
+    properties:
+      name:
+        type: string
+        example: "Daniel"
+      avatarUrl:
+        type: string
+        example: "new_image_profile_pic_url"
+      roleChangeRequest:
+        type: object
+        required:
+          - role
+          - apiSecret
+        properties:
+          role:
+            type: string
+            example: "Dev"
+          apiSecret:
+            type: string
+            example: "gomoku_secret"
+
+  UserCredentialsInput:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        example: "Daniel@gmail.com"
+      password:
+        type: string
+        example: "password"
+
+  Token:
+    type: object
+    required:
+      - tokenValue
+      - userId
+      - createdAt
+      - lastUsed
+    properties:
+      tokenValue:
+        type: string
+        example: "Token123"
+      userId:
+        type: integer
+        example: 1
+      createdAt:
+        type: string
+        format: LocalDateTime
+        example: "2023-10-09 15:28:09.852478"
+      lastUsed:
+        type: string
+        format: LocalDateTime
+        example: "2023-10-16 15:36:50.151145"
+
+  MatchCreateInputModel:
+    type: object
+    required:
+      - isPrivate
+      - size
+      - variant
+    properties:
+      isPrivate:
+        type: boolean
+        example: false
+      size:
+        type: integer
+        example: 15
+      variant:
+        type: string
+        example: "FreeStyleBoard"
+
+  MatchCreationOut:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "3f5d34c9-cd8d-4963-97c8-f7fa50ba3677"
+
+  Match:
+    type: object
+    required:
+      - id
+      - isPrivate
+      - board
+      - player_black
+      - player_white
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "3f5d34c9-cd8d-4963-97c8-f7fa50ba3677"
+      isPrivate:
+        type: boolean
+        example: false
+      board:
+        type: object
+        required:
+          - size
+          - stones
+          - turn
+        properties:
+          size:
+            type: integer
+            example: 15
+          stones:
+            type: array
+            items:
+              type: object
+              example: []
+          turn:
+            type: object
+            required:
+              - symbol
+            properties:
+              symbol:
+                type: string
+                example: "B"
+      player_black:
+        type: integer
+        example: 1
+      player_white:
+        type: integer
+        example: 2
+
+  MatchUpdateInput:
+    type: object
+    required:
+      - id
+      - winner
+    properties:
+      id:
+        type: string
+        format: uuid
+        example: "3f5d34c9-cd8d-4963-97c8-f7fa50ba3677"
+      winner:
+        type: integer
+        example: 2
+
+  Dot:
+    type: object
+    required:
+      - rowNum
+      - columnSymbol
+    properties:
+      rowNum:
+        type: integer
+        example: 2
+      columnSymbol:
+        type: string
+        example: "c"
