@@ -7,9 +7,19 @@ sealed class BadRequestProblem(
     data: Any? = null
 ) : Problem(subType, status, "Bad Request", detail, data) {
 
-    class InvalidRequestContent() : UserProblem(
-        400,
+    class InvalidRequestContent() : Problem(
         "invalid-request-content",
-        "The request content is invalid"
+        400,
+        "Invalid request body content",
+        "The request content is invalid",
+        null
+    )
+
+    class InvalidMethod() : Problem(
+        "invalid-method",
+        405,
+        "Invalid method for resource",
+        "The method is not allowed",
+        null
     )
 }

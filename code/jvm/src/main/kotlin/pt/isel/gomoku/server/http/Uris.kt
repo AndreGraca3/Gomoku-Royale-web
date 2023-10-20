@@ -11,6 +11,6 @@ object Uris {
 
     object Matches {
         const val BASE = "/matches"
-        // TODO
+        const val JOIN = "/join"
     }
 }

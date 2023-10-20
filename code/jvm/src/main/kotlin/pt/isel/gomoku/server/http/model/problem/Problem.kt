@@ -1,8 +1,10 @@
 package pt.isel.gomoku.server.http.model.problem
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 open class Problem(
     subType: String,
     val status: Int,
@@ -14,7 +16,7 @@ open class Problem(
     val type = "https://gomokyroyale.pt/probs/$subType"
 
     companion object {
-        private val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")
+        val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")
     }
 
     fun response() = ResponseEntity

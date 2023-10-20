@@ -1,21 +1,30 @@
 package pt.isel.gomoku.server.repository.interfaces
 
-import pt.isel.gomoku.domain.Match
-import pt.isel.gomoku.server.http.model.match.MatchCreationOut
-import pt.isel.gomoku.server.http.model.match.MatchOutDev
-import java.util.*
+import pt.isel.gomoku.domain.game.Match
 
 interface MatchRepository {
 
-    fun createMatch(id: UUID, isPrivate: Boolean, board: String, player1_id: Int, player2_id: Int): MatchCreationOut
+    fun createMatch(
+        id: String,
+        isPrivate: Boolean,
+        serializedVariant: String,
+        serializedBoard: String,
+        blackId: Int,
+        whiteId: Int
+    ): String
 
-    fun getMatchesFromUser(idUser: Int): List<Match>
+    fun getMatchesFromUser(userId: Int): List<Match>
 
-    fun getMatchById(id: UUID): Match?
+    fun getMatchById(id: String): Match?
 
-    fun getMatchDev(id : UUID) : MatchOutDev?
-
-    fun updateMatch(id: UUID, winner: Int?)
-
-    fun playMove(id: UUID, board: String)
+    /**
+     * Updates the specified match with new values, selectively replacing non-null properties.
+     */
+    fun updateMatch(
+        id: String,
+        serializedBoard: String? = null,
+        blackId: Int? = null,
+        whiteId: Int? = null,
+        winnerId: Int? = null
+    )
 }

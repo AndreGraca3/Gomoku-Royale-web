@@ -5,7 +5,7 @@ object UserStatements {
         "insert into \"user\" (name, email, password, avatar_url) values (:name, :email, :password, :avatar_url)"
 
     const val GET_USER_BY_ID =
-        "select id, name, email, avatar_url, role from \"user\" where id = :id"
+        "select id, name, email, avatar_url, role, rank from \"user\" where id = :id"
 
     const val GET_USER_BY_NAME =
         "select id, name, email, avatar_url, role from \"user\" where name = :name"
@@ -19,7 +19,7 @@ object UserStatements {
     const val UPDATE_USER =
         """
                 update "user"
-                set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url), role = coalesce(:role, role)
+                set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url)
                 where id = :id
         """
 

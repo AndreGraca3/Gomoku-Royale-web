@@ -2,7 +2,7 @@ package pt.isel.gomoku.server.repository.jdbi.mappers
 
 import org.jdbi.v3.core.mapper.ColumnMapper
 import org.jdbi.v3.core.statement.StatementContext
-import pt.isel.gomoku.domain.game.boards.Board
+import pt.isel.gomoku.domain.game.board.Board
 import java.sql.ResultSet
 import java.sql.SQLException
 

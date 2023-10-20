@@ -1,22 +1,22 @@
 {
 	"info": {
-		"_postman_id": "222f00c2-3533-4300-b3e5-06cbdf776e08",
+		"_postman_id": "8f5d70ad-7c33-44cb-b095-39da2843648d",
 		"name": "Gomoku",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20801773"
+		"_exporter_id": "25534107"
 	},
 	"item": [
 		{
 			"name": "/users",
 			"item": [
 				{
-					"name": "addUser",
+					"name": "Create User",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Daniel\",\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"pass123\",\r\n    \"avatar\" : null\r\n}",
+							"raw": "{\r\n    \"name\": \"Alberto\",\r\n    \"email\": \"alberto@gmail.com\",\r\n    \"password\": \"isel123\",\r\n    \"avatar\" : null\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -36,17 +36,10 @@
 					"response": []
 				},
 				{
-					"name": "getUser",
+					"name": "Get User",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "token12",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -62,7 +55,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "4"
+									"value": "3"
 								}
 							]
 						}
@@ -70,23 +63,23 @@
 					"response": []
 				},
 				{
-					"name": "changeName",
+					"name": "Update User",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "SZJrQMBJXhi9udV5aVmaADJgIzMw9hxhE6AgojtSCnI=",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
 									"type": "string"
 								}
 							]
 						},
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Phoenix\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Graça\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -106,13 +99,16 @@
 					"response": []
 				},
 				{
-					"name": "createToken",
+					"name": "Create Token",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"pass123\"\r\n}",
+							"raw": "{\r\n    \"email\": \"andre@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -138,14 +134,85 @@
 			"name": "/matches",
 			"item": [
 				{
-					"name": "getMatch",
+					"name": "Create Match",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isPrivate\": false,\r\n    \"size\": 15,\r\n    \"variant\": \"Freestyle\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/matches",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Private Match",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id/join",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id",
+								"join"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e26ec8ad-1eac-4ddc-9500-4e75552c7f47"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Match",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
 									"type": "string"
 								}
 							]
@@ -164,7 +231,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "9368cfca-7af2-4d9d-b75d-505985948225"
+									"value": "2b1eaf36-b934-4693-aee5-48ed88e8b174"
 								}
 							]
 						}
@@ -172,14 +239,14 @@
 					"response": []
 				},
 				{
-					"name": "createMatch",
+					"name": "Play",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
 									"type": "string"
 								}
 							]
@@ -188,7 +255,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"visibility\": \"public\",\r\n    \"boardSpecs\": {\r\n        \"variant\": \"FreeStyleBoard\",\r\n        \"size\": 15,\r\n        \"turn\": \"B\"\r\n    },\r\n    \"variant\": \"freestyle\",\r\n    \"player1_id\": \"1\"\r\n}",
+							"raw": "{\r\n    \"row\": {\r\n        \"number\": 1\r\n    },\r\n    \"column\": {\r\n        \"symbol\": \"c\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -196,54 +263,65 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/matches",
+							"raw": "{{host}}{{port}}/matches/:id",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
-								"matches"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "updateMatch",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+								"matches",
+								":id"
+							],
+							"variable": [
 								{
-									"key": "token",
-									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
-									"type": "string"
+									"key": "id",
+									"value": "d0905227-0ce2-45f8-8b6f-9d6c62129a06"
 								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"95b756b7-349f-451f-87ef-f3bc213ce24c\",\r\n    \"visibility\": \"public\",\r\n    \"winner\": 1\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}{{port}}/matches",
-							"host": [
-								"{{host}}{{port}}"
-							],
-							"path": [
-								"matches"
 							]
 						}
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "/system",
+			"item": [
+				{
+					"name": "Get System Info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Daniel\",\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"456\",\r\n    \"avatar\" : null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/system",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"system"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "port",
+			"value": "8080"
 		}
 	]
 }

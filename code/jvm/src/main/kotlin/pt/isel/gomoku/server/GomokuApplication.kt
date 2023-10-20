@@ -17,6 +17,7 @@ import pt.isel.gomoku.server.pipeline.authorization.AuthenticationInterceptor
 import pt.isel.gomoku.server.repository.jdbi.configureWithAppRequirements
 import java.time.Duration
 
+
 @SpringBootApplication
 class GomokuApplication {
 
@@ -30,7 +31,7 @@ class GomokuApplication {
 
     @Bean
     fun systemDomainConfig() =
-        SystemDomain(0.1f, "GOMOKU_SECRET")
+        SystemDomain(0.1f)
 
     @Bean
     fun jdbi(): Jdbi {

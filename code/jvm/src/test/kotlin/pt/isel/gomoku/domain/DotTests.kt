@@ -2,10 +2,10 @@ package pt.isel.gomoku.domain
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import pt.isel.gomoku.domain.game.Dot
-import pt.isel.gomoku.domain.game.toColumn
-import pt.isel.gomoku.domain.game.toDot
-import pt.isel.gomoku.domain.game.toRow
+import pt.isel.gomoku.domain.game.cell.Dot
+import pt.isel.gomoku.domain.game.cell.toColumn
+import pt.isel.gomoku.domain.game.cell.toDot
+import pt.isel.gomoku.domain.game.cell.toRow
 
 class DotTests {
 
