@@ -1,16 +1,13 @@
 package pt.isel.gomoku.server.repository.interfaces
 
 import pt.isel.gomoku.domain.game.Match
-import pt.isel.gomoku.domain.game.board.Board
 
 interface MatchRepository {
 
     fun createMatch(
         isPrivate: Boolean,
         serializedVariant: String,
-        board: Board,
         blackId: Int,
-        whiteId: Int?
     ): String
 
     fun getMatchesFromUser(userId: Int): List<Match>
