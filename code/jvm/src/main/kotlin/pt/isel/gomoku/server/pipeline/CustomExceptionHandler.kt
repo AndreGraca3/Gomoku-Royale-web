@@ -48,13 +48,6 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
                 MatchPlayError.InvalidPlay(ex.dst)
             ).response()
 
-            is GomokuGameException.InvalidTurn -> MatchProblem.InvalidTurn(
-                ex.message,
-                MatchPlayError.InvalidTurn(ex.turn)
-            ).response()
-
-            is GomokuGameException.AlreadyFinished -> MatchProblem.AlreadyFinished(ex.message).response()
-
             is GomokuGameException.InvalidBoardSize -> MatchProblem.InvalidBoardSize(
                 MatchCreationError.InvalidBoardSize(ex.variant, ex.size, ex.sizes)
             ).response()

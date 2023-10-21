@@ -1,8 +1,10 @@
 package pt.isel.gomoku.domain.game.cell
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 class Row private constructor(val number: Int) {
 
-    val index = number - 1
+    @JsonIgnore val index = number - 1
 
     companion object {
         private val values = mutableMapOf<Int, Row>()

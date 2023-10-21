@@ -76,19 +76,4 @@ sealed class MatchProblem(
         reason,
         data
     )
-
-    class InvalidTurn(reason: String, data: MatchPlayError.InvalidTurn) : MatchProblem(
-        403,
-        "invalid-turn",
-        "Invalid turn",
-        reason,
-        data
-    )
-
-    class AlreadyFinished(reason: String) : MatchProblem(
-        409,
-        "match-finished",
-        "Match already finished",
-        reason
-    )
 }

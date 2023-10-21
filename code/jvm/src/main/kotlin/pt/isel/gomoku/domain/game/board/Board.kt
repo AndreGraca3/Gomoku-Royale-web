@@ -10,18 +10,18 @@ import kotlin.reflect.full.primaryConstructor
 sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
 
     companion object {
-        fun deserialize(input: String): Board {
-            val lines = input.split("\n")
-            val kind = lines[0]
-            val size = lines[1].toInt()
-            val turn = lines[2][0].toPlayer()
-            val stones = lines.drop(3).map { Stone.deserialize(it) }
-            return Board::class.sealedSubclasses.find { it.simpleName == kind }
+
+        fun create(type: String, size: Int, serializedStones: String, turn: Player): Board {
+            val stones = if (serializedStones.isEmpty()) emptyList() else serializedStones.split("\n")
+                .map { Stone.deserialize(it) }
+            return Board::class.sealedSubclasses.find { it.simpleName == type }
                 ?.primaryConstructor?.call(size, stones, turn)
-                ?: throw IllegalArgumentException("There is no board type for input $kind")
+                ?: throw IllegalArgumentException("There is no board type for input $type")
         }
+
     }
 
+    // TODO: Remove this, we won't need this method when we have a board as an entity in the database
     fun serialize() =
         "${this::class.simpleName}\n${size}\n${turn.symbol}${
             stones.joinToString(separator = "\n", prefix = "\n") { it.serialize() }.takeIf { stones.isNotEmpty() }
@@ -61,13 +61,13 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
 
 class BoardWinner(size: Int, stones: List<Stone>, val winner: Player) : Board(size, stones, winner) {
     override fun play(dst: Dot, player: Player): Board {
-        throw GomokuGameException.AlreadyFinished { "Player $winner has already won this game." }
+        throw GomokuGameException.InvalidPlay(dst) { "Player $winner has already won this game." }
     }
 }
 
 class BoardDraw(size: Int, stones: List<Stone>, turn: Player) : Board(size, stones, turn) {
     override fun play(dst: Dot, player: Player): Board {
-        throw GomokuGameException.AlreadyFinished { "This game has already finished with a draw." }
+        throw GomokuGameException.InvalidPlay(dst) { "This game has already finished with a draw." }
     }
 }
 

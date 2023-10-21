@@ -2,29 +2,38 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.domain.game.board.Board
+import pt.isel.gomoku.domain.game.cell.serialize
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
 
 class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
 
     override fun createMatch(
-        id: String,
         isPrivate: Boolean,
         serializedVariant: String,
-        serializedBoard: String,
+        board: Board,
         blackId: Int,
-        whiteId: Int
+        whiteId: Int?
     ): String {
-        return handle.createUpdate(MatchStatements.CREATE_MATCH)
-            .bind("id", id)
+
+        val matchId = handle.createUpdate(MatchStatements.CREATE_MATCH)
             .bind("isPrivate", isPrivate)
             .bind("variant", serializedVariant)
-            .bind("board", serializedBoard)
             .bind("black_id", blackId)
             .bind("white_id", whiteId)
             .executeAndReturnGeneratedKeys("id")
             .mapTo(String::class.java)
             .one()
+
+        handle.createUpdate(MatchStatements.CREATE_BOARD)
+            .bind("match_id", matchId)
+            .bind("type", board::class.simpleName)
+            .bind("size", board.size)
+            .bind("stones", board.stones.serialize())
+            .bind("turn", board.turn.symbol)
+            .execute()
+        return matchId
     }
 
     override fun getMatchById(id: String): Match? {

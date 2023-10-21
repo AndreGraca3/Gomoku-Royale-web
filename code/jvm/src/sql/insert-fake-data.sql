@@ -1,4 +1,4 @@
-TRUNCATE lobby CASCADE;
+TRUNCATE board CASCADE;
 TRUNCATE match CASCADE;
 TRUNCATE token CASCADE;
 TRUNCATE "user" CASCADE;
@@ -23,7 +23,17 @@ VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1', NOW(), NOW(), 2),
        ('9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf', NOW(), NOW(), 3);
 
-INSERT INTO match (id, isprivate, variant, board, created_at, black_id, white_id, winner_id)
-VALUES (gen_random_uuid(), false, 'Freestyle','match_board_1', NOW(), 1, 2, 1),
-       (gen_random_uuid(), true, 'Freestyle','match_board_2', NOW(), 2, 3, 3),
-       (gen_random_uuid(), false, 'Freestyle', 'match_board_3', NOW(), 1, 3, 1);
+
+SELECT id,
+       isPrivate,
+       variant,
+       black_id,
+       white_id,
+       state,
+       type,
+       size,
+       stones,
+       turn
+FROM match
+         join board on match.id = board.match_id
+WHERE match.id = '1';

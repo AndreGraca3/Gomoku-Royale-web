@@ -1,4 +1,4 @@
-drop table if exists lobby;
+drop table if exists board;
 drop table if exists match;
 drop table if exists token;
 drop table if exists "user";
@@ -21,7 +21,7 @@ create table if not exists "user"
     mmr        int                                                              default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
     created_at timestamp           not null                                     default now(),
-    rank       varchar(20)         not null references rank (name)
+    rank       varchar(20)         not null references rank (name)              default 'Bronze'
 );
 
 create table if not exists token
@@ -34,22 +34,20 @@ create table if not exists token
 
 create table if not exists match
 (
-    id         VARCHAR(256) primary key,
+    id         VARCHAR(256) primary key                                                                default gen_random_uuid(),
     isPrivate  Boolean                    not null,
     variant    VARCHAR(20)                not null,
-    board      VARCHAR(256)               not null,
-    created_at timestamp                  not null default now(),
+    created_at timestamp                  not null                                                     default now(),
     black_id   int references "user" (id) not null,
-    white_id   int references "user" (id),
-    winner_id  int references "user" (id) check ( winner_id in (black_id, white_id) )
+    white_id   int references "user" (id) check ( white_id <> black_id ),
+    state      varchar(20)                not null check ( state in ('SETUP', 'ONGOING', 'FINISHED') ) default 'SETUP'
 );
 
-create table if not exists lobby
+create table if not exists board
 (
-    id         VARCHAR(256)       default gen_random_uuid() primary key,
-    player_id  int references "user" (id) unique,
-    isPrivate  Boolean   not null default false,
-    size       int,
-    variant    VARCHAR(20),
-    created_at timestamp not null default now()
+    match_id VARCHAR(256) primary key references match (id),
+    size     int          not null,
+    type     varchar(20)  not null,
+    stones   varchar(256) not null,
+    turn     varchar(1)   not null
 );

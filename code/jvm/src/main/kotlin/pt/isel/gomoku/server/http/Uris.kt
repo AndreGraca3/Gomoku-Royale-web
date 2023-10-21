@@ -13,4 +13,9 @@ object Uris {
         const val BASE = "/matches"
         const val JOIN = "/join"
     }
+
+    object Stats {
+        const val BASE = "/stats"
+        const val TOP = "/top"
+    }
 }

@@ -26,7 +26,7 @@ class MatchController(private val service: MatchService) {
         return when (val res =
             service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)
         ) {
-            is Success -> ResponseEntity.status(if(res.value.isActive) 201 else 200).body(res.value)
+            is Success -> ResponseEntity.status(201).body(res.value)
             is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()
                 is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).response()

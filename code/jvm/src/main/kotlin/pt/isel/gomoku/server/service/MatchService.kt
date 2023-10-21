@@ -2,6 +2,7 @@ package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.domain.game.MatchState
 import pt.isel.gomoku.domain.game.Variant
 import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot
@@ -23,40 +24,31 @@ class MatchService(private val trManager: TransactionManager) {
         isPrivate: Boolean,
         size: Int?,
         variant: String?
-    ): Either<MatchCreationError, MatchCreationOutput> {
+    ): Either<MatchCreationError, Match> {
         return trManager.run {
-            // if user is already in queue, return error
-            if (it.lobbyRepository.getLobbiesByUser(userId).isNotEmpty())
-                return@run failure(MatchCreationError.AlreadyInQueue(userId))
 
-            // if private match, size and variant must be specified
-            if (isPrivate && (variant == null || size == null))
-                return@run failure(MatchCreationError.InvalidPrivateMatch(size, variant))
-
-            // check if variant and size are valid
             val newVariant = if (variant != null) Variant.from(variant) else Variant.getRandom()
             val newBoard = newVariant.createBoard(size)
 
-            // if it's private or no suitable public match is found, create lobby
-            val lobby = (if (isPrivate) null else it.lobbyRepository.getPublicLobbyByPreferences(size, variant))
-                ?: return@run success(
-                    MatchCreationOutput(
-                        it.lobbyRepository.createLobby(
-                            userId,
-                            isPrivate,
-                            size,
-                            variant
-                        ),
-                        false
-                    )
-                )
-
-            // create public match and remove lobby
             val matchId = it.matchRepository.createMatch(
-                lobby.id, false, newVariant.name, newBoard.serialize(), lobby.playerId, userId
+                isPrivate = isPrivate,
+                serializedVariant = variant ?: Variant.getRandom().name,
+                board = newBoard,
+                blackId = userId,
+                whiteId = null
             )
-            it.lobbyRepository.removeLobby(lobby.id)
-            success(MatchCreationOutput(matchId, true))
+
+            return@run success(
+                Match(
+                    id = matchId,
+                    isPrivate = isPrivate,
+                    variant = newVariant,
+                    board = newBoard,
+                    blackId = userId,
+                    whiteId = null,
+                    state = MatchState.SETUP
+                )
+            )
         }
     }
 
@@ -73,7 +65,7 @@ class MatchService(private val trManager: TransactionManager) {
             val newBoard = newVariant.createBoard(lobby.size)
 
             val matchId = it.matchRepository.createMatch(
-                lobby.id, true, newVariant.name, newBoard.serialize(), lobby.playerId, userId
+                true, newVariant.name, newBoard, lobby.playerId, userId
             )
             it.lobbyRepository.removeLobby(lobby.id)
             success(MatchCreationOutput(matchId, true))

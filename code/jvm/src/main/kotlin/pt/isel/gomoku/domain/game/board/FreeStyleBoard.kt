@@ -14,7 +14,9 @@ class FreeStyleBoard(size: Int, stones: List<Stone> = emptyList(), turn: Player 
     }
 
     override fun play(dst: Dot, player: Player): Board {
-        requireOrThrow(turn == player, GomokuGameException.InvalidTurn(player))
+        requireOrThrow(turn == player, GomokuGameException.InvalidPlay(dst) {
+            "It's not $player's turn."
+        })
         requireOrThrow(isIdxInBoard(dst.row.index) && isIdxInBoard(dst.column.index),
             GomokuGameException.InvalidPlay(dst) { "$dst is outside of board's limits." }
         )
