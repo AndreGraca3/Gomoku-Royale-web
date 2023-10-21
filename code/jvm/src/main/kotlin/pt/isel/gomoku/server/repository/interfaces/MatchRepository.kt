@@ -15,25 +15,19 @@ interface MatchRepository {
     fun getMatchById(id: String): Match?
 
     fun getMatchByPreferences(
-        isPrivate: Boolean,
         size: Int?,
         variant: String?
     ): Match?
 
-    fun addToMatch(
-        id: String,
-        userId: Int
-    ): String
     /**
      * Updates the specified match with new values, selectively replacing non-null properties.
      */
     fun updateMatch(
         id: String,
-        serializedBoard: String? = null,
         blackId: Int? = null,
         whiteId: Int? = null,
-        winnerId: Int? = null
-    )
+        state: String? = null
+    ): String
 
     fun isUserInMatch(
         userId: Int

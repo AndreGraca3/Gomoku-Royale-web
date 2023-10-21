@@ -1,5 +1,7 @@
 package pt.isel.gomoku.server.repository.interfaces
 
 interface BoardRepository {
-    fun createBoard(match_id: String, size: Int, type: String)
+    fun createBoard(matchId: String, size: Int, type: String)
+
+    fun updateBoard(matchId: String, serializedStones: String, turn: Char)
 }

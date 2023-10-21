@@ -15,7 +15,7 @@ data class Match(
     val state: State
 ) {
     fun play(dst: Dot, player: Player): Match {
-        if (state == State.WAITING_FOR_PLAYERS)
+        if (state == State.SETUP)
             throw GomokuGameException.NotEnoughPlayers(id)
         return copy(board = board.play(dst, player))
     }
