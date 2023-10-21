@@ -2,9 +2,11 @@ package pt.isel.gomoku.server
 
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
@@ -33,14 +35,28 @@ class GomokuApplication {
     fun systemDomainConfig() =
         SystemDomain(0.1f)
 
+    @Value("\${JDBI_DATABASE_URL}")
+    private lateinit var defaultJdbiDatabaseURL: String
+
+    @Value("\${JDBI_TEST_DATABASE_URL}")
+    private lateinit var testJdbiDatabaseURL: String
+
     @Bean
+    @Profile("!test")
     fun jdbi(): Jdbi {
-        // val jdbiDatabaseURL = System.getenv("JDBI_DATABASE_URL")
-        val jdbiDatabaseURL = System.getenv("JDBI_TEST_DATABASE_URL")
         val dataSource = PGSimpleDataSource()
-        dataSource.setURL(jdbiDatabaseURL)
+        dataSource.setURL(defaultJdbiDatabaseURL)
         return Jdbi.create(dataSource).configureWithAppRequirements()
     }
+
+    @Bean
+    @Profile("test")
+    fun jdbiTest(): Jdbi {
+        val dataSource = PGSimpleDataSource()
+        dataSource.setURL(testJdbiDatabaseURL)
+        return Jdbi.create(dataSource).configureWithAppRequirements()
+    }
+
 }
 
 @Component

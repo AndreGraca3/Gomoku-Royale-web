@@ -2,7 +2,7 @@ package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
-import pt.isel.gomoku.domain.game.State
+import pt.isel.gomoku.domain.game.MatchState
 import pt.isel.gomoku.domain.game.Variant
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.domain.game.cell.Stone
@@ -48,7 +48,7 @@ class MatchService(private val trManager: TransactionManager) {
                             it.matchRepository.updateMatch(
                                 match.id,
                                 whiteId = userId,
-                                state = State.ONGOING.name
+                                state = MatchState.ONGOING.name
                             )
                         )
                     )
@@ -84,7 +84,7 @@ class MatchService(private val trManager: TransactionManager) {
                     it.matchRepository.updateMatch(
                         id,
                         whiteId = userId,
-                        state = State.ONGOING.name
+                        state = MatchState.ONGOING.name
                     )
                 )
             )
