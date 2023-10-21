@@ -24,9 +24,9 @@ VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf', NOW(), NOW(), 3);
 
 INSERT INTO match (id, isprivate, variant, created_at, black_id, white_id, state)
-VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', false, 'FreeStyle', NOW(), 1, 2, 'WAITING'),
-       ('bf4b911a-38ad-45a9-8680-135a25e40e99', true, 'FreeStyle', NOW(), 2, 3, 'WAITING'),
-       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', false, 'FreeStyle',NOW(), 1, 3, 'WAITING');
+VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', false, 'FreeStyle', NOW(), 1, 2, 'FINISHED'),
+       ('bf4b911a-38ad-45a9-8680-135a25e40e99', true, 'FreeStyle', NOW(), 2, 3, 'FINISHED'),
+       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', false, 'FreeStyle',NOW(), 1, 3, 'FINISHED');
 
 INSERT INTO board (match_id, turn, size, stones, type)
 VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', 'B', 15, '', 'FreeStyleBoard'),

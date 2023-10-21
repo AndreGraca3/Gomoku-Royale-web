@@ -57,7 +57,7 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
     override fun isUserInMatch(userId: Int): Boolean {
         return handle.createQuery(MatchStatements.IS_USER_IN_MATCH)
             .bind("userId", userId)
-            .mapTo(Boolean::class.java)
+            .mapTo(String::class.java)
             .findFirst()
             .isPresent
     }

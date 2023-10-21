@@ -35,7 +35,7 @@ object MatchStatements {
     """
 
     const val IS_USER_IN_MATCH = """
-        SELECT * 
+        SELECT id
         FROM match
         WHERE (black_id = :userId or white_id = :userId) and (state = 'SETUP' or state = 'ONGOING')
     """

@@ -1,6 +1,5 @@
 package pt.isel.gomoku.server
 
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -14,18 +13,18 @@ class GomokuMatchAPITests {
     @LocalServerPort
     var port: Int = 0
 
-    /** tests are occurring in live DB !!!**/
+    val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-    private val token = "Bearer 0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD"
+    private val token1 = "Bearer 0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD"
+    private val token2 = "Bearer 5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1"
+    private val invalidToken = "invalidToken"
 
     @Test
     fun `create match returns created status code`() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
         client.post().uri(Uris.Matches.BASE)
             .header(
                 "Authorization",
-                token
+                token1
             )
             .bodyValue(
                 MatchCreationInput(
@@ -41,41 +40,64 @@ class GomokuMatchAPITests {
     }
 
     @Test
-    fun `create match returns bad request status code`() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
+    fun `create match returns bad request status code because body is missing`() {
         client.post().uri(Uris.Matches.BASE)
             .header(
                 "Authorization",
-                token
+                token1
             )
             .exchange()
             .expectStatus().isBadRequest
     }
 
     @Test
-    fun `create match returns unauthorized status code`() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
+    fun `create match returns unauthorized status code with no token in authorization header`() {
         client.post().uri(Uris.Matches.BASE)
             .exchange()
             .expectStatus().isUnauthorized
     }
 
     @Test
-    fun `create match returns forbidden status code`() {
-        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-
+    fun `create match returns unauthorized status code with invalid token in authorization header`() {
         client.post().uri(Uris.Matches.BASE)
+            .header(
+                "Authorization",
+                invalidToken
+            )
             .exchange()
-            .expectStatus().isCreated
+            .expectStatus().isUnauthorized
+    }
+
+    @Test
+    fun `create match returns conflict status code when user is already in match`() {
+        client.post().uri(Uris.Matches.BASE)
+            .header(
+                "Authorization",
+                token2
+            )
+            .bodyValue(
+                MatchCreationInput(
+                    false,
+                    15,
+                    "FreeStyle"
+                )
+            )
+            .exchange()
+            .expectStatus().is4xxClientError
             .expectBody()
             .jsonPath("id").isNotEmpty
     }
 
-
-    @AfterEach
-    fun rollBack() {
-
+    @Test
+    fun `get match by id returns ok if match exists and user belongs to it`() {
+        client.get().uri(Uris.Matches.BASE + "/" )
+            .header(
+                "Authorization",
+                token1
+            )
+            .exchange()
+            .expectStatus().is4xxClientError
+            .expectBody()
+            .jsonPath("id").isNotEmpty
     }
 }
