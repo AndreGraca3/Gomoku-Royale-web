@@ -1,17 +1,21 @@
 package pt.isel.gomoku.server.controllers
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.match.MatchCreationInput
 
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GomokuMatchAPITests {
 
     @LocalServerPort
-    var port: Int = 0
+    var port: Int = 8080
 
     val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 

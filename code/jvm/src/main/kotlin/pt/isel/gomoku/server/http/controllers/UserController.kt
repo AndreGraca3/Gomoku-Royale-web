@@ -21,6 +21,7 @@ class UserController(private val service: UserService) {
             is Failure -> when (res.value) {
                 is UserCreationError.InsecurePassword -> UserProblem.InsecurePassword(res.value).response()
                 is UserCreationError.EmailAlreadyInUse -> UserProblem.UserAlreadyExists(res.value).response()
+                is UserCreationError.InvalidEmail -> UserProblem.InvalidEmail(res.value).response()
             }
         }
     }

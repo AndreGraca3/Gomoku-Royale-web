@@ -18,7 +18,7 @@ data class Match(
         return copy(board = board.play(dst, player))
     }
 
-    fun getPlayer(userId: Int) = if (blackId == userId) Player.BLACK else Player.WHITE
+    fun getPlayer(userId: Int) = if(blackId == userId) Player.BLACK else Player.WHITE
 }
 
 enum class MatchState {

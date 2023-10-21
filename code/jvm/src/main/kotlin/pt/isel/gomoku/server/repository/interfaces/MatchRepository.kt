@@ -7,7 +7,7 @@ interface MatchRepository {
     fun createMatch(
         isPrivate: Boolean,
         serializedVariant: String,
-        blackId: Int
+        blackId: Int,
     ): String
 
     fun getMatchesFromUser(userId: Int): List<Match>

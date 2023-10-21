@@ -1,8 +1,10 @@
 package pt.isel.gomoku.domain.game.cell
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 class Column private constructor(val symbol: Char) {
 
-    val index = symbol - 'a'
+    @JsonIgnore val index = symbol - 'a'
 
     companion object {
         private val values = mutableMapOf<Char, Column>()

@@ -3,7 +3,7 @@ package pt.isel.gomoku.server.repository.jdbi
 import org.jdbi.v3.core.Jdbi
 import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
-import pt.isel.gomoku.server.repository.jdbi.mappers.BoardMapper
+import pt.isel.gomoku.server.repository.jdbi.mappers.MatchMapper
 import pt.isel.gomoku.server.repository.jdbi.mappers.VariantMapper
 
 fun Jdbi.configureWithAppRequirements(): Jdbi {
@@ -11,5 +11,5 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
         .installPlugin(KotlinPlugin())
         .installPlugin(PostgresPlugin())
         .registerColumnMapper(VariantMapper())
-        .registerColumnMapper(BoardMapper())
+        .registerRowMapper(MatchMapper())
 }

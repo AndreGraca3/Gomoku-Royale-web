@@ -61,7 +61,7 @@ class GomokuUserAPITests {
     }
 
     @Test
-    fun updateUser(){
+    fun updateUser_OK(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val user = client.patch().uri("/users")
@@ -111,13 +111,40 @@ class GomokuUserAPITests {
     }
 
     @Test
-    fun getUser(){
+    fun createUser_BadRequest() {
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        client.post().uri("/users")
+            .bodyValue(
+                UserCreateInput(
+                    "Dummy",
+                    "invalid_email",
+                    "dummy123",
+                    null
+                )
+            ).exchange()
+            .expectStatus().isBadRequest
+    }
+
+    @Test
+    fun getUser_OK(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val user = client.get().uri("/users/${idDummy}")
             .header("Authorization", "Bearer $idToken"
             ).exchange()
             .expectStatus().isOk
+            .expectBody(UserInfo::class.java)
+    }
+
+    @Test
+    fun getUser_NotFound(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val user = client.get().uri("/users/9999")
+            .header("Authorization", "Bearer $idToken"
+            ).exchange()
+            .expectStatus().isNotFound
             .expectBody(UserInfo::class.java)
     }
 }

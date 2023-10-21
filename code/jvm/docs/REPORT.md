@@ -3,7 +3,12 @@
 This document presents the design and implementation aspects of the DAW Project. <br>
 
 ## Modeling the Database
-
+The database is modeled using 5 different tables: <br>
+- `user` - Represents the users of the application.
+- `token` - Represents the tokens of the application.
+- `match` - Represents the matches of the application.
+- `rank` - Represents the ranks of the application.
+- `board` - Represents the boards of the application.
 
 ### Conceptual Model
 The conceptual model of the database is represented in the following image:
@@ -11,9 +16,6 @@ The conceptual model of the database is represented in the following image:
 <img src="images/gomokuDIA.jpg" alt="Conceptual Model">
 
 This Diagram includes the EA Model and some of the constraints that are defined in the [Open-API](../docs/swagger/apiRoutes.yaml) specification. <br>
-
-### Physical Model
-TODO
 
 ## Software Organization
 
@@ -127,7 +129,9 @@ Each one of them are responsible for a different task: <br>
 - `Statements` are responsible for defining the queries that are used to access the database.
 
 #### Transaction
-TODO
+The [Transaction](../src/main/kotlin/pt/isel/gomoku/server/repository/transaction) package, contains the classes that represent the transaction repositories of the application. <br>
+The transaction repositories are responsible for accessing the database using the `Jdbi` library. <br>
+The transaction repositories are used to execute multiple queries in the same transaction. <br>
 
 ### Service
 The [Service](../src/main/kotlin/pt/isel/gomoku/server/service) package, contains the classes that represent the services of the application. <br>

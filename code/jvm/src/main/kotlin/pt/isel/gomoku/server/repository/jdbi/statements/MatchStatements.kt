@@ -8,9 +8,9 @@ object MatchStatements {
     """
 
     const val GET_MATCH_BY_ID = """
-        SELECT id, isPrivate, variant, board, black_id, white_id, winner_id
-        FROM match
-        WHERE id = :id
+        SELECT id, isPrivate, variant, black_id, white_id, state, type, size, stones, turn
+        FROM match join board on match.id = board.match_id
+        where id = :id
     """
 
     const val GET_MATCH_BY_PREFERENCES = """

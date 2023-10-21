@@ -20,3 +20,5 @@ data class Stone(val player: Player, val dot: Dot) {
         }
     }
 }
+
+fun List<Stone>.serialize() = joinToString(separator = "\n") { it.serialize() }

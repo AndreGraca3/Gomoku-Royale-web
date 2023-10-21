@@ -7,10 +7,6 @@ sealed class GomokuGameException(override val message: String) : Exception(messa
 
     class InvalidPlay(val dst: Dot, lazyMessage: () -> String) : GomokuGameException(lazyMessage())
 
-    class InvalidTurn(val turn: Player) : GomokuGameException("It's not $turn's turn.")
-
-    class AlreadyFinished(lazyMessage: () -> String) : GomokuGameException(lazyMessage())
-
     class InvalidBoardSize(val variant: String, val size: Int, val sizes: List<Int>) :
         GomokuGameException("Invalid size for $variant variant. Valid sizes are $sizes.")
 
