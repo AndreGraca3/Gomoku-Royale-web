@@ -26,11 +26,11 @@ class MatchController(private val service: MatchService) {
         return when (val res =
             service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)
         ) {
-            is Success -> ResponseEntity.status(if(res.value.isActive) 201 else 200).body(res.value)
+            is Success -> ResponseEntity.status(201).body(res.value)
             is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()
                 is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).response()
-                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).response()
+                is MatchCreationError.AlreadyInMatch -> MatchProblem.AlreadyInMatch(res.value).response()
                 is MatchCreationError.InvalidPrivateMatch -> MatchProblem.InvalidPrivateMatch(res.value).response()
             }
         }
@@ -43,7 +43,7 @@ class MatchController(private val service: MatchService) {
             is Failure -> when (res.value) {
                 is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).response()
                 is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.MatchIsNotPrivate(res.value).response()
-                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).response()
+                is MatchCreationError.AlreadyInMatch -> MatchProblem.AlreadyInMatch(res.value).response()
                 else -> throw Exception()
             }
         }

@@ -1,3 +1,5 @@
 package pt.isel.gomoku.server.http.model.match
 
-data class MatchCreationOutput(val id: String, val isActive: Boolean)
+data class MatchCreationOutput(
+    val id: String
+)

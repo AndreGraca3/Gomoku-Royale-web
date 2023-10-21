@@ -62,6 +62,10 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
             is GomokuGameException.InvalidVariant -> MatchProblem.InvalidVariant(
                 MatchCreationError.InvalidVariant(ex.variant)
             ).response()
+
+            is GomokuGameException.NotEnoughPlayers -> MatchProblem.NotEnoughPlayers(
+                MatchPlayError.NotStarted(ex.matchId)
+            ).response()
         }
     }
 

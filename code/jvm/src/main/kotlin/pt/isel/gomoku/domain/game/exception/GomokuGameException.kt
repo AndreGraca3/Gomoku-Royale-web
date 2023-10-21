@@ -15,6 +15,8 @@ sealed class GomokuGameException(override val message: String) : Exception(messa
         GomokuGameException("Invalid size for $variant variant. Valid sizes are $sizes.")
 
     class InvalidVariant(val variant: String) : GomokuGameException("Invalid variant: $variant.")
+
+    class NotEnoughPlayers(val matchId: String) : GomokuGameException("Match with $matchId didn't started yet..." )
 }
 
 fun requireOrThrow(condition: Boolean, exception: GomokuGameException) {

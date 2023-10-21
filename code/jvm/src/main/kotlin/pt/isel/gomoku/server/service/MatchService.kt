@@ -10,7 +10,6 @@ import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
 import pt.isel.gomoku.server.service.error.match.MatchError
 import pt.isel.gomoku.server.service.error.match.MatchFetchingError
-import pt.isel.gomoku.server.service.error.match.MatchJoiningError
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
 import pt.isel.gomoku.server.utils.success
@@ -25,58 +24,47 @@ class MatchService(private val trManager: TransactionManager) {
         variant: String?
     ): Either<MatchCreationError, MatchCreationOutput> {
         return trManager.run {
-            // if user is already in queue, return error
-            if (it.lobbyRepository.getLobbiesByUser(userId).isNotEmpty())
-                return@run failure(MatchCreationError.AlreadyInQueue(userId))
+            // user is already in a match with another player,
+            // or user is already waiting for another player
+            if (it.matchRepository.isUserInMatch(userId))
+                return@run failure(MatchCreationError.AlreadyInMatch(userId))
 
-            // if private match, size and variant must be specified
-            if (isPrivate && (variant == null || size == null))
-                return@run failure(MatchCreationError.InvalidPrivateMatch(size, variant))
-
-            // check if variant and size are valid
-            val newVariant = if (variant != null) Variant.from(variant) else Variant.getRandom()
-            val newBoard = newVariant.createBoard(size)
-
-            // if it's private or no suitable public match is found, create lobby
-            val lobby = (if (isPrivate) null else it.lobbyRepository.getPublicLobbyByPreferences(size, variant))
-                ?: return@run success(
+            // there is a user with the same preferences as this user
+            val match = it.matchRepository.getMatchByPreferences(isPrivate, size, variant)
+            if (match != null)
+                return@run success(
                     MatchCreationOutput(
-                        it.lobbyRepository.createLobby(
-                            userId,
-                            isPrivate,
-                            size,
-                            variant
-                        ),
-                        false
+                        it.matchRepository.addToMatch(
+                            match.id,
+                            userId
+                        )
                     )
                 )
 
-            // create public match and remove lobby
-            val matchId = it.matchRepository.createMatch(
-                lobby.id, false, newVariant.name, newBoard.serialize(), lobby.playerId, userId
+            // waiting for other player
+            val newVariant = if (variant != null) Variant.from(variant) else Variant.getRandom()
+
+            val newBoard = newVariant.createBoard(size)
+
+            val idMatch = it.matchRepository.createMatch(
+                isPrivate,
+                newVariant.name,
+                userId
             )
-            it.lobbyRepository.removeLobby(lobby.id)
-            success(MatchCreationOutput(matchId, true))
+
+            it.boardRepository.createBoard(idMatch, newBoard.size, newVariant.name)
+
+            return@run success(
+                MatchCreationOutput(
+                    idMatch
+                )
+            )
         }
     }
 
     fun joinPrivateMatch(id: String, userId: Int): Either<MatchError, MatchCreationOutput> {
         return trManager.run {
-            val lobby = it.lobbyRepository.getLobbyById(id)
-                ?: return@run failure(MatchFetchingError.MatchByIdNotFound(id))
-
-            if (!lobby.isPrivate) return@run failure(MatchJoiningError.MatchIsNotPrivate(id))
-
-            if (lobby.playerId == userId) return@run failure(MatchCreationError.AlreadyInQueue(userId))
-
-            val newVariant = Variant.from(lobby.variant!!)
-            val newBoard = newVariant.createBoard(lobby.size)
-
-            val matchId = it.matchRepository.createMatch(
-                lobby.id, true, newVariant.name, newBoard.serialize(), lobby.playerId, userId
-            )
-            it.lobbyRepository.removeLobby(lobby.id)
-            success(MatchCreationOutput(matchId, true))
+            TODO("Not yet implemented")
         }
     }
 
