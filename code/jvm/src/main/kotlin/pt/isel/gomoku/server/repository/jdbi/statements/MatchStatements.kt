@@ -20,13 +20,6 @@ object MatchStatements {
         WHERE isPrivate = false and size = :size and variant = :variant and state = 'SETUP';
     """
 
-    const val ADD_USER_TO_MATCH = """
-        UPDATE match
-        SET player_white = :player_white, 
-        state = 'IN_PROGRESS'
-        WHERE id = :id
-    """
-
     const val GET_MATCHES_BY_USER_ID = """
         SELECT id, isPrivate, board, black_id, white_id, winner_id 
         FROM match

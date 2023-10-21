@@ -14,7 +14,6 @@ import pt.isel.gomoku.server.service.error.match.MatchFetchingError
 import pt.isel.gomoku.server.service.error.match.MatchJoiningError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
-import java.util.*
 
 @RestController
 @RequestMapping(Uris.Matches.BASE)

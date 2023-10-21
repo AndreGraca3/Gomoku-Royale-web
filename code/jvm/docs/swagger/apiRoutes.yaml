@@ -53,8 +53,12 @@ paths:
             $ref: '#/definitions/UserCreationOut'
         400:
           description: invalid or missing parameters in body.
+          schema:
+            $ref: '#/definitions/Problem'
         409:
           description: Email already exists.
+          schema:
+            $ref: '#/definitions/Problem'
 
     put:
       summary: PUT users/
@@ -79,8 +83,13 @@ paths:
           description: user's information updated successfully.
         400:
           description: invalid or missing parameters in body.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
+
 
   /users/{id}:
     get:
@@ -106,8 +115,13 @@ paths:
             $ref: '#/definitions/UserNameAndAvatar'
         400:
           description: invalid parameters in path
+          schema:
+            $ref: '#/definitions/Problem'
         404:
           description: user with the given identifier not found..
+          schema:
+            $ref: '#/definitions/Problem'
+
 
   /users/token:
     post:
@@ -135,8 +149,12 @@ paths:
             $ref: '#/definitions/Token'
         400:
           description: invalid parameter in header?.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
 
   /matches:
     post:
@@ -164,10 +182,16 @@ paths:
             $ref: '#/definitions/MatchCreationOut'
         400:
           description: missing or invalid parameters in body.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
         403:
           description: already in queue.
+          schema:
+            $ref: '#/definitions/Problem'
 
   /matches/{id}:
     get:
@@ -193,10 +217,16 @@ paths:
             $ref: '#/definitions/Match'
         400:
           description: missing or invalid parameters in path.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
         404:
           description: match with a given id not found.
+          schema:
+            $ref: '#/definitions/Problem'
 
   /matches/all:
     get:
@@ -213,8 +243,12 @@ paths:
           description: every match from the authenticated user.
         400:
           description: invalid parameters in header.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
 
   /match:
     patch:
@@ -239,11 +273,17 @@ paths:
         200:
           description: successfully modifier match's state.
         400:
-          description: invalid parameters in body
+          description: invalid parameters in body.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
         404:
           description: match with the given identifier not found.
+          schema:
+            $ref: '#/definitions/Problem'
 
   /match/{id}:
     post:
@@ -274,10 +314,16 @@ paths:
           description: move was successful.
         400:
           description: invalid parameters in body.
+          schema:
+            $ref: '#/definitions/Problem'
         401:
           description: invalid token.
+          schema:
+            $ref: '#/definitions/Problem'
         404:
           description: Match not found or user doesn't have access to given match.
+          schema:
+            $ref: '#/definitions/Problem'
 
 definitions:
   SystemInfo:
@@ -468,7 +514,7 @@ definitions:
             type: array
             items:
               type: object
-              example: []
+              example: [ ]
           turn:
             type: object
             required:
@@ -510,3 +556,28 @@ definitions:
       columnSymbol:
         type: string
         example: "c"
+
+  Problem:
+    type: object
+    required:
+      - subType
+      - status
+      - title
+      - detail
+      - data
+    properties:
+      subType:
+        type: string
+        example: "invalid-request-content"
+      status:
+        type: integer
+        example: 400
+      title:
+        type: string
+        example: "Invalid request body content"
+      detail:
+        type: string
+        example: "The request content is invalid"
+      data:
+        type: string
+        example: null

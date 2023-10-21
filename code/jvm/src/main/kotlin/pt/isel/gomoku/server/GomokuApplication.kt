@@ -1,7 +1,6 @@
 package pt.isel.gomoku.server
 
 import org.jdbi.v3.core.Jdbi
-import org.jetbrains.annotations.TestOnly
 import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

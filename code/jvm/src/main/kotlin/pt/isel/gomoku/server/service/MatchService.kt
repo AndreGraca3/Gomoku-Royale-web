@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.domain.game.State
 import pt.isel.gomoku.domain.game.Variant
-import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.domain.game.cell.Stone
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput

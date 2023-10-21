@@ -1,7 +1,6 @@
 package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
-import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
