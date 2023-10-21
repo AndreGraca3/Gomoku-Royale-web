@@ -21,6 +21,7 @@ class UserController(private val service: UserService) {
             is Failure -> when (res.value) {
                 is UserCreationError.InsecurePassword -> UserProblem.InsecurePassword(res.value).response()
                 is UserCreationError.EmailAlreadyInUse -> UserProblem.UserAlreadyExists(res.value).response()
+                is UserCreationError.InvalidEmail -> UserProblem.InvalidEmail(res.value).response()
             }
         }
     }
@@ -45,10 +46,18 @@ class UserController(private val service: UserService) {
         }
     }
 
-    @PostMapping(Uris.Users.TOKEN)
+    @DeleteMapping()
+    fun deleteUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
+        return when (val res = service.deleteUser(authenticatedUser.user.id)) {
+            is Success -> ResponseEntity.status(204).build<Any>()
+            is Failure -> UserProblem.UserByIdNotFound(res.value).response()
+        }
+    }
+
+    @PutMapping(Uris.Users.TOKEN)
     fun createToken(@RequestBody input: UserCredentialsInput): ResponseEntity<*> {
         return when (val res = service.createToken(input.email, input.password)) {
-            is Success -> ResponseEntity.status(200).body(TokenCreateOutput(res.value.tokenValue))
+            is Success -> ResponseEntity.status(201).body(TokenCreateOutput(res.value.tokenValue))
             is Failure -> UserProblem.InvalidCredentials(res.value).response()
         }
     }

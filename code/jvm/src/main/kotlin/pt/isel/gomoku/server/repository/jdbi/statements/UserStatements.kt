@@ -27,7 +27,7 @@ object UserStatements {
         "delete from \"user\" where id = :id"
 
     const val CREATE_TOKEN =
-        "insert into token (token_value, user_id, created_at, last_used) values (:token_value, :user_id, :created_at, :last_used)"
+        "insert into token (token_value, user_id) values (:token_value, :user_id)"
 
     const val GET_USER_AND_TOKEN_BY_TOKEN_VALUE =
         """

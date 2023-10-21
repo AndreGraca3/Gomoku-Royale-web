@@ -31,6 +31,9 @@ class UserService(
         if (!userDomain.isSafePassword(password))
             return failure(UserCreationError.InsecurePassword(password))
 
+        if(verifyEmail(email))
+            return failure(UserCreationError.InvalidEmail(email))
+
         return trManager.run {
             if (it.userRepository.getUserByEmail(email) != null)
                 return@run failure(UserCreationError.EmailAlreadyInUse(email))
@@ -78,6 +81,7 @@ class UserService(
                         it.userRepository.updateTokenLastUsed(token, LocalDateTime.now())
                         return@run success(token)
                     }
+
                     false -> it.userRepository.deleteToken(token.tokenValue)
                 }
             }
@@ -85,6 +89,16 @@ class UserService(
             // No Token found, create new one
             val tokenValue = userDomain.generateTokenValue()
             success(it.userRepository.createToken(tokenValue, user.id))
+        }
+    }
+
+    fun deleteUser(id: Int): Either<UserFetchingError.UserByIdNotFound, Unit> {
+        return trManager.run {
+            val user: UserInfo? = it.userRepository.getUserById(id)
+            if (user != null) {
+                it.userRepository.deleteUser(id)
+                success(Unit)
+            } else failure(UserFetchingError.UserByIdNotFound(id))
         }
     }
 
@@ -99,4 +113,6 @@ class UserService(
             } else null
         }
     }
+
+    private fun verifyEmail(email: String) = !Regex("@").containsMatchIn(email)
 }

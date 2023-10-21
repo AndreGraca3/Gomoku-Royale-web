@@ -1,6 +1,5 @@
 package pt.isel.gomoku.domain.game
 
-import org.jdbi.v3.core.mapper.Nested
 import pt.isel.gomoku.domain.game.board.Board
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.domain.game.exception.GomokuGameException
@@ -19,12 +18,12 @@ data class Match(
         return copy(board = board.play(dst, player))
     }
 
-    fun getPlayer(userId: Int) = if (blackId == userId) Player.BLACK else Player.WHITE
+    fun getPlayer(userId: Int) = if(blackId == userId) Player.BLACK else Player.WHITE
 }
 
 enum class MatchState {
     SETUP,
-    PLAYING,
+    ONGOING,
     FINISHED;
 
     companion object {

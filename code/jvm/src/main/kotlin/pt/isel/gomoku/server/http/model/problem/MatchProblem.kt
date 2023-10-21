@@ -45,7 +45,7 @@ sealed class MatchProblem(
         data
     )
 
-    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue) : MatchProblem(
+    class AlreadyInMatch(data: MatchCreationError.AlreadyInMatch) : MatchProblem(
         409,
         "already-in-queue",
         "User already in queue",
@@ -75,5 +75,20 @@ sealed class MatchProblem(
         "Invalid play",
         reason,
         data
+    )
+
+    class InvalidTurn(reason: String, data: MatchPlayError.InvalidTurn) : MatchProblem(
+        403,
+        "invalid-turn",
+        "Invalid turn",
+        reason,
+        data
+    )
+
+    class AlreadyFinished(reason: String) : MatchProblem(
+        409,
+        "match-finished",
+        "Match already finished",
+        reason
     )
 }

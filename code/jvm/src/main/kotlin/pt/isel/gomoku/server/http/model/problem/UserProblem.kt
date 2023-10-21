@@ -45,6 +45,14 @@ sealed class UserProblem(
         data
     )
 
+    class InvalidEmail(data: UserCreationError.InvalidEmail) : UserProblem(
+        400,
+        "invalid-email",
+        "Invalid email",
+        "The email ${data.email} is invalid",
+        data
+    )
+
     object InvalidToken : UserProblem(
         401,
         "invalid-token",
