@@ -2,9 +2,10 @@ package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.domain.game.MatchState
 import pt.isel.gomoku.domain.game.Variant
-import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot
+import pt.isel.gomoku.domain.game.cell.Stone
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
@@ -25,58 +26,68 @@ class MatchService(private val trManager: TransactionManager) {
         variant: String?
     ): Either<MatchCreationError, MatchCreationOutput> {
         return trManager.run {
-            // if user is already in queue, return error
-            if (it.lobbyRepository.getLobbiesByUser(userId).isNotEmpty())
-                return@run failure(MatchCreationError.AlreadyInQueue(userId))
+            // user is already in a match with another player,
+            // or user is already waiting for another player
+            if (it.matchRepository.isUserInMatch(userId))
+                return@run failure(MatchCreationError.AlreadyInMatch(userId))
 
-            // if private match, size and variant must be specified
             if (isPrivate && (variant == null || size == null))
                 return@run failure(MatchCreationError.InvalidPrivateMatch(size, variant))
 
-            // check if variant and size are valid
+            // waiting for other player
             val newVariant = if (variant != null) Variant.from(variant) else Variant.getRandom()
             val newBoard = newVariant.createBoard(size)
 
-            // if it's private or no suitable public match is found, create lobby
-            val lobby = (if (isPrivate) null else it.lobbyRepository.getPublicLobbyByPreferences(size, variant))
-                ?: return@run success(
-                    MatchCreationOutput(
-                        it.lobbyRepository.createLobby(
-                            userId,
-                            isPrivate,
-                            size,
-                            variant
-                        ),
-                        false
+            // there is a user with the same preferences as this user
+            if (!isPrivate) {
+                val match = it.matchRepository.getMatchByPreferences(size, variant)
+                // add user to match
+                if (match != null)
+                    return@run success(
+                        MatchCreationOutput(
+                            it.matchRepository.updateMatch(
+                                match.id,
+                                whiteId = userId,
+                                state = MatchState.ONGOING.name
+                            )
+                        )
                     )
-                )
+            }
 
-            // create public match and remove lobby
-            val matchId = it.matchRepository.createMatch(
-                lobby.id, false, newVariant.name, newBoard.serialize(), lobby.playerId, userId
+            val idMatch = it.matchRepository.createMatch(
+                isPrivate,
+                newVariant.name,
+                userId
             )
-            it.lobbyRepository.removeLobby(lobby.id)
-            success(MatchCreationOutput(matchId, true))
+
+            it.boardRepository.createBoard(idMatch, newBoard.size, newVariant.name)
+
+            return@run success(
+                MatchCreationOutput(
+                    idMatch
+                )
+            )
         }
     }
 
     fun joinPrivateMatch(id: String, userId: Int): Either<MatchError, MatchCreationOutput> {
         return trManager.run {
-            val lobby = it.lobbyRepository.getLobbyById(id)
+            val match = it.matchRepository.getMatchById(id)
                 ?: return@run failure(MatchFetchingError.MatchByIdNotFound(id))
 
-            if (!lobby.isPrivate) return@run failure(MatchJoiningError.MatchIsNotPrivate(id))
+            if (!match.isPrivate) return@run failure(MatchJoiningError.MatchIsNotPrivate(id))
 
-            if (lobby.playerId == userId) return@run failure(MatchCreationError.AlreadyInQueue(userId))
+            if (isUserInMatch(userId, match)) return@run failure(MatchCreationError.AlreadyInMatch(userId))
 
-            val newVariant = Variant.from(lobby.variant!!)
-            val newBoard = newVariant.createBoard(lobby.size)
-
-            val matchId = it.matchRepository.createMatch(
-                lobby.id, true, newVariant.name, newBoard.serialize(), lobby.playerId, userId
+            success(
+                MatchCreationOutput(
+                    it.matchRepository.updateMatch(
+                        id,
+                        whiteId = userId,
+                        state = MatchState.ONGOING.name
+                    )
+                )
             )
-            it.lobbyRepository.removeLobby(lobby.id)
-            success(MatchCreationOutput(matchId, true))
         }
     }
 
@@ -98,7 +109,7 @@ class MatchService(private val trManager: TransactionManager) {
         }
     }
 
-    fun play(userId: Int, id: String, dot: Dot): Either<MatchFetchingError, Unit> {
+    fun play(userId: Int, id: String, dot: Dot): Either<MatchFetchingError, Stone> {
         return trManager.run {
             val match = it.matchRepository.getMatchById(id)
                 ?: return@run failure(MatchFetchingError.MatchByIdNotFound(id))
@@ -107,13 +118,18 @@ class MatchService(private val trManager: TransactionManager) {
                 return@run failure(MatchFetchingError.UserNotInMatch(userId, match.id))
 
             val player = match.getPlayer(userId)
-            val newMatch = match.play(dot, player)
+            val newBoard = match.play(dot, player).board
+            val serializedStones =
+                newBoard.stones.map { stone -> stone.serialize() }.toString()
+
+            it.boardRepository.updateBoard(
+                id,
+                serializedStones,
+                newBoard.turn.symbol
+            )
+
             success(
-                it.matchRepository.updateMatch(
-                    id,
-                    serializedBoard = newMatch.board.serialize(),
-                    winnerId = if (newMatch.board is BoardWinner) userId else null
-                )
+                Stone(player, dot)
             )
         }
     }

@@ -6,7 +6,11 @@ This document presents the design and implementation aspects of the DAW Project.
 
 
 ### Conceptual Model
-TODO
+The conceptual model of the database is represented in the following image:
+
+<img src="images/gomokuDIA.jpg" alt="Conceptual Model">
+
+This Diagram includes the EA Model and some of the constraints that are defined in the [Open-API](../docs/swagger/apiRoutes.yaml) specification. <br>
 
 ### Physical Model
 TODO
@@ -100,8 +104,8 @@ Explaining the authorization with a deeper detail, we have the following chain o
 - 3º The `HandlerMapping` uses the `Open-API` specification to match the request URI to a route.
 - 4º The request URI matches a route, the request is forwarded to the corresponding controller.
 - 5º The request is intercepted by the `AuthorizationInterceptor`.
-- 6º If the `prehandle` condition is met, in this case, having a parameterType of `AuthenticatedUser` the chain of events continue.
-- 7º Inside the `prehandle` method, the `tokenProcessor` is used to process the `Bearer Token` in the `Authorization` header or create a new one if needed.
+- 6º If the `prehandle` condition is met, in this case, having a parameterType of `AuthenticatedUser` the chain of events continues.
+- 7º Inside the `prehandle` method, the `tokenProcessor` is used to process the `Bearer Token` in the `Authorization` header.
 - 8º Finally, the Argument Resolver `AuthenticatedUserArgumentResolver` is used to resolve the `AuthenticatedUser` parameter.
 
 Enhancing the fact, that is required the presence of a parameter of type `AuthenticatedUser` in the controller method, to be able to use the `AuthorizationInterceptor` and `AuthenticatedUserArgumentResolver`. <br>
@@ -132,7 +136,17 @@ The `Service` layer contains the main services responsible to validate the reque
 So, depending on the sucess or failure of the request, the service will return the correspondent `Error` or `DTO`. <br>
 
 ## Testing
-TODO
+In the [Test](../src/test/kotlin/pt/isel/gomoku/server) package, we have the classes that represent the tests of the application. <br>
+We have the following tests:
+- [DomainTests](../src/test/kotlin/pt/isel/gomoku/domain) - Tests the domain of the application.
+- [ServerTests](../src/test/kotlin/pt/isel/gomoku/server) - Tests the server of the application.
+
+Inside the `ServerTests` package, we have the following tests:
+- [ControllersTests](../src/test/kotlin/pt/isel/gomoku/server/controllers) - Tests the controllers of the application.
+- [ServicesTests](../src/test/kotlin/pt/isel/gomoku/server/services) - Tests the services of the application.
 
 ## Critical Evaluation
-TODO
+In this project, we have used the `Spring Framework` and `Spring Boot` to develop the server of the application. <br>
+The `Spring Framework` and `Spring Boot` are very powerful tools that allow us to develop the server of the application in a fast and efficient way. <br>
+This phase of the project went well. However, there's always room for improvement. <br>
+In the next phase of the project, we will try to improve the server/domain of the application. <br>

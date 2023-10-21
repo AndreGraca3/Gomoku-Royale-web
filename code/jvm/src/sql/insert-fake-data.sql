@@ -1,4 +1,4 @@
-TRUNCATE lobby CASCADE;
+TRUNCATE board CASCADE;
 TRUNCATE match CASCADE;
 TRUNCATE token CASCADE;
 TRUNCATE "user" CASCADE;
@@ -23,7 +23,12 @@ VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1', NOW(), NOW(), 2),
        ('9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf', NOW(), NOW(), 3);
 
-INSERT INTO match (id, isprivate, variant, board, created_at, black_id, white_id, winner_id)
-VALUES (gen_random_uuid(), false, 'Freestyle','match_board_1', NOW(), 1, 2, 1),
-       (gen_random_uuid(), true, 'Freestyle','match_board_2', NOW(), 2, 3, 3),
-       (gen_random_uuid(), false, 'Freestyle', 'match_board_3', NOW(), 1, 3, 1);
+INSERT INTO match (id, isprivate, variant, created_at, black_id, white_id, state)
+VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', false, 'FreeStyle', NOW(), 1, 2, 'FINISHED'),
+       ('bf4b911a-38ad-45a9-8680-135a25e40e99', true, 'FreeStyle', NOW(), 2, 3, 'FINISHED'),
+       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', false, 'FreeStyle',NOW(), 1, 3, 'FINISHED');
+
+INSERT INTO board (match_id, turn, size, stones, type)
+VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', 'B', 15, '', 'FreeStyleBoard'),
+       ('bf4b911a-38ad-45a9-8680-135a25e40e99', 'B', 19, '', 'FreeStyleBoard'),
+       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', 'B', 15, '', 'FreeStyleBoard');

@@ -8,20 +8,14 @@ import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
 class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
 
     override fun createMatch(
-        id: String,
         isPrivate: Boolean,
         serializedVariant: String,
-        serializedBoard: String,
-        blackId: Int,
-        whiteId: Int
+        blackId: Int
     ): String {
         return handle.createUpdate(MatchStatements.CREATE_MATCH)
-            .bind("id", id)
             .bind("isPrivate", isPrivate)
             .bind("variant", serializedVariant)
-            .bind("board", serializedBoard)
             .bind("black_id", blackId)
-            .bind("white_id", whiteId)
             .executeAndReturnGeneratedKeys("id")
             .mapTo(String::class.java)
             .one()
@@ -34,6 +28,14 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .singleOrNull()
     }
 
+    override fun getMatchByPreferences(size: Int?, variant: String?): Match? {
+        return handle.createQuery(MatchStatements.GET_MATCH_BY_PREFERENCES)
+            .bind("size", size)
+            .bind("variant", variant)
+            .mapTo(Match::class.java)
+            .singleOrNull()
+    }
+
     override fun getMatchesFromUser(userId: Int): List<Match> {
         return handle.createQuery(MatchStatements.GET_MATCHES_BY_USER_ID)
             .bind("userId", userId)
@@ -41,13 +43,22 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .list()
     }
 
-    override fun updateMatch(id: String, serializedBoard: String?, blackId: Int?, whiteId: Int?, winnerId: Int?) {
-        handle.createUpdate(MatchStatements.UPDATE_MATCH)
+    override fun updateMatch(id: String, blackId: Int?, whiteId: Int?, state: String?): String {
+        return handle.createUpdate(MatchStatements.UPDATE_MATCH)
             .bind("id", id)
-            .bind("board", serializedBoard)
             .bind("black_id", blackId)
             .bind("white_id", whiteId)
-            .bind("winner_id", winnerId)
-            .execute()
+            .bind("state", state)
+            .executeAndReturnGeneratedKeys("id")
+            .mapTo(String::class.java)
+            .one()
+    }
+
+    override fun isUserInMatch(userId: Int): Boolean {
+        return handle.createQuery(MatchStatements.IS_USER_IN_MATCH)
+            .bind("userId", userId)
+            .mapTo(String::class.java)
+            .findFirst()
+            .isPresent
     }
 }

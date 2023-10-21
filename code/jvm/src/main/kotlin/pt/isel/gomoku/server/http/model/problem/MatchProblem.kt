@@ -45,7 +45,7 @@ sealed class MatchProblem(
         data
     )
 
-    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue) : MatchProblem(
+    class AlreadyInMatch(data: MatchCreationError.AlreadyInMatch) : MatchProblem(
         409,
         "already-in-queue",
         "User already in queue",
@@ -90,5 +90,12 @@ sealed class MatchProblem(
         "match-finished",
         "Match already finished",
         reason
+    )
+
+    class NotEnoughPlayers(data: MatchPlayError.NotStarted) : MatchProblem(
+        403,
+        "not-enough-players",
+        "Match still waiting for players",
+        "Match with id ${data.matchId} didn't started yet.",
     )
 }

@@ -88,6 +88,16 @@ class UserService(
         }
     }
 
+    fun deleteUser(id: Int): Either<UserFetchingError.UserByIdNotFound, Unit> {
+        return trManager.run {
+            val user: UserInfo? = it.userRepository.getUserById(id)
+            if (user != null) {
+                it.userRepository.deleteUser(id)
+                success(Unit)
+            } else failure(UserFetchingError.UserByIdNotFound(id))
+        }
+    }
+
     // Service function, does not return Either
     fun getUserByToken(token: String): User? {
         return trManager.run {

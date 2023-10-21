@@ -1,4 +1,4 @@
-package pt.isel.gomoku.server
+package pt.isel.gomoku.server.controllers
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

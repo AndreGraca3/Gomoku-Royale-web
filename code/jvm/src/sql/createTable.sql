@@ -1,4 +1,4 @@
-drop table if exists lobby;
+drop table if exists board;
 drop table if exists match;
 drop table if exists token;
 drop table if exists "user";
@@ -9,7 +9,7 @@ create table if not exists rank
     name     varchar(20) primary key,
     icon_url TEXT unique not null,
     min_mmr  int         not null
-);
+    );
 
 create table if not exists "user"
 (
@@ -21,35 +21,33 @@ create table if not exists "user"
     mmr        int                                                              default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
     created_at timestamp           not null                                     default now(),
-    rank       varchar(20)         not null references rank (name)
-);
+    rank       varchar(20)         not null references rank (name) default 'Bronze'
+    );
 
 create table if not exists token
 (
     token_value VARCHAR(256) primary key,
     created_at  timestamp not null default now(),
     last_used   timestamp not null default now(),
-    user_id     int references "user" (id)
-);
+    user_id     int references "user"  (id) on delete cascade
+    );
 
 create table if not exists match
 (
-    id         VARCHAR(256) primary key,
+    id         VARCHAR(256)                        default gen_random_uuid() primary key,
     isPrivate  Boolean                    not null,
     variant    VARCHAR(20)                not null,
-    board      VARCHAR(256)               not null,
     created_at timestamp                  not null default now(),
     black_id   int references "user" (id) not null,
     white_id   int references "user" (id),
-    winner_id  int references "user" (id) check ( winner_id in (black_id, white_id) )
-);
+    state      VARCHAR(20)                not null
+    );
 
-create table if not exists lobby
+create table if not exists board
 (
-    id         VARCHAR(256)       default gen_random_uuid() primary key,
-    player_id  int references "user" (id) unique,
-    isPrivate  Boolean   not null default false,
-    size       int,
-    variant    VARCHAR(20),
-    created_at timestamp not null default now()
-);
+    match_id VARCHAR(256) primary key references match (id),
+    turn     Char         not null,
+    size     int          not null,
+    stones   VARCHAR(256) not null,
+    type     VARCHAR(20)  not null
+    );

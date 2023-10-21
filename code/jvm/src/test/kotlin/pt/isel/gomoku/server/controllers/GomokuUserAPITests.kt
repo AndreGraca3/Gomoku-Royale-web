@@ -1,27 +1,31 @@
 package pt.isel.gomoku.server.controllers
 
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.event.annotation.AfterTestClass
+import org.springframework.test.context.event.annotation.AfterTestExecution
 import org.springframework.test.context.event.annotation.BeforeTestClass
 import org.springframework.test.web.reactive.server.WebTestClient
-import pt.isel.gomoku.server.http.model.user.UserCreateInput
-import pt.isel.gomoku.server.http.model.user.UserIdOutput
-import pt.isel.gomoku.server.http.model.user.UserInfo
-import pt.isel.gomoku.server.http.model.user.UserUpdateInput
-import kotlin.properties.Delegates
+import pt.isel.gomoku.server.http.model.user.*
 
 
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class GomokuTests {
+class GomokuUserAPITests {
 
-    var idDummy by Delegates.notNull<Int>()
+    var idDummy : Int = 0
+    var idToken : String = ""
 
     @LocalServerPort
     var port: Int = 8080
 
-    @BeforeTestClass
+    @BeforeAll
     fun setup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         idDummy = client.post().uri("/users")
@@ -36,14 +40,24 @@ class GomokuTests {
             .expectStatus().isCreated
             .expectBody(UserIdOutput::class.java)
             .returnResult().responseBody!!.id
+
+        idToken = client.put().uri("/users/token")
+            .bodyValue(UserCredentialsInput(
+                "dummy@gmail.com",
+                "dummy123"
+            )).exchange()
+            .expectStatus().isCreated
+            .expectBody(TokenCreateOutput::class.java)
+            .returnResult().responseBody!!.token
     }
 
-    @AfterTestClass
+    @AfterAll
     fun teardown() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri("/users/$idDummy")
+        client.delete().uri("/users")
+            .header("Authorization", "Bearer $idToken")
             .exchange()
-            .expectStatus().isOk
+            .expectStatus().isNoContent
     }
 
     @Test
@@ -51,6 +65,7 @@ class GomokuTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val user = client.patch().uri("/users")
+            .header("Authorization", "Bearer $idToken")
             .bodyValue(
                 UserUpdateInput(
                     "DummyChanged",
@@ -66,11 +81,11 @@ class GomokuTests {
     fun createDeleteUser() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val userInfo = client.post().uri("/users")
+        val userInternal = client.post().uri("/users")
             .bodyValue(
                 UserCreateInput(
-                    "Dummy",
-                    "dummy@gmail.com",
+                    "Dummy1",
+                    "dummy1@gmail.com",
                     "dummy123",
                     null
                 )
@@ -79,9 +94,19 @@ class GomokuTests {
             .expectStatus().isCreated
             .expectBody(UserIdOutput::class.java)
 
-        client.delete().uri("/users/${userInfo.returnResult().responseBody!!.id}}")
-            .exchange()
-            .expectStatus().isOk
+        val idTokenInternal = client.put().uri("/users/token")
+            .bodyValue(UserCredentialsInput(
+                "dummy1@gmail.com",
+                "dummy123"
+            )).exchange()
+            .expectStatus().isCreated
+            .expectBody(TokenCreateOutput::class.java)
+            .returnResult().responseBody!!.token
+
+        client.delete().uri("/users")
+            .header("Authorization", "Bearer $idTokenInternal"
+            ).exchange()
+            .expectStatus().isNoContent
 
     }
 
@@ -90,9 +115,9 @@ class GomokuTests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
         val user = client.get().uri("/users/${idDummy}")
-            .exchange()
+            .header("Authorization", "Bearer $idToken"
+            ).exchange()
             .expectStatus().isOk
             .expectBody(UserInfo::class.java)
     }
-
 }
