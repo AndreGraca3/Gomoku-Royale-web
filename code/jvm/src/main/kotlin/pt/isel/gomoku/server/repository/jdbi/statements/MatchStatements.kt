@@ -14,7 +14,7 @@ object MatchStatements {
     """
 
     const val GET_MATCH_BY_PREFERENCES = """
-        SELECT id, isPrivate, variant, black_id, white_id, turn, size, type, stones
+        SELECT id, isPrivate, variant, black_id, white_id, turn, size, type, stones, state
         FROM match m
         INNER JOIN board b ON b.match_id = m.id
         WHERE isPrivate = false and size = :size and variant = :variant and state = 'SETUP';
@@ -35,7 +35,7 @@ object MatchStatements {
     """
 
     const val IS_USER_IN_MATCH = """
-        SELECT id
+        SELECT state
         FROM match
         WHERE (black_id = :userId or white_id = :userId) and (state = 'SETUP' or state = 'ONGOING')
     """

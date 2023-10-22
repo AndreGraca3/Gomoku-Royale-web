@@ -45,7 +45,7 @@ create table if not exists match
 
 create table if not exists board
 (
-    match_id VARCHAR(256) primary key references match (id),
+    match_id VARCHAR(256) primary key references match (id) on delete cascade,
     turn     Char         not null,
     size     int          not null,
     stones   VARCHAR(256) not null,

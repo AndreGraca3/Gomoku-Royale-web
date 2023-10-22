@@ -5,9 +5,11 @@ import pt.isel.gomoku.domain.game.Match
 interface MatchRepository {
 
     fun createMatch(
+        blackId: Int,
         isPrivate: Boolean,
         serializedVariant: String,
-        blackId: Int,
+        size: Int,
+        type: String
     ): String
 
     fun getMatchesFromUser(userId: Int): List<Match>
@@ -31,7 +33,7 @@ interface MatchRepository {
 
     fun isUserInMatch(
         userId: Int
-    ): Boolean
+    ): String?
 
     fun deleteMatch(
         userId: Int

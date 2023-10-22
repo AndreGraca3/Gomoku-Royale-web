@@ -3,22 +3,33 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
+import pt.isel.gomoku.server.repository.jdbi.statements.BoardStatements
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
 
 class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
 
     override fun createMatch(
+        blackId: Int,
         isPrivate: Boolean,
         serializedVariant: String,
-        blackId: Int
+        size: Int,
+        type: String
     ): String {
-        return handle.createUpdate(MatchStatements.CREATE_MATCH)
+        val matchId =  handle.createUpdate(MatchStatements.CREATE_MATCH)
             .bind("isPrivate", isPrivate)
             .bind("variant", serializedVariant)
             .bind("black_id", blackId)
             .executeAndReturnGeneratedKeys("id")
             .mapTo(String::class.java)
             .one()
+
+        handle.createUpdate(BoardStatements.CREATE_BOARD)
+            .bind("match_id", matchId)
+            .bind("size", size)
+            .bind("type", type)
+            .execute()
+
+        return matchId
     }
 
     override fun getMatchById(id: String): Match? {
@@ -54,12 +65,11 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .one()
     }
 
-    override fun isUserInMatch(userId: Int): Boolean {
+    override fun isUserInMatch(userId: Int): String? {
         return handle.createQuery(MatchStatements.IS_USER_IN_MATCH)
             .bind("userId", userId)
             .mapTo(String::class.java)
-            .findFirst()
-            .isPresent
+            .firstOrNull()
     }
 
     override fun deleteMatch(userId: Int) {

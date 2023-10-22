@@ -9,7 +9,8 @@ object BoardStatements {
     const val UPDATE_BOARD = """
         UPDATE board
         SET turn = :turn,
-        stones = :stones
+        stones = :stones,
+        type = :type
         WHERE match_id = :match_id
     """
 }
