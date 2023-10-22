@@ -1,22 +1,23 @@
 {
 	"info": {
-		"_postman_id": "8f5d70ad-7c33-44cb-b095-39da2843648d",
+		"_postman_id": "a15ee1ae-f8a4-4218-8d00-5ee4aef29f16",
 		"name": "Gomoku",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "25534107"
+		"_exporter_id": "24285462",
+		"_collection_link": "https://planetary-comet-685379.postman.co/workspace/Trello~75b18d6b-f901-4dd7-95e5-f92c7e3f6468/collection/24285462-a15ee1ae-f8a4-4218-8d00-5ee4aef29f16?action=share&source=collection_link&creator=24285462"
 	},
 	"item": [
 		{
 			"name": "/users",
 			"item": [
 				{
-					"name": "Create User",
+					"name": "createUser",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Alberto\",\r\n    \"email\": \"alberto@gmail.com\",\r\n    \"password\": \"isel123\",\r\n    \"avatar\" : null\r\n}",
+							"raw": "{\r\n    \"name\": \"João\",\r\n    \"email\": \"joão@gmail.com\",\r\n    \"password\": \"pass123\",\r\n    \"avatar\" : null\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -36,7 +37,7 @@
 					"response": []
 				},
 				{
-					"name": "Get User",
+					"name": "getUser",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -55,7 +56,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "3"
+									"value": "1"
 								}
 							]
 						}
@@ -63,23 +64,23 @@
 					"response": []
 				},
 				{
-					"name": "Update User",
+					"name": "updateUser",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
 									"type": "string"
 								}
 							]
 						},
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Graça\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Phoenix\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -99,16 +100,13 @@
 					"response": []
 				},
 				{
-					"name": "Create Token",
+					"name": "createToken",
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"andre@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "{\r\n    \"email\": \"daniel@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -127,6 +125,32 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "deleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Diogo\",\r\n    \"password\": \"password123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -134,14 +158,14 @@
 			"name": "/matches",
 			"item": [
 				{
-					"name": "Create Match",
+					"name": "createMatch",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
 									"type": "string"
 								}
 							]
@@ -150,7 +174,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"isPrivate\": false,\r\n    \"size\": 15,\r\n    \"variant\": \"Freestyle\"\r\n}",
+							"raw": "{\r\n    \"isPrivate\" : false,\r\n    \"size\" : null,\r\n    \"variant\": \"FreeStyle\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -170,7 +194,105 @@
 					"response": []
 				},
 				{
-					"name": "Join Private Match",
+					"name": "getMatchById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "81e598e9-5031-4858-8d2c-f7f77b1264d3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMatchesFromUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/all",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateMatch",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"666f2888-05b2-48ea-b9a8-b8f3e7191001\",\r\n    \"winner\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/matches",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "playMove",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -184,6 +306,299 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rowNum\": 2,\r\n    \"columnSymbol\" : \"c\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "666f2888-05b2-48ea-b9a8-b8f3e7191001"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMatch",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/stats",
+			"item": [
+				{
+					"name": "getTopRanks",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/stats/top",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"stats",
+								"top"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getStatsById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/stats/users/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"stats",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Demo",
+			"item": [
+				{
+					"name": "criar novo user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"João\",\r\n    \"email\": \"joao@gmail.com\",\r\n    \"password\": \"pass123\",\r\n    \"avatarUrl\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login usando as credenciais do novo user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"joao@gmail.com\",\r\n    \"password\": \"pass123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users/token",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "alterar o nome do novo user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "D4M8zsY9LYqbvQ0I7OWbEZjyiOMh7amp4FY1mMjIcJs=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"João2023\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/users",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "criar uma partida publica com o token do novo user ( 2 vezes)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "D4M8zsY9LYqbvQ0I7OWbEZjyiOMh7amp4FY1mMjIcJs=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isPrivate\": false,\r\n    \"size\": 15,\r\n    \"variant\": \"FreeStyle\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/matches",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "criar uma partida privada com token de outro user (Daniel)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isPrivate\": true,\r\n    \"size\": 15,\r\n    \"variant\": \"FreeStyle\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}{{port}}/matches",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "juntar a uma partida privada com o token de um outro user (André)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isPrivate\": true,\r\n    \"size\": 15,\r\n    \"variant\": \"FreeStyle\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{host}}{{port}}/matches/:id/join",
 							"host": [
@@ -197,7 +612,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "e26ec8ad-1eac-4ddc-9500-4e75552c7f47"
+									"value": "f89dc753-1b9c-48f4-b446-977f4cd19eb2"
 								}
 							]
 						}
@@ -205,48 +620,14 @@
 					"response": []
 				},
 				{
-					"name": "Get Match",
+					"name": "fazer uma jogada na partida privada (Daniel) (2 vezes)",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{port}}/matches/:id",
-							"host": [
-								"{{host}}{{port}}"
-							],
-							"path": [
-								"matches",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": "2b1eaf36-b934-4693-aee5-48ed88e8b174"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Play",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"value": "0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD",
 									"type": "string"
 								}
 							]
@@ -255,7 +636,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"row\": {\r\n        \"number\": 1\r\n    },\r\n    \"column\": {\r\n        \"symbol\": \"c\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"rowNum\": 2,\r\n    \"columnSymbol\" : \"c\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -274,54 +655,137 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "d0905227-0ce2-45f8-8b6f-9d6c62129a06"
+									"value": "f89dc753-1b9c-48f4-b446-977f4cd19eb2"
 								}
 							]
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "/system",
-			"item": [
+				},
 				{
-					"name": "Get System Info",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "desistir de estar a espera de outro jogador",
 					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Daniel\",\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"456\",\r\n    \"avatar\" : null\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "D4M8zsY9LYqbvQ0I7OWbEZjyiOMh7amp4FY1mMjIcJs=",
+									"type": "string"
 								}
-							}
+							]
 						},
+						"method": "DELETE",
+						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/system",
+							"raw": "{{host}}{{port}}/matches",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
-								"system"
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tentar fazer get de uma partida que não existe!",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "D4M8zsY9LYqbvQ0I7OWbEZjyiOMh7amp4FY1mMjIcJs=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "e8e1ece6-6cfc-424d-bc59-e681d659e7a2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fazer get sobre a partida privada",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "D4M8zsY9LYqbvQ0I7OWbEZjyiOMh7amp4FY1mMjIcJs=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/matches/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"matches",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "f89dc753-1b9c-48f4-b446-977f4cd19eb2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "obter as estatísticas de um usuário (André)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/stats/users/:id",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"stats",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
 							]
 						}
 					},
 					"response": []
 				}
 			]
-		}
-	],
-	"variable": [
-		{
-			"key": "port",
-			"value": "8080"
 		}
 	]
 }

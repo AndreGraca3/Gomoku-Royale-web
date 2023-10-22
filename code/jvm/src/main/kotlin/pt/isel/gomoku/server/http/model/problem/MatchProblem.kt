@@ -91,4 +91,11 @@ sealed class MatchProblem(
         "Match already finished",
         reason
     )
+
+    class NotEnoughPlayers(data: MatchPlayError.NotStarted) : MatchProblem(
+        403,
+        "not-enough-players",
+        "Match still waiting for players",
+        "Match with id ${data.matchId} didn't started yet.",
+    )
 }

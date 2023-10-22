@@ -71,11 +71,18 @@ class MatchController(private val service: MatchService) {
         @RequestBody move: Dot
     ): ResponseEntity<*> {
         return when (val res = service.play(authenticatedUser.user.id, id, move)) {
-            is Success -> ResponseEntity.status(200).build<Unit>()
+            is Success -> ResponseEntity.status(200).body(res.value)
             is Failure -> when (res.value) {
                 is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).response()
                 is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).response()
             }
         }
+    }
+
+    @DeleteMapping
+    fun deleteMatch(
+        authenticatedUser: AuthenticatedUser
+    ): ResponseEntity<*> {
+        return ResponseEntity.status(204).body(service.deleteMatch(authenticatedUser.user.id))
     }
 }

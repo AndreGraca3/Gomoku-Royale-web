@@ -15,7 +15,7 @@ class JdbiBoardRepository(private val handle: Handle): BoardRepository {
 
     override fun updateBoard(matchId: String, stones: String, turn: Char) {
         handle.createUpdate(BoardStatements.UPDATE_BOARD)
-            .bind("id", matchId)
+            .bind("match_id", matchId)
             .bind("stones", stones)
             .bind("turn", turn)
             .execute()

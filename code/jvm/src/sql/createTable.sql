@@ -9,7 +9,7 @@ create table if not exists rank
     name     varchar(20) primary key,
     icon_url TEXT unique not null,
     min_mmr  int         not null
-    );
+);
 
 create table if not exists "user"
 (
@@ -21,16 +21,16 @@ create table if not exists "user"
     mmr        int                                                              default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
     created_at timestamp           not null                                     default now(),
-    rank       varchar(20)         not null references rank (name) default 'Bronze'
-    );
+    rank       varchar(20) references rank (name)                               default 'Bronze'
+);
 
 create table if not exists token
 (
     token_value VARCHAR(256) primary key,
     created_at  timestamp not null default now(),
     last_used   timestamp not null default now(),
-    user_id     int references "user"  (id) on delete cascade
-    );
+    user_id     int references "user" (id) on delete cascade
+);
 
 create table if not exists match
 (
@@ -41,7 +41,7 @@ create table if not exists match
     black_id   int references "user" (id) not null,
     white_id   int references "user" (id),
     state      VARCHAR(20)                not null
-    );
+);
 
 create table if not exists board
 (
@@ -50,4 +50,4 @@ create table if not exists board
     size     int          not null,
     stones   VARCHAR(256) not null,
     type     VARCHAR(20)  not null
-    );
+);

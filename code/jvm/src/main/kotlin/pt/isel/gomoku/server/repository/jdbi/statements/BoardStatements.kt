@@ -10,6 +10,6 @@ object BoardStatements {
         UPDATE board
         SET turn = :turn,
         stones = :stones
-        WHERE id = :id
+        WHERE match_id = :match_id
     """
 }

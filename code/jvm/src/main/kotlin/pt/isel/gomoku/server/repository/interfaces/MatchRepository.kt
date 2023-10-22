@@ -32,4 +32,8 @@ interface MatchRepository {
     fun isUserInMatch(
         userId: Int
     ): Boolean
+
+    fun deleteMatch(
+        userId: Int
+    )
 }

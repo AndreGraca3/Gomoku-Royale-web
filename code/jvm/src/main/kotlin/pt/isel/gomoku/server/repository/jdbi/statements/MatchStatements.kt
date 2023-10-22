@@ -39,4 +39,8 @@ object MatchStatements {
         FROM match
         WHERE (black_id = :userId or white_id = :userId) and (state = 'SETUP' or state = 'ONGOING')
     """
+
+    const val DELETE_MATCH = """
+        delete from match where black_id = :userId and state = 'SETUP'
+    """
 }

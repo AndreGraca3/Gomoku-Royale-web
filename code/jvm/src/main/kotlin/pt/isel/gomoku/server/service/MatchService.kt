@@ -6,6 +6,7 @@ import pt.isel.gomoku.domain.game.MatchState
 import pt.isel.gomoku.domain.game.Variant
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.domain.game.cell.Stone
+import pt.isel.gomoku.domain.game.cell.serialize
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
@@ -60,7 +61,7 @@ class MatchService(private val trManager: TransactionManager) {
                 userId
             )
 
-            it.boardRepository.createBoard(idMatch, newBoard.size, newVariant.name)
+            it.boardRepository.createBoard(idMatch, newBoard.size, newBoard::class.java.simpleName)
 
             return@run success(
                 MatchCreationOutput(
@@ -120,7 +121,7 @@ class MatchService(private val trManager: TransactionManager) {
             val player = match.getPlayer(userId)
             val newBoard = match.play(dot, player).board
             val serializedStones =
-                newBoard.stones.map { stone -> stone.serialize() }.toString()
+                newBoard.stones.serialize()
 
             it.boardRepository.updateBoard(
                 id,
@@ -131,6 +132,12 @@ class MatchService(private val trManager: TransactionManager) {
             success(
                 Stone(player, dot)
             )
+        }
+    }
+
+    fun deleteMatch(userId: Int): Either<Unit, Unit> {
+        return trManager.run {
+            success(it.matchRepository.deleteMatch(userId))
         }
     }
 

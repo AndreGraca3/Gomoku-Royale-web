@@ -61,4 +61,10 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .findFirst()
             .isPresent
     }
+
+    override fun deleteMatch(userId: Int) {
+        handle.createUpdate(MatchStatements.DELETE_MATCH)
+            .bind("userId", userId)
+            .execute()
+    }
 }
