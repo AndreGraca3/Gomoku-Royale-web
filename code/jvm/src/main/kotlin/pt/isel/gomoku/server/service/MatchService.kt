@@ -5,10 +5,13 @@ import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.domain.game.MatchState
 import pt.isel.gomoku.domain.game.State
 import pt.isel.gomoku.domain.game.Variant
+import pt.isel.gomoku.domain.game.board.BoardDraw
+import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.domain.game.cell.Stone
 import pt.isel.gomoku.domain.game.cell.serialize
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput
+import pt.isel.gomoku.server.http.model.match.PlayOutput
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.error.match.MatchCreationError
 import pt.isel.gomoku.server.service.error.match.MatchError
@@ -25,12 +28,10 @@ class MatchService(private val trManager: TransactionManager) {
         userId: Int,
         isPrivate: Boolean,
         size: Int?,
-        variant: String?
+        variant: String?,
     ): Either<MatchCreationError, MatchCreationOutput> {
         return trManager.run {
-            // user is already in a match with another player,
-            // or user is already waiting for another player
-            when (it.matchRepository.isUserInMatch(userId)) {
+            when (it.matchRepository.getMatchStatusFromUser(userId)) {
                 State.SETUP.name -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
                 State.ONGOING.name -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
             }
@@ -38,27 +39,29 @@ class MatchService(private val trManager: TransactionManager) {
             if (isPrivate && (variant == null || size == null))
                 return@run failure(MatchCreationError.InvalidPrivateMatch(size, variant))
 
-            // waiting for other player
+            // generate a variant and a board
             val newVariant = if (variant != null) Variant.from(variant) else Variant.getRandom()
             val newBoard = newVariant.createBoard(size)
 
-            // there is a user with the same preferences as this user
+            // if it's a public match then find one with same preferences
             if (!isPrivate) {
-                val match = it.matchRepository.getMatchByPreferences(size, variant)
+                val match = it.matchRepository.getPublicMatchByPreferences(newBoard.size, newVariant.name)
                 if (match != null) {
-                    // add user to match
+                    // match found, adding user to match
                     return@run success(
                         MatchCreationOutput(
                             it.matchRepository.updateMatch(
                                 match.id,
                                 whiteId = userId,
                                 state = MatchState.ONGOING.name
-                            )
+                            ),
+                            MatchState.ONGOING.name
                         )
                     )
                 }
             }
 
+            // create a new match(with board associated)
             return@run success(
                 MatchCreationOutput(
                     it.matchRepository.createMatch(
@@ -67,7 +70,8 @@ class MatchService(private val trManager: TransactionManager) {
                         newVariant.name,
                         newBoard.size,
                         newBoard::class.java.simpleName
-                    )
+                    ),
+                    MatchState.SETUP.name
                 )
             )
         }
@@ -75,7 +79,7 @@ class MatchService(private val trManager: TransactionManager) {
 
     fun joinPrivateMatch(id: String, userId: Int): Either<MatchError, MatchCreationOutput> {
         return trManager.run {
-            when (it.matchRepository.isUserInMatch(userId)) {
+            when (it.matchRepository.getMatchStatusFromUser(userId)) {
                 State.SETUP.name -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
                 State.ONGOING.name -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
             }
@@ -91,7 +95,8 @@ class MatchService(private val trManager: TransactionManager) {
                         id,
                         whiteId = userId,
                         state = MatchState.ONGOING.name
-                    )
+                    ),
+                    MatchState.ONGOING.name
                 )
             )
         }
@@ -115,7 +120,7 @@ class MatchService(private val trManager: TransactionManager) {
         }
     }
 
-    fun play(userId: Int, id: String, dot: Dot): Either<MatchFetchingError, Stone> {
+    fun play(userId: Int, id: String, dot: Dot): Either<MatchFetchingError, PlayOutput> {
         return trManager.run {
             val match = it.matchRepository.getMatchById(id)
                 ?: return@run failure(MatchFetchingError.MatchByIdNotFound(id))
@@ -125,19 +130,18 @@ class MatchService(private val trManager: TransactionManager) {
 
             val player = match.getPlayer(userId)
             val newBoard = match.play(dot, player).board
-            val serializedStones =
-                newBoard.stones.serialize()
+
+            val isMatchOver = newBoard is BoardWinner || newBoard is BoardDraw
+            val newState = if (isMatchOver) MatchState.FINISHED else MatchState.ONGOING
+            if (isMatchOver) it.matchRepository.updateMatch(id, state = newState.name)
 
             it.boardRepository.updateBoard(
                 id,
-                newBoard::class.simpleName!!,
-                serializedStones,
+                newBoard::class.java.simpleName,
+                newBoard.stones.serialize(),
                 newBoard.turn.symbol
             )
-
-            success(
-                Stone(player, dot)
-            )
+            success(PlayOutput(Stone(player, dot), newState.name))
         }
     }
 

@@ -23,7 +23,7 @@ class ColumnTests {
     }
 
     @Test
-    fun equalsAndIdentityOfColumns() {
+    fun isEqualsAndSame() {
         val column = Column('a')
         val col1 = 'a'.toColumn()
         assertNotNull(col1)

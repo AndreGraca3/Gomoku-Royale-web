@@ -13,7 +13,7 @@ object MatchStatements {
         where id = :id
     """
 
-    const val GET_MATCH_BY_PREFERENCES = """
+    const val GET_PUBLIC_MATCH_BY_PREFERENCES = """
         SELECT id, isPrivate, variant, black_id, white_id, turn, size, type, stones, state
         FROM match m
         INNER JOIN board b ON b.match_id = m.id

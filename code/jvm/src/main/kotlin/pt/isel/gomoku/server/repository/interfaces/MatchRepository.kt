@@ -16,9 +16,9 @@ interface MatchRepository {
 
     fun getMatchById(id: String): Match?
 
-    fun getMatchByPreferences(
-        size: Int?,
-        variant: String?
+    fun getPublicMatchByPreferences(
+        size: Int,
+        variant: String
     ): Match?
 
     /**
@@ -31,7 +31,7 @@ interface MatchRepository {
         state: String? = null
     ): String
 
-    fun isUserInMatch(
+    fun getMatchStatusFromUser(
         userId: Int
     ): String?
 

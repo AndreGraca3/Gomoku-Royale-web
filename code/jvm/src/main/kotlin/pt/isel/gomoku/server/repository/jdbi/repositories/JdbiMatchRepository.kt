@@ -39,8 +39,8 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .singleOrNull()
     }
 
-    override fun getMatchByPreferences(size: Int?, variant: String?): Match? {
-        return handle.createQuery(MatchStatements.GET_MATCH_BY_PREFERENCES)
+    override fun getPublicMatchByPreferences(size: Int, variant: String): Match? {
+        return handle.createQuery(MatchStatements.GET_PUBLIC_MATCH_BY_PREFERENCES)
             .bind("size", size)
             .bind("variant", variant)
             .mapTo(Match::class.java)
@@ -65,7 +65,7 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .one()
     }
 
-    override fun isUserInMatch(userId: Int): String? {
+    override fun getMatchStatusFromUser(userId: Int): String? {
         return handle.createQuery(MatchStatements.IS_USER_IN_MATCH)
             .bind("userId", userId)
             .mapTo(String::class.java)
