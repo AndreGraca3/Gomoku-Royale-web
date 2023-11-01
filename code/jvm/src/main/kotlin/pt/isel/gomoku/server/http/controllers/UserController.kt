@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.problem.UserProblem
+import pt.isel.gomoku.server.http.model.siren.*
 import pt.isel.gomoku.server.http.model.user.*
 import pt.isel.gomoku.server.service.UserService
 import pt.isel.gomoku.server.service.error.user.UserCreationError
@@ -17,7 +18,36 @@ class UserController(private val service: UserService) {
     @PostMapping()
     fun createUser(@RequestBody input: UserCreateInput): ResponseEntity<*> {
         return when (val res = service.createUser(input.name, input.email, input.password, input.avatarUrl)) {
-            is Success -> ResponseEntity.status(201).body(res.value)
+            is Success -> ResponseEntity.status(201).body(
+                SirenEntity (
+                    clazz = listOf("user"),
+                    properties = res.value,
+                    entities = listOf(
+                        EmbeddedLink(
+                            rel = listOf(
+                                "stats"
+                            ),
+                            href = "${Uris.Users.BASE}${Uris.ID}"
+                        )
+                    ),
+                    links = listOf(
+                        SirenLink.self(
+                            href = Uris.Users.BASE + Uris.ID
+                        )
+                    ),
+                    actions = listOf(
+                        SirenAction(
+                            name = "get-user",
+                            href = Uris.Users.BASE + Uris.ID
+                        ),
+                        SirenAction(
+                            name = "update-user",
+                            href = Uris.Users.BASE,
+                            method = "PATCH"
+                        )
+                    )
+                )
+            )
             is Failure -> when (res.value) {
                 is UserCreationError.InsecurePassword -> UserProblem.InsecurePassword(res.value).response()
                 is UserCreationError.EmailAlreadyInUse -> UserProblem.UserAlreadyExists(res.value).response()
