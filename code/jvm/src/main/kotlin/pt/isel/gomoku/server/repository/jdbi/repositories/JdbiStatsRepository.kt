@@ -3,16 +3,16 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.stats.MatchesStats
 import pt.isel.gomoku.server.http.model.stats.RawWinStats
-import pt.isel.gomoku.server.http.model.user.UserIdAndName
+import pt.isel.gomoku.server.http.model.stats.UserStats
 import pt.isel.gomoku.server.repository.interfaces.StatsRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.StatsStatements
 
 class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
 
-    override fun getTopRanks(limit: Int?): List<UserIdAndName> {
+    override fun getTopRanks(limit: Int?): List<UserStats> {
         return handle.createQuery(StatsStatements.GET_TOP_RANKS)
             .bind("limit", limit)
-            .mapTo(UserIdAndName::class.java)
+            .mapTo(UserStats::class.java)
             .list()
     }
 
