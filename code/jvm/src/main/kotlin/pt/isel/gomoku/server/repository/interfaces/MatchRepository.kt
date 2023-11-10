@@ -1,6 +1,7 @@
 package pt.isel.gomoku.server.repository.interfaces
 
 import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.server.http.model.match.MatchIdState
 
 interface MatchRepository {
 
@@ -31,9 +32,10 @@ interface MatchRepository {
         state: String? = null
     ): String
 
-    fun getMatchStatusFromUser(
-        userId: Int
-    ): String?
+    /**
+     * Returns the match state of the specified user. If the user is not in a match, returns null.
+     */
+    fun getMatchStatusFromUser(userId: Int): MatchIdState?
 
     fun deleteMatch(
         userId: Int

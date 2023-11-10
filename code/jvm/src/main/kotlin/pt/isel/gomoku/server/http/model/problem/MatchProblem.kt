@@ -58,7 +58,7 @@ sealed class MatchProblem(
         409,
         "already-in-match",
         "User already in match",
-        "User with id ${data.playerId} is already in a ongoing match.",
+        "User with id ${data.playerId} is already in a match",
         data
     )
 

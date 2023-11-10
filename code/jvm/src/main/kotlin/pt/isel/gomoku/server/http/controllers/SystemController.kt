@@ -16,7 +16,7 @@ import pt.isel.gomoku.server.service.UserService
 @RequestMapping("/system")
 class SystemController(val systemDomain: SystemDomain, val userService: UserService) {
 
-    @GetMapping("")
+    @GetMapping()
     fun getSystemInfo() =
         ResponseEntity.status(200).body(
             SirenEntity(

@@ -34,8 +34,8 @@ object MatchStatements {
         WHERE id = :id
     """
 
-    const val IS_USER_IN_MATCH = """
-        SELECT state
+    const val MATCH_STATUS = """
+        SELECT id, state
         FROM match
         WHERE (black_id = :userId or white_id = :userId) and (state = 'SETUP' or state = 'ONGOING')
     """

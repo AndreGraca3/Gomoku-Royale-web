@@ -13,7 +13,7 @@ open class Problem(
     val data: Any? = null
 ) {
 
-    val type = "https://gomokyroyale.pt/probs/$subType"
+    val type = "https://gomokuroyale.pt/probs/$subType"
 
     companion object {
         val MEDIA_TYPE = MediaType.parseMediaType("application/problem+json")

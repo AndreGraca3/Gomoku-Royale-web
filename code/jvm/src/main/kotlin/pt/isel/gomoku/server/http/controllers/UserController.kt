@@ -30,18 +30,13 @@ class UserController(private val service: UserService) {
                     properties = res.value,
                     entities = listOf(
                         EmbeddedLink(
-                            rel = listOf(
-                                "stats"
-                            ),
-                            href = "${Uris.Users.BASE}${Uris.ID}"
+                            rel = listOf("stats"),
+                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
                         )
                     ),
                     links = listOf(
-                        SirenLink.self(
-                            href = Uris.Users.BASE + Uris.ID
-                        )
+                        SirenLink.self(href = "${Uris.Users.BASE}/${res.value.id}")
                     ),
-//                    actions = getSirenActionListFrom(UserController::class.java, "createUser", res.value)
                     actions = listOf(
                         GET_USER_ACTION,
                         UPDATE_USER_ACTION,
@@ -68,10 +63,8 @@ class UserController(private val service: UserService) {
                     properties = res.value,
                     entities = listOf(
                         EmbeddedLink(
-                            rel = listOf(
-                                "stats"
-                            ),
-                            href = "${Uris.Users.BASE}${Uris.ID}"
+                            rel = listOf("stats"),
+                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
                         )
                     ),
                     links = listOf(
@@ -80,7 +73,6 @@ class UserController(private val service: UserService) {
                         )
                     ),
                     actions = listOf(
-                        CREATE_USER_ACTION,
                         UPDATE_USER_ACTION,
                         DELETE_USER_ACTION,
                         CREATE_TOKEN_ACTION
@@ -105,20 +97,15 @@ class UserController(private val service: UserService) {
                     properties = res.value,
                     entities = listOf(
                         EmbeddedLink(
-                            rel = listOf(
-                                "stats"
-                            ),
-                            href = "${Uris.Users.BASE}${Uris.ID}"
+                            rel = listOf("stats"),
+                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
                         )
                     ),
                     links = listOf(
-                        SirenLink.self(
-                            href = Uris.Users.BASE + Uris.ID
-                        )
+                        SirenLink.self(href = "${Uris.Users.BASE}/${res.value.id}")
                     ),
                     actions = listOf(
                         GET_USER_ACTION,
-                        CREATE_USER_ACTION,
                         DELETE_USER_ACTION,
                         CREATE_TOKEN_ACTION
                     )
@@ -136,24 +123,8 @@ class UserController(private val service: UserService) {
                 SirenEntity(
                     clazz = listOf("user"),
                     properties = null,
-                    entities = listOf(
-                        EmbeddedLink(
-                            rel = listOf(
-                                "stats"
-                            ),
-                            href = "${Uris.Users.BASE}${Uris.ID}"
-                        )
-                    ),
-                    links = listOf(
-                        SirenLink.self(
-                            href = Uris.Users.BASE + Uris.ID
-                        )
-                    ),
                     actions = listOf(
-                        GET_USER_ACTION,
-                        CREATE_USER_ACTION,
-                        UPDATE_USER_ACTION,
-                        CREATE_TOKEN_ACTION
+                        CREATE_USER_ACTION
                     )
                 )
             )
@@ -168,23 +139,20 @@ class UserController(private val service: UserService) {
             is Success -> ResponseEntity.status(201).body(
                 SirenEntity(
                     clazz = listOf("user"),
-                    properties = res.value.tokenValue,
+                    properties = res.value,
                     entities = listOf(
                         EmbeddedLink(
-                            rel = listOf(
-                                "stats"
-                            ),
-                            href = "${Uris.Users.BASE}${Uris.ID}"
+                            rel = listOf("stats"),
+                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}/${res.value.userId}"
                         )
                     ),
                     links = listOf(
                         SirenLink.self(
-                            href = Uris.Users.BASE + Uris.ID
+                            href = "${Uris.Users.BASE}/${res.value.userId}"
                         )
                     ),
                     actions = listOf(
                         GET_USER_ACTION,
-                        CREATE_USER_ACTION,
                         UPDATE_USER_ACTION,
                         DELETE_USER_ACTION
                     )

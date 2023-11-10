@@ -2,6 +2,8 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.domain.game.MatchState
+import pt.isel.gomoku.server.http.model.match.MatchIdState
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.BoardStatements
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
@@ -65,10 +67,10 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .one()
     }
 
-    override fun getMatchStatusFromUser(userId: Int): String? {
-        return handle.createQuery(MatchStatements.IS_USER_IN_MATCH)
+    override fun getMatchStatusFromUser(userId: Int): MatchIdState? {
+        return handle.createQuery(MatchStatements.MATCH_STATUS)
             .bind("userId", userId)
-            .mapTo(String::class.java)
+            .mapTo(MatchIdState::class.java)
             .firstOrNull()
     }
 

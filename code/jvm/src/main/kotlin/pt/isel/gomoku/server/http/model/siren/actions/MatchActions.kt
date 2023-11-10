@@ -4,8 +4,8 @@ import pt.isel.gomoku.server.http.model.siren.SirenAction
 
 object MatchActions {
 
-    val CREATE_MATCH_ACTION_PUBLIC: SirenAction = SirenAction(
-        name = "create-match",
+    val CREATE_PUBLIC_MATCH_ACTION: SirenAction = SirenAction(
+        name = "create-public-match",
         href = "/matches",
         method = "POST",
         type = "application/json",
@@ -26,9 +26,9 @@ object MatchActions {
     )
 
     val JOIN_PRIVATE_MATCH_ACTION: SirenAction = SirenAction(
-        name = "create-match",
-        href = "/matches/{id}/join",
-        method = "POST",
+        name = "join-private-match",
+        href = "/matches/{id}",
+        method = "PUT",
         type = "application/json",
         fields = listOf(
             SirenAction.SirenField(
@@ -60,9 +60,9 @@ object MatchActions {
     )
 
     val PLAY_MATCH_ACTION: SirenAction = SirenAction(
-        name = "update-match",
+        name = "play-match",
         href = "/matches/{id}",
-        method = "PATCH",
+        method = "POST",
         type = "application/json",
         fields = listOf(
             SirenAction.SirenField(

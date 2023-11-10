@@ -3,7 +3,6 @@ package pt.isel.gomoku.server.service
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.game.Match
 import pt.isel.gomoku.domain.game.MatchState
-import pt.isel.gomoku.domain.game.State
 import pt.isel.gomoku.domain.game.Variant
 import pt.isel.gomoku.domain.game.board.BoardDraw
 import pt.isel.gomoku.domain.game.board.BoardWinner
@@ -31,9 +30,10 @@ class MatchService(private val trManager: TransactionManager) {
         variant: String?,
     ): Either<MatchCreationError, MatchCreationOutput> {
         return trManager.run {
-            when (it.matchRepository.getMatchStatusFromUser(userId)) {
-                State.SETUP.name -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
-                State.ONGOING.name -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
+            when (it.matchRepository.getMatchStatusFromUser(userId)?.state) {
+                MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
+                MatchState.ONGOING -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
+                else -> Unit
             }
 
             if (isPrivate && (variant == null || size == null))
@@ -79,9 +79,14 @@ class MatchService(private val trManager: TransactionManager) {
 
     fun joinPrivateMatch(id: String, userId: Int): Either<MatchError, MatchCreationOutput> {
         return trManager.run {
-            when (it.matchRepository.getMatchStatusFromUser(userId)) {
-                State.SETUP.name -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
-                State.ONGOING.name -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
+            val matchStatus = it.matchRepository.getMatchStatusFromUser(userId)
+            when (matchStatus?.state) {
+                MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
+                MatchState.ONGOING -> return@run success(
+                    MatchCreationOutput(matchStatus.id, MatchState.ONGOING.name)
+                )
+                MatchState.FINISHED -> return@run failure(MatchJoiningError.FinishedMatch(id))
+                else -> Unit
             }
 
             val match = it.matchRepository.getMatchById(id)

@@ -16,6 +16,7 @@ class SirenAction(
     val type: String? = null, // "application/x-www-form-urlencoded"
     val fields: List<SirenField>? = null
 ) {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     data class SirenField(
         val name: String,
         @JsonProperty("class") val clazz: String? = null,
@@ -24,20 +25,3 @@ class SirenAction(
         val title: String? = null
     )
 }
-
-//fun getSirenActionListFrom(clazz: Class<*>, methodName: String, value: Any?): List<SirenAction> {
-//    //obtain method -> clazz.getMethod(methodName)
-//    val sirenList = mutableListOf<SirenAction>()
-//    val methods = clazz.declaredMethods.filter { it.name != methodName }
-//    for (method in methods) {
-//        val href = method.declaredAnnotations.find { it.javaClass.isInstance(RequestMapping::class.java) } ?: throw CancellationException("andré é feio")
-//
-//        SirenAction(
-//            name = method.name,
-//            clazz = clazz.simpleName,
-//            method = method.name,
-//            href = href,
-//            fields = listOf()
-//        )
-//    }
-//}
