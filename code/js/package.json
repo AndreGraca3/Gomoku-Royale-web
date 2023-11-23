@@ -29,6 +29,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
     "copy-webpack-plugin": "^11.0.0"
   }
 }

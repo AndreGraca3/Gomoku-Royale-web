@@ -5,13 +5,14 @@
 :root {
   --theme-color: rgb(100, 55, 31);
   --dark-theme-color: rgb(70, 38, 21);
+  --gr-yellow: #fce51e;
 }
 
 body {
   flex-direction: column;
-  background-color: var(--theme-color);
+  background: var(--theme-color);
   font-family: "Burbank Big Condensed";
-  color: rgb(255, 255, 255, .85);
+  color: #fff;
   box-sizing: border-box;
   overflow-x: hidden;
   width: 100vw;
