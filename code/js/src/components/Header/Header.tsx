@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Nprogress from "../../../dist/nprogress/nprogress";
+import NavItem from "./NavItem";
 
 export default function Header() {
   const location = useLocation();
@@ -13,7 +14,7 @@ export default function Header() {
   }, [location]);
 
   return (
-    <header className="items-center border-b border-dark-theme-color flex px-2 fixed w-full shadow-2xl">
+    <header className="items-center bg-theme-color border-b border-dark-theme-color flex px-2 fixed w-full h-14 shadow-2xl">
       <Link
         to="/"
         className="header-logo flex items-center border-dark-theme-color group"
@@ -26,13 +27,8 @@ export default function Header() {
 
       <div className="header-sac relative flex flex-grow flex-shrink-0 basis-28"></div>
 
-      <nav className="header-menu block px-2">
-        <Link
-          to="/about"
-          className="inline-block nav-item text-lg hover:text-gr-yellow border-b-4 border-transparent hover:border-gr-yellow hover:rounded-b"
-        >
-          <div>About</div>
-        </Link>
+      <nav className="header-menu flex h-full items-center">
+        <NavItem to="/about" title="About" isActive={false} />
       </nav>
     </header>
   );

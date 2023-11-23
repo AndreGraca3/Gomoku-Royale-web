@@ -8,11 +8,23 @@
   --gr-yellow: #fce51e;
 }
 
+@font-face {
+	font-family: gr;
+	font-display: swap;
+	src: url(/dist/fonts/BurbankSmall-Black.woff2) format('woff2');
+}
+
+@font-face {
+	font-family: gr-bold;
+	font-display: swap;
+	src: url(/dist/fonts/BurbankSmall-Bold.woff2) format('woff2');
+}
+
 body {
   flex-direction: column;
   background: var(--theme-color);
-  font-family: "Burbank Big Condensed";
-  color: #fff;
+  font-family: "gr";
+  color: #ffffffbf;
   box-sizing: border-box;
   overflow-x: hidden;
   width: 100vw;
