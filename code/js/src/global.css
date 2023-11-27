@@ -20,6 +20,10 @@
 	src: url(/dist/fonts/BurbankSmall-Bold.woff2) format('woff2');
 }
 
+.font-bold {
+  font-family: "gr-bold" !important;
+}
+
 body {
   flex-direction: column;
   background: var(--theme-color);

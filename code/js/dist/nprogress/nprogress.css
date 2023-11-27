@@ -3,8 +3,12 @@
   pointer-events: none;
 }
 
+:root {
+  --bar-gradient: linear-gradient(to right, rgb(255,255,255), rgb(0,0,0))
+}
+
 #nprogress .bar {
-  background: var(--gr-yellow);
+  background: var(--bar-gradient);
   opacity: 0.6;
 
   position: fixed;
@@ -23,7 +27,7 @@
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px var(--gr-yellow), 0 0 5px var(--gr-yellow);
+  box-shadow: 0 0 5px rgb(255, 255, 255);
   opacity: 1.0;
 
   -webkit-transform: rotate(3deg) translate(0px, -4px);

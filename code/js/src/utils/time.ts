@@ -24,3 +24,9 @@ export function timeSince(datetime: string): string {
 
   return "Just now";
 }
+
+export function delay(delayInMs: number) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(undefined), delayInMs);
+  });
+}
