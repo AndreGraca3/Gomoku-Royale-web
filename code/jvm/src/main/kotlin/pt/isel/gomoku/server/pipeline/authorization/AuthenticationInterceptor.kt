@@ -9,7 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor
 import pt.isel.gomoku.server.http.model.problem.Problem
 import pt.isel.gomoku.server.http.model.problem.UserProblem
 import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
-import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_AUTHORIZATION_HEADER
+import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_AUTHORIZATION_COOKIE
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_WWW_AUTHENTICATE_HEADER
 
 @Component
@@ -22,12 +22,11 @@ class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) : Han
                 it.parameterType == AuthenticatedUser::class.java
             }) {
             // enforce authentication
-
             val user = tokenProcessor
-                .processAuthorizationHeaderValue(request.getHeader(NAME_AUTHORIZATION_HEADER))
+                .processAuthorizationHeaderValue(request.cookies?.find { it.name == NAME_AUTHORIZATION_COOKIE }?.value)
             return if (user == null) {
                 response.status = 401
-                response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, "bearer")
+                response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, "cookie")
                 response.contentType = Problem.MEDIA_TYPE.toString()
                 response.writer.write(objectMapper.writeValueAsString(UserProblem.InvalidToken))
                 false

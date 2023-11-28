@@ -2,8 +2,8 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.gomoku.domain.Token
-import pt.isel.gomoku.domain.User
+import pt.isel.gomoku.server.http.model.user.Token
+import pt.isel.gomoku.server.http.model.user.User
 import pt.isel.gomoku.server.http.model.user.UserAndToken
 import pt.isel.gomoku.server.http.model.user.UserIdAndName
 import pt.isel.gomoku.server.http.model.user.UserInfo

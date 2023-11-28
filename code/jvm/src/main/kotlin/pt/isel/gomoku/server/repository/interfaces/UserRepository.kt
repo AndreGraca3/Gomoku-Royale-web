@@ -1,7 +1,7 @@
 package pt.isel.gomoku.server.repository.interfaces
 
-import pt.isel.gomoku.domain.Token
-import pt.isel.gomoku.domain.User
+import pt.isel.gomoku.server.http.model.user.Token
+import pt.isel.gomoku.server.http.model.user.User
 import pt.isel.gomoku.server.http.model.user.UserIdAndName
 import pt.isel.gomoku.server.http.model.user.UserInfo
 import java.time.LocalDateTime

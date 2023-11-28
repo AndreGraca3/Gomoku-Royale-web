@@ -2,11 +2,11 @@ package pt.isel.gomoku.server.repository.jdbi.mappers
 
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext
-import pt.isel.gomoku.domain.game.Match
-import pt.isel.gomoku.domain.game.MatchState
-import pt.isel.gomoku.domain.game.Variant
-import pt.isel.gomoku.domain.game.board.Board
-import pt.isel.gomoku.domain.game.toPlayer
+import pt.isel.gomoku.domain.Match
+import pt.isel.gomoku.domain.MatchState
+import pt.isel.gomoku.domain.Variant
+import pt.isel.gomoku.domain.board.Board
+import pt.isel.gomoku.domain.toPlayer
 import java.sql.ResultSet
 import java.sql.SQLException
 

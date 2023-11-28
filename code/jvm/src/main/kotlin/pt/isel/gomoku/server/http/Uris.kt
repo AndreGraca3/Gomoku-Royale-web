@@ -7,6 +7,7 @@ object Uris {
     object Users {
         const val BASE = "/users"
         const val TOKEN = "/token"
+        const val ME = "/me"
     }
 
     object Matches {

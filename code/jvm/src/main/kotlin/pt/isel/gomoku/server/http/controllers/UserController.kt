@@ -1,17 +1,19 @@
 package pt.isel.gomoku.server.http.controllers
 
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.problem.UserProblem
 import pt.isel.gomoku.server.http.model.siren.*
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions
 import pt.isel.gomoku.server.http.model.siren.actions.UserActions.CREATE_TOKEN_ACTION
 import pt.isel.gomoku.server.http.model.siren.actions.UserActions.CREATE_USER_ACTION
 import pt.isel.gomoku.server.http.model.siren.actions.UserActions.DELETE_USER_ACTION
 import pt.isel.gomoku.server.http.model.siren.actions.UserActions.GET_USER_ACTION
 import pt.isel.gomoku.server.http.model.siren.actions.UserActions.UPDATE_USER_ACTION
 import pt.isel.gomoku.server.http.model.user.*
+import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails
 import pt.isel.gomoku.server.service.UserService
 import pt.isel.gomoku.server.service.error.user.UserCreationError
 import pt.isel.gomoku.server.utils.Failure
@@ -54,8 +56,34 @@ class UserController(private val service: UserService) {
         }
     }
 
+    @GetMapping(Uris.Users.ME)
+    fun getUserHome(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
+        val res = service.getUserByToken(authenticatedUser.token)
+        return if (res != null)
+            SirenEntity(
+                clazz = listOf("user"),
+                properties = res.toUserDetails(),
+                entities = listOf(
+                    EmbeddedLink(
+                        rel = listOf("stats"),
+                        href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.id}"
+                    )
+                ),
+                links = listOf(
+                    SirenLink.self(
+                        href = "${Uris.Users.BASE}/${res.id}"
+                    )
+                ),
+                actions = listOf(
+                    UPDATE_USER_ACTION,
+                    DELETE_USER_ACTION,
+                )
+            ).let { ResponseEntity.status(200).body(it) }
+        else UserProblem.InvalidToken.response()
+    }
+
     @GetMapping(Uris.ID)
-    fun getUser(@PathVariable id: Int): ResponseEntity<*> {
+    fun getUserById(@PathVariable id: Int): ResponseEntity<*> {
         return when (val res = service.getUserById(id)) {
             is Success -> ResponseEntity.status(200).body(
                 SirenEntity(
@@ -75,7 +103,6 @@ class UserController(private val service: UserService) {
                     actions = listOf(
                         UPDATE_USER_ACTION,
                         DELETE_USER_ACTION,
-                        CREATE_TOKEN_ACTION
                     )
                 )
             )
@@ -87,7 +114,7 @@ class UserController(private val service: UserService) {
     @PatchMapping()
     fun updateUser(
         authenticatedUser: AuthenticatedUser,
-        @RequestBody userInput: UserUpdateInput
+        @RequestBody userInput: UserUpdateInput,
     ): ResponseEntity<*> {
         return when (val res =
             service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
@@ -134,30 +161,42 @@ class UserController(private val service: UserService) {
     }
 
     @PutMapping(Uris.Users.TOKEN)
-    fun createToken(@RequestBody input: UserCredentialsInput): ResponseEntity<*> {
+    fun createToken(@RequestBody input: UserCredentialsInput, response: HttpServletResponse): ResponseEntity<*> {
         return when (val res = service.createToken(input.email, input.password)) {
-            is Success -> ResponseEntity.status(201).body(
-                SirenEntity(
-                    clazz = listOf("user"),
-                    properties = res.value,
-                    entities = listOf(
-                        EmbeddedLink(
-                            rel = listOf("stats"),
-                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}/${res.value.userId}"
+            is Success -> {
+                response.addCookie(
+                    Cookie(
+                        AuthenticationDetails.NAME_AUTHORIZATION_COOKIE,
+                        res.value.tokenValue
+                    ).apply {
+                        path = "/"
+                        isHttpOnly = true
+                        maxAge = 3600
+                    }
+                )
+                ResponseEntity.status(201).body(
+                    SirenEntity(
+                        clazz = listOf("user"),
+                        properties = null,
+                        entities = listOf(
+                            EmbeddedLink(
+                                rel = listOf("stats"),
+                                href = "${Uris.Stats.BASE}${Uris.Users.BASE}/${res.value.userId}"
+                            )
+                        ),
+                        links = listOf(
+                            SirenLink.self(
+                                href = "${Uris.Users.BASE}/${res.value.userId}"
+                            )
+                        ),
+                        actions = listOf(
+                            GET_USER_ACTION,
+                            UPDATE_USER_ACTION,
+                            DELETE_USER_ACTION
                         )
-                    ),
-                    links = listOf(
-                        SirenLink.self(
-                            href = "${Uris.Users.BASE}/${res.value.userId}"
-                        )
-                    ),
-                    actions = listOf(
-                        GET_USER_ACTION,
-                        UPDATE_USER_ACTION,
-                        DELETE_USER_ACTION
                     )
                 )
-            )
+            }
 
             is Failure -> UserProblem.InvalidCredentials(res.value).response()
         }

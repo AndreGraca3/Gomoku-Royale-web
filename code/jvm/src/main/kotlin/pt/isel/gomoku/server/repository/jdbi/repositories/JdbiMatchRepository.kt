@@ -1,8 +1,7 @@
 package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
-import pt.isel.gomoku.domain.game.Match
-import pt.isel.gomoku.domain.game.MatchState
+import pt.isel.gomoku.domain.Match
 import pt.isel.gomoku.server.http.model.match.MatchIdState
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.BoardStatements

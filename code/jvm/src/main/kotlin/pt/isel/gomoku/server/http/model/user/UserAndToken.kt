@@ -1,7 +1,5 @@
 package pt.isel.gomoku.server.http.model.user
 
-import pt.isel.gomoku.domain.Token
-import pt.isel.gomoku.domain.User
 import java.time.LocalDateTime
 
 data class UserAndToken(

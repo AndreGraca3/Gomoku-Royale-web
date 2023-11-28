@@ -20,7 +20,7 @@ class AuthenticatedUserArgumentResolver : HandlerMethodArgumentResolver {
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): Any? {
+    ): AuthenticatedUser? {
         val request = webRequest.getNativeRequest(HttpServletRequest::class.java)
             ?: throw IllegalStateException("No HttpServletRequest found.")
         return getUserFrom(request) ?: throw IllegalStateException("Request not authenticated.")
