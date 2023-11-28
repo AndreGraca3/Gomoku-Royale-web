@@ -39,6 +39,7 @@ class UserService(
                 return@run failure(UserCreationError.EmailAlreadyInUse(email))
 
             val id = it.userRepository.createUser(name, email, password, avatar)
+            it.statsRepository.createStatsEntry(id)
             success(UserIdOutput(id))
         }
     }

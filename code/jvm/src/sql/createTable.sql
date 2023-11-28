@@ -3,6 +3,7 @@ drop table if exists match;
 drop table if exists token;
 drop table if exists "user";
 drop table if exists rank;
+drop table if exists stats;
 
 create table if not exists rank
 (
@@ -50,4 +51,14 @@ create table if not exists board
     size     int          not null,
     stones   VARCHAR(256) not null,
     type     VARCHAR(20)  not null
+);
+
+create table if not exists stats
+(
+    user_id       int references "user" (id) primary key,
+    matches_as_black int default 0,
+    wins_as_black int default 0,
+    matches_as_white int default 0,
+    wins_as_white int default 0,
+    draws         int default 0
 );
