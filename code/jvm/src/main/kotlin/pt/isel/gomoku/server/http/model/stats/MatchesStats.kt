@@ -1,4 +1,4 @@
-package pt.isel.gomoku.domain.stats
+package pt.isel.gomoku.server.http.model.stats
 
 data class MatchesStats(
     val totalMatches: Int,

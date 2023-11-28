@@ -1,12 +1,12 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.domain.Token
-import pt.isel.gomoku.domain.User
-import pt.isel.gomoku.domain.UserDomain
+import pt.isel.gomoku.server.http.model.user.Token
+import pt.isel.gomoku.server.http.model.user.User
 import pt.isel.gomoku.server.http.model.user.UserIdOutput
 import pt.isel.gomoku.server.http.model.user.UserInfo
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
+import pt.isel.gomoku.server.service.core.SecurityManager
 import pt.isel.gomoku.server.service.error.user.TokenCreationError
 import pt.isel.gomoku.server.service.error.user.UserCreationError
 import pt.isel.gomoku.server.service.error.user.UserFetchingError
@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @Component
 class UserService(
     private val trManager: TransactionManager,
-    private val userDomain: UserDomain
+    private val securityManager: SecurityManager
 ) {
 
     fun createUser(
@@ -28,7 +28,7 @@ class UserService(
         password: String,
         avatar: String?
     ): Either<UserCreationError, UserIdOutput> {
-        if (!userDomain.isSafePassword(password))
+        if (!securityManager.isSafePassword(password))
             return failure(UserCreationError.InsecurePassword(password))
 
         if(verifyEmail(email))
@@ -76,7 +76,7 @@ class UserService(
             // if token already exists: if is valid, return it else delete it
             val token = it.userRepository.getTokenByUserId(user.id)
             if (token != null) {
-                when (userDomain.isTokenTimeValid(token)) {
+                when (securityManager.isTokenTimeValid(token)) {
                     true -> {
                         it.userRepository.updateTokenLastUsed(token, LocalDateTime.now())
                         return@run success(token)
@@ -87,7 +87,7 @@ class UserService(
             }
 
             // No Token found, create new one
-            val tokenValue = userDomain.generateTokenValue()
+            val tokenValue = securityManager.generateTokenValue()
             success(it.userRepository.createToken(tokenValue, user.id))
         }
     }
@@ -107,7 +107,7 @@ class UserService(
         return trManager.run {
             val userAndToken =
                 it.userRepository.getUserAndTokenByTokenValue(token)
-            if (userAndToken != null && userDomain.isTokenTimeValid(userAndToken.second)) {
+            if (userAndToken != null && securityManager.isTokenTimeValid(userAndToken.second)) {
                 it.userRepository.updateTokenLastUsed(userAndToken.second, LocalDateTime.now())
                 userAndToken.first
             } else null

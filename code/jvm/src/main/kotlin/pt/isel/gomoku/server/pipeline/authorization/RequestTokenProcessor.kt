@@ -10,22 +10,11 @@ class RequestTokenProcessor(val userService: UserService) {
         if (authorizationValue == null) {
             return null
         }
-        val parts = authorizationValue.trim().split(" ")
-        if (parts.size != 2) {
-            return null
-        }
-        if (parts[0].lowercase() != SCHEME) {
-            return null
-        }
-        return userService.getUserByToken(parts[1])?.let {
+        return userService.getUserByToken(authorizationValue)?.let {
             AuthenticatedUser(
                 it,
-                parts[1]
+                authorizationValue
             )
         }
-    }
-
-    companion object {
-        const val SCHEME = "bearer"
     }
 }

@@ -1,7 +1,7 @@
-package pt.isel.gomoku.domain.game.cell
+package pt.isel.gomoku.domain.cell
 
-import pt.isel.gomoku.domain.game.Player
-import pt.isel.gomoku.domain.game.toPlayer
+import pt.isel.gomoku.domain.Player
+import pt.isel.gomoku.domain.toPlayer
 
 data class Stone(val player: Player, val dot: Dot) {
 

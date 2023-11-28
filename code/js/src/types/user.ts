@@ -3,7 +3,7 @@ export type UserCreationInput = {
   email: string;
   password: string;
   avatar: string;
-}
+};
 
 export type UserInfo = {
   id: number;
@@ -11,4 +11,9 @@ export type UserInfo = {
   avatarUrl?: string;
   role: string;
   rank: string;
-}
+};
+
+export type UserAvatar = {
+  name: string;
+  avatarUrl: string;
+};

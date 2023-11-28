@@ -22,5 +22,8 @@ module.exports = {
   devServer: {
     static: path.resolve(__dirname, "dist"),
     historyApiFallback: true,
+    proxy: {
+      '/api': 'http://localhost:2001',
+    },
   },
 };

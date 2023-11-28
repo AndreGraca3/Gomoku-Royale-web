@@ -1,17 +1,15 @@
 import { UserInfo } from "../types/user";
 import { fetchReq } from "../utils/http";
 
-async function login(email: string, password: string): Promise<UserInfo> {
-  return {
-    id: 1,
-    name: "Graça",
-    avatarUrl: "https://i.imgur.com/jv0tbT8.png",
-    role: "admin",
-    rank: "silver",
-  }
-  // return await fetchReq("/login", "POST", { email, password });
+async function login(email: string, password: string): Promise<void> {
+  return await fetchReq("/users/token", "PUT", { email, password });
+}
+
+async function getUserHome(): Promise<UserInfo> {
+  return await fetchReq("/users/me");
 }
 
 export default {
   login,
+  getUserHome,
 };

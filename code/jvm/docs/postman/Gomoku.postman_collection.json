@@ -13,11 +13,21 @@
 					"name": "Home",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
-							"raw": "{{host}}{{port}}",
+							"raw": "{{host}}{{port}}/api",
 							"host": [
 								"{{host}}{{port}}"
+							],
+							"path": [
+								"api"
 							]
 						}
 					},
@@ -43,11 +53,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/users",
+							"raw": "{{host}}{{port}}/api/users",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"users"
 							]
 						}
@@ -63,19 +74,42 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/users/:id",
+							"raw": "{{host}}{{port}}/api/users/:id",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"users",
 								":id"
 							],
 							"variable": [
 								{
 									"key": "id",
-									"value": "3"
+									"value": "2"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Home",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/users/me",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
 							]
 						}
 					},
@@ -106,11 +140,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/users",
+							"raw": "{{host}}{{port}}/api/users",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"users"
 							]
 						}
@@ -127,7 +162,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"andre@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
+							"raw": "{\r\n    \"email\": \"diogo@gmail.com\",\r\n    \"password\": \"password123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -135,11 +170,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/users/token",
+							"raw": "{{host}}{{port}}/api/users/token",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"users",
 								"token"
 							]
@@ -163,11 +199,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/users",
+							"raw": "{{host}}{{port}}/api/users",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"users"
 							]
 						}
@@ -187,7 +224,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
+									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
 									"type": "string"
 								}
 							]
@@ -204,11 +241,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/matches",
+							"raw": "{{host}}{{port}}/api/matches",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"matches"
 							]
 						}
@@ -231,11 +269,12 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/matches/:id",
+							"raw": "{{host}}{{port}}/api/matches/:id",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"matches",
 								":id"
 							],
@@ -253,30 +292,31 @@
 					"name": "Get Match",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "Authorization=k78IHgzZBLjlGD2OUAHWDqhkYvpuIR6OOAuny-_ZkDU=",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
-							"raw": "{{host}}{{port}}/matches/:id",
+							"raw": "{{host}}{{port}}/api/matches/:id",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"matches",
 								":id"
 							],
 							"variable": [
 								{
 									"key": "id",
-									"value": "e26ec8ad-1eac-4ddc-9500-4e75552c7f47"
+									"value": "d313a1a2-8c98-4730-a998-8dce05cb18f8"
 								}
 							]
 						}
@@ -308,11 +348,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/matches/:id",
+							"raw": "{{host}}{{port}}/api/matches/:id",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"matches",
 								":id"
 							],
@@ -342,11 +383,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/matches",
+							"raw": "{{host}}{{port}}/api/matches",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"matches"
 							]
 						}
@@ -376,11 +418,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}{{port}}/system",
+							"raw": "{{host}}{{port}}/api/system",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"system"
 							]
 						}
@@ -398,11 +441,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/stats/top",
+							"raw": "{{host}}{{port}}/api/stats/top",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"stats",
 								"top"
 							]
@@ -416,11 +460,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/stats/users/1",
+							"raw": "{{host}}{{port}}/api/stats/users/1",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
+								"api",
 								"stats",
 								"users",
 								"1"
@@ -432,10 +477,30 @@
 			]
 		}
 	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
 	"variable": [
 		{
 			"key": "port",
-			"value": "8080"
+			"value": "2001"
 		}
 	]
 }

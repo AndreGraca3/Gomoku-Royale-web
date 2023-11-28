@@ -1,7 +1,6 @@
-package pt.isel.gomoku.domain.game.exception
+package pt.isel.gomoku.domain.exception
 
-import pt.isel.gomoku.domain.game.Player
-import pt.isel.gomoku.domain.game.cell.Dot
+import pt.isel.gomoku.domain.cell.Dot
 
 sealed class GomokuGameException(override val message: String) : Exception(message) {
 

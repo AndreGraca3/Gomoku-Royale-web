@@ -1,10 +1,10 @@
-package pt.isel.gomoku.domain.game.board
+package pt.isel.gomoku.domain.board
 
-import pt.isel.gomoku.domain.game.*
-import pt.isel.gomoku.domain.game.cell.Dot
-import pt.isel.gomoku.domain.game.cell.Stone
-import pt.isel.gomoku.domain.game.exception.GomokuGameException
-import pt.isel.gomoku.domain.game.exception.requireOrThrow
+import pt.isel.gomoku.domain.Player
+import pt.isel.gomoku.domain.cell.Dot
+import pt.isel.gomoku.domain.cell.Stone
+import pt.isel.gomoku.domain.exception.GomokuGameException
+import pt.isel.gomoku.domain.exception.requireOrThrow
 
 class FreeStyleBoard(size: Int, stones: List<Stone> = emptyList(), turn: Player = Player.BLACK) :
     Board(size, stones, turn) {

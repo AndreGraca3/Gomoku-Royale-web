@@ -36,16 +36,16 @@ export function Login() {
     setIsSubmitting(true);
     const email = inputs.email;
     const password = inputs.password;
-    userData.login(email, password)
+    userData
+      .login(email, password)
       .then((res) => {
         setIsSubmitting(false);
-        if (res) {
-          console.log(res);
-          setUser(res);
-          // setRedirect("/me");
-        } else {
-          setError("Invalid email or password!");
-        }
+        userData.getUserHome().then((res) => {
+          setUser({ name: res.name, avatarUrl: res.avatarUrl });
+        });
+        localStorage.setItem("loggedIn", "true");
+        console.log("Logged in!");
+        // setRedirect("/me");
       })
       .catch((error) => {
         setIsSubmitting(false);

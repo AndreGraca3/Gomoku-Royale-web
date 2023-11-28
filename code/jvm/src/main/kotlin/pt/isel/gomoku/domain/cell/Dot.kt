@@ -1,4 +1,4 @@
-package pt.isel.gomoku.domain.game.cell
+package pt.isel.gomoku.domain.cell
 
 class Dot private constructor(rowNum: Int, columnSymbol: Char) {
 

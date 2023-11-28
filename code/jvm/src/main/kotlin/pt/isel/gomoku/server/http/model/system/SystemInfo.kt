@@ -1,4 +1,4 @@
-package pt.isel.gomoku.server.http.model
+package pt.isel.gomoku.server.http.model.system
 
 import pt.isel.gomoku.server.http.model.user.UserIdAndName
 

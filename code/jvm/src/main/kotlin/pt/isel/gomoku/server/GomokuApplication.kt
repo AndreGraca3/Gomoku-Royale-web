@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import pt.isel.gomoku.domain.SystemDomain
-import pt.isel.gomoku.domain.UserDomain
+import pt.isel.gomoku.server.http.model.system.SystemDomain
+import pt.isel.gomoku.server.service.core.SecurityManager
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticatedUserArgumentResolver
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationInterceptor
 import pt.isel.gomoku.server.repository.jdbi.configureWithAppRequirements
@@ -25,7 +25,7 @@ class GomokuApplication {
 
     @Bean
     fun userDomainConfig() =
-        UserDomain(
+        SecurityManager(
             Duration.ofDays(1),
             256 / 8,
             BCryptPasswordEncoder()
@@ -62,7 +62,7 @@ class GomokuApplication {
 @Component
 class PipelineConfigure(
     val authenticationInterceptor: AuthenticationInterceptor,
-    val authenticatedUserArgumentResolver: AuthenticatedUserArgumentResolver
+    val authenticatedUserArgumentResolver: AuthenticatedUserArgumentResolver,
 ) : WebMvcConfigurer {
 
     override fun addInterceptors(registry: InterceptorRegistry) {

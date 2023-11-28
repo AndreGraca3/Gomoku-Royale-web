@@ -1,10 +1,9 @@
-package pt.isel.gomoku.domain.game.board
+package pt.isel.gomoku.domain.board
 
-import pt.isel.gomoku.domain.game.Player
-import pt.isel.gomoku.domain.game.cell.Stone
-import pt.isel.gomoku.domain.game.cell.Dot
-import pt.isel.gomoku.domain.game.exception.GomokuGameException
-import pt.isel.gomoku.domain.game.toPlayer
+import pt.isel.gomoku.domain.Player
+import pt.isel.gomoku.domain.cell.Stone
+import pt.isel.gomoku.domain.cell.Dot
+import pt.isel.gomoku.domain.exception.GomokuGameException
 import kotlin.reflect.full.primaryConstructor
 
 sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {

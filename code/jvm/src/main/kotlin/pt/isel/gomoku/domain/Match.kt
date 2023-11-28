@@ -1,8 +1,8 @@
-package pt.isel.gomoku.domain.game
+package pt.isel.gomoku.domain
 
-import pt.isel.gomoku.domain.game.board.Board
-import pt.isel.gomoku.domain.game.cell.Dot
-import pt.isel.gomoku.domain.game.exception.GomokuGameException
+import pt.isel.gomoku.domain.board.Board
+import pt.isel.gomoku.domain.cell.Dot
+import pt.isel.gomoku.domain.exception.GomokuGameException
 
 data class Match(
     val id: String,

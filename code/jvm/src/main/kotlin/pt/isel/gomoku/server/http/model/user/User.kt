@@ -1,4 +1,4 @@
-package pt.isel.gomoku.domain
+package pt.isel.gomoku.server.http.model.user
 
 data class User(
     val id: Int,

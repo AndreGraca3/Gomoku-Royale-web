@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer";
-import { AuthnContainer } from "../hooks/Auth/Auth";
+import { AuthnStatusProvider } from "../hooks/Auth/AuthnStatus";
 
 export default function Layout() {
   return (
-    <AuthnContainer>
+    <AuthnStatusProvider>
       <div className="wrap min-h-screen flex flex-col">
         <Header />
         <div className="padding p-12" />
@@ -14,6 +14,6 @@ export default function Layout() {
         </main>
         <Footer />
       </div>
-    </AuthnContainer>
+    </AuthnStatusProvider>
   );
 }

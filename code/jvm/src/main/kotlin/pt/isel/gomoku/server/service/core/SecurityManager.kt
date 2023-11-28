@@ -1,12 +1,13 @@
-package pt.isel.gomoku.domain
+package pt.isel.gomoku.server.service.core
 
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.isel.gomoku.server.http.model.user.Token
 import java.security.SecureRandom
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
 
-class UserDomain(
+class SecurityManager(
     val tokenTtl: Duration,
     private val tokenSizeInBytes: Int,
     private val passwordEncoder: PasswordEncoder

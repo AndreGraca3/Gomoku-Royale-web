@@ -1,6 +1,6 @@
 package pt.isel.gomoku.server.repository.interfaces
 
-import pt.isel.gomoku.domain.game.Match
+import pt.isel.gomoku.domain.Match
 import pt.isel.gomoku.server.http.model.match.MatchIdState
 
 interface MatchRepository {

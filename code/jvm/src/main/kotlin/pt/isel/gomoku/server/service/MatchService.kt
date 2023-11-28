@@ -1,14 +1,14 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.domain.game.Match
-import pt.isel.gomoku.domain.game.MatchState
-import pt.isel.gomoku.domain.game.Variant
-import pt.isel.gomoku.domain.game.board.BoardDraw
-import pt.isel.gomoku.domain.game.board.BoardWinner
-import pt.isel.gomoku.domain.game.cell.Dot
-import pt.isel.gomoku.domain.game.cell.Stone
-import pt.isel.gomoku.domain.game.cell.serialize
+import pt.isel.gomoku.domain.Match
+import pt.isel.gomoku.domain.MatchState
+import pt.isel.gomoku.domain.Variant
+import pt.isel.gomoku.domain.board.BoardDraw
+import pt.isel.gomoku.domain.board.BoardWinner
+import pt.isel.gomoku.domain.cell.Dot
+import pt.isel.gomoku.domain.cell.Stone
+import pt.isel.gomoku.domain.cell.serialize
 import pt.isel.gomoku.server.http.model.match.MatchCreationOutput
 import pt.isel.gomoku.server.http.model.match.PlayOutput
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager

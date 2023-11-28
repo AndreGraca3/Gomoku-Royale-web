@@ -1,7 +1,8 @@
 package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
-import pt.isel.gomoku.domain.stats.MatchesStats
+import pt.isel.gomoku.server.http.model.stats.MatchesStats
+import pt.isel.gomoku.server.http.model.stats.Rank
 import pt.isel.gomoku.server.http.model.stats.RawWinStats
 import pt.isel.gomoku.server.http.model.stats.UserRank
 import pt.isel.gomoku.server.repository.interfaces.StatsRepository
@@ -28,5 +29,9 @@ class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
             .bind("userId", userId)
             .mapTo(MatchesStats::class.java)
             .one()
+    }
+
+    override fun getUserRank(userId: Int): Rank {
+        TODO("Not yet implemented")
     }
 }

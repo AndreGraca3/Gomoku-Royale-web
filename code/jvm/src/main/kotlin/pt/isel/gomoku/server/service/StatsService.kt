@@ -1,8 +1,8 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.domain.stats.UserStats
-import pt.isel.gomoku.domain.stats.WinStats
+import pt.isel.gomoku.server.http.model.stats.UserStats
+import pt.isel.gomoku.server.http.model.stats.WinStats
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 
 @Component
@@ -18,6 +18,7 @@ class StatsService(private val trManager: TransactionManager) {
         val totalWins = rawWinStats.winsAsBlack + rawWinStats.winsAsWhite
 
         UserStats(
+            it.statsRepository.getUserRank(userId),
             WinStats(
                 totalWins,
                 rawWinStats.winsAsBlack,

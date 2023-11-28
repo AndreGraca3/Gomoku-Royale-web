@@ -1,9 +1,9 @@
-package pt.isel.gomoku.domain.game
+package pt.isel.gomoku.domain
 
-import pt.isel.gomoku.domain.game.board.Board
-import pt.isel.gomoku.domain.game.board.FreeStyleBoard
-import pt.isel.gomoku.domain.game.exception.GomokuGameException
-import pt.isel.gomoku.domain.game.exception.requireOrThrow
+import pt.isel.gomoku.domain.board.Board
+import pt.isel.gomoku.domain.board.FreeStyleBoard
+import pt.isel.gomoku.domain.exception.GomokuGameException
+import pt.isel.gomoku.domain.exception.requireOrThrow
 
 enum class Variant {
 

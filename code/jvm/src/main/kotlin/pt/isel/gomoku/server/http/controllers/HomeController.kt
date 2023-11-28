@@ -1,6 +1,7 @@
 package pt.isel.gomoku.server.http.controllers
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.gomoku.server.http.model.siren.SirenEntity

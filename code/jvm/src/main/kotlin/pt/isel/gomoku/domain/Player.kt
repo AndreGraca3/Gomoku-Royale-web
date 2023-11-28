@@ -1,4 +1,4 @@
-package pt.isel.gomoku.domain.game
+package pt.isel.gomoku.domain
 
 enum class Player(val symbol: Char) {
     BLACK('B'),
