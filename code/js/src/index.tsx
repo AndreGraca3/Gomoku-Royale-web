@@ -7,7 +7,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-  },
+  }
 ]);
 
 const root = createRoot(document.getElementById("container"));
