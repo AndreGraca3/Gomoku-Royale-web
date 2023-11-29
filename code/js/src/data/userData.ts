@@ -5,7 +5,7 @@ async function login(email: string, password: string): Promise<void> {
   return await fetchReq("/users/token", "PUT", { email, password });
 }
 
-async function getUserHome(): Promise<UserInfo> {
+async function getUserHome(): Promise<any> {
   return await fetchReq("/users/me");
 }
 

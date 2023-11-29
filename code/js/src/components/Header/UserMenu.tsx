@@ -3,6 +3,7 @@ import Avatar from "../Avatar";
 import { useLoggedIn } from "../../hooks/Auth/AuthnStatus";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import userData from "../../data/userData";
 
 const UserMenuLinks = ({ loggedIn }) => {
   const userLinks = loggedIn
@@ -55,11 +56,10 @@ export default function UserMenu() {
 
   useEffect(() => {
     if (loggedIn) {
-      fetch("/api/user/me")
-        .then((res) => res.json())
-        .then((res) => {
-          setAvatar(res.avatarUrl);
-        });
+      userData.getUserHome().then((res) => {
+        console.log("Got user home from UserMenu");
+        setAvatar(res.properties.avatarUrl);
+      });
     }
   }, [loggedIn]);
 

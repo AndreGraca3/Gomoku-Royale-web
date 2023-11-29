@@ -28,8 +28,7 @@ export async function fetchReq(
   const rsp = await fetch(BASE_URL + path, options);
   const content = await rsp.json();
 
-  if (!rsp.ok)
-    console.log("Error: ", content.error ?? content.message ?? "Unknown error");
+  if (!rsp.ok) throw content;
 
   return content;
 }

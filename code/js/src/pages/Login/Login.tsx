@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useCurrentUser, useSetUser } from "../../hooks/Auth/Auth";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
+import { useLogin } from "../../hooks/Auth/AuthnStatus";
 
 export function Login() {
   const [inputs, setInputs] = useState({
@@ -13,9 +13,9 @@ export function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(undefined);
   const [redirect, setRedirect] = useState(undefined);
-  const setUser = useSetUser();
-  const user = useCurrentUser();
+  const setLoggedIn = useLogin();
   const location = useLocation();
+
   if (redirect) {
     return (
       <Navigate
@@ -38,10 +38,11 @@ export function Login() {
     const password = inputs.password;
     userData
       .login(email, password)
-      .then((res) => {
+      .then(() => {
         setIsSubmitting(false);
+        setLoggedIn(true);
         userData.getUserHome().then((res) => {
-          setUser({ name: res.name, avatarUrl: res.avatarUrl });
+          
         });
         localStorage.setItem("loggedIn", "true");
         console.log("Logged in!");
@@ -49,7 +50,7 @@ export function Login() {
       })
       .catch((error) => {
         setIsSubmitting(false);
-        setError(error.message);
+        setError(error.detail);
       });
   }
 
