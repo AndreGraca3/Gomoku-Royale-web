@@ -6,7 +6,7 @@ object StatsStatements {
     """
 
     const val GET_TOP_RANKS = """
-        SELECT id, u.name as userName, r.name as rankName, r.icon_url as rankImage
+        SELECT id, u.name as userName, r.name as rankName, r.icon_url as iconUrl
         FROM "user" u
         INNER JOIN rank r on u.rank = r.name
         ORDER BY u.mmr DESC

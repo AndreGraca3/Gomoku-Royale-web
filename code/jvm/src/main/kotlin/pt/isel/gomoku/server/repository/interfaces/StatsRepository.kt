@@ -8,7 +8,6 @@ import pt.isel.gomoku.server.http.model.stats.UserRank
 interface StatsRepository {
     fun createStatsEntry(userId: Int)
 
-    fun getTopRanks(limit: Int?): List<UserStats>
     fun getTopRanks(limit: Int?): List<UserRank>
 
     fun getScoreStatsByUser(userId: Int): RawWinStats

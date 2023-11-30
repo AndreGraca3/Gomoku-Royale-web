@@ -5,6 +5,7 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import pt.isel.gomoku.server.repository.jdbi.mappers.MatchMapper
 import pt.isel.gomoku.server.repository.jdbi.mappers.MatchStateMapper
+import pt.isel.gomoku.server.repository.jdbi.mappers.RankMapper
 import pt.isel.gomoku.server.repository.jdbi.mappers.VariantMapper
 
 fun Jdbi.configureWithAppRequirements(): Jdbi {
@@ -14,4 +15,5 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
         .registerColumnMapper(VariantMapper())
         .registerColumnMapper(MatchStateMapper())
         .registerRowMapper(MatchMapper())
+        .registerRowMapper(RankMapper())
 }
