@@ -1,9 +1,9 @@
 drop table if exists board;
 drop table if exists match;
 drop table if exists token;
+drop table if exists stats;
 drop table if exists "user";
 drop table if exists rank;
-drop table if exists stats;
 
 create table if not exists rank
 (
@@ -16,13 +16,12 @@ create table if not exists "user"
 (
     id         int generated always as identity primary key,
     name       varchar(20),
-    email      varchar(200) unique                not null,
+    email      varchar(200) unique not null,
     password   varchar(30),
-    role       varchar(5)                         not null check ( role in ('user', 'admin') ) default 'user',
-    mmr        int                                                                             default 0 not null check ( mmr >= 0 ),
+    role       varchar(5)          not null check ( role in ('user', 'admin') ) default 'user',
+    mmr        int                                                              default 0 not null check ( mmr >= 0 ),
     avatar_url TEXT,
-    created_at timestamp                          not null                                     default now(),
-    rank       varchar(20) references rank (name) not null                                     default 'Bronze'
+    created_at timestamp           not null                                     default now()
 );
 
 create table if not exists token
@@ -55,10 +54,11 @@ create table if not exists board
 
 create table if not exists stats
 (
-    user_id       int references "user" (id) primary key,
-    matches_as_black int default 0,
-    wins_as_black int default 0,
-    matches_as_white int default 0,
-    wins_as_white int default 0,
-    draws         int default 0
+    user_id          int references "user" (id) primary key,
+    rank             varchar(20) references rank (name) not null default 'Bronze',
+    matches_as_black int                                         default 0,
+    wins_as_black    int                                         default 0,
+    matches_as_white int                                         default 0,
+    wins_as_white    int                                         default 0,
+    draws            int                                         default 0
 );

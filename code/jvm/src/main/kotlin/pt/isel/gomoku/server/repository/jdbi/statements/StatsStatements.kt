@@ -8,7 +8,8 @@ object StatsStatements {
     const val GET_TOP_RANKS = """
         SELECT id, u.name as userName, r.name as rankName, r.icon_url as iconUrl
         FROM "user" u
-        INNER JOIN rank r on u.rank = r.name
+        INNER JOIN stats s on u.id = s.user_id
+        INNER JOIN rank r on s.rank = r.name
         ORDER BY u.mmr DESC
         LIMIT :limit
     """

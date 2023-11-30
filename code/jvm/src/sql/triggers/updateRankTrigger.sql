@@ -16,7 +16,7 @@ begin
         where new.mmr >= r.min_mmr
         order by r.min_mmr DESC;
 
-        update "user" set rank = newRank where id = new.id;
+        update stats set rank = newRank where user_id = new.id;
     end if;
 
     return null;

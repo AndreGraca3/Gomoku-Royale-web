@@ -13,10 +13,10 @@ VALUES ('Bronze', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-
        ('Champion', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-16.png', 250),
        ('Grand Champion', 'https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank19.png', 300);
 
-INSERT INTO "user" (name, email, password, role, mmr, avatar_url, created_at, rank)
-VALUES ('Daniel', 'daniel@gmail.com', 'password123', 'user', 120, 'daniel_avatar_url', NOW(), 'Bronze'),
-       ('Diogo', 'diogo@gmail.com', 'password123', 'user', 80, 'diogo_avatar_url', NOW(), 'Silver'),
-       ('Andre', 'andre@gmail.com', 'password', 'admin', 210, 'andre_avatar_url', NOW(), 'Grand Champion');
+INSERT INTO "user" (name, email, password, role, mmr, avatar_url, created_at)
+VALUES ('Daniel', 'daniel@gmail.com', 'password123', 'user', 120, 'daniel_avatar_url', NOW()),
+       ('Diogo', 'diogo@gmail.com', 'password123', 'user', 210, 'diogo_avatar_url', NOW()),
+       ('Andre', 'andre@gmail.com', 'password', 'admin', 80, 'andre_avatar_url', NOW());
 
 INSERT INTO token (token_value, created_at, last_used, user_id)
 VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
