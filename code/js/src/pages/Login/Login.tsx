@@ -83,7 +83,7 @@ export function Login() {
         </div>
       </form>
       <ScaledButton
-        onClick={() => setRedirect("/singup")}
+        onClick={() => setRedirect("/signup")}
         text="Sign Up"
         color="green"
       />
