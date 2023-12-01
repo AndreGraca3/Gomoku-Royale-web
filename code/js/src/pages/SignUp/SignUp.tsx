@@ -24,8 +24,6 @@ export function SignUp() {
     setError(undefined);
   };
 
-  // ... (previous code)
-
 const selectImage = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
       const input = document.createElement("input");

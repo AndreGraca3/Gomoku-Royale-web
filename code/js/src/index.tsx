@@ -6,6 +6,7 @@ import Layout from "./layouts/Layout";
 import { Login } from "./pages/Login/Login";
 import Logout from "./pages/Login/Logout";
 import { SignUp } from "./pages/SignUp/SignUp";
+import Leaderboard from "./pages/Leaderboard/Leaderboard";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        path: "top",
+        element: <Leaderboard/>,
       }
     ],
   },
