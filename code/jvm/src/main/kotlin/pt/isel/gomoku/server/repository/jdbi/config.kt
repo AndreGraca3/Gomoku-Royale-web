@@ -16,4 +16,5 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
         .registerColumnMapper(MatchStateMapper())
         .registerColumnMapper(RankMapper())
         .registerRowMapper(MatchMapper())
+        .registerRowMapper(RankMapper())
 }

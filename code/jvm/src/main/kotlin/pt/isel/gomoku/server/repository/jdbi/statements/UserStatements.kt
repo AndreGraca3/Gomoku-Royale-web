@@ -18,7 +18,12 @@ object UserStatements {
         "insert into \"user\" (name, email, password, avatar_url) values (:name, :email, :password, :avatar_url)"
 
     const val GET_USER_BY_ID =
-        "$GET_USER_INFO_BASE where id = :id"
+        """
+            select id, name, email, avatar_url, role, s.rank as rank 
+            from \"user\" u 
+            INNER JOIN stats s on u.id = s.user_id
+            where id = :id
+        """
 
     const val GET_USER_BY_NAME =
         "select id, name, email, avatar_url, role from \"user\" where name = :name"

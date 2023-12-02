@@ -9,6 +9,11 @@ import pt.isel.gomoku.server.repository.interfaces.StatsRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.StatsStatements
 
 class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
+    override fun createStatsEntry(userId: Int) {
+        handle.createUpdate(StatsStatements.CREATE_ENTRY)
+            .bind("userId", userId)
+            .execute()
+    }
 
     override fun getTopRanks(limit: Int?): List<UserItem> {
         return handle.createQuery(StatsStatements.GET_TOP_RANKS)

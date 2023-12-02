@@ -6,6 +6,8 @@ import Layout from "./layouts/Layout";
 import { Login } from "./pages/Login/Login";
 import Logout from "./pages/Login/Logout";
 import { fetchAPI } from "./utils/http";
+import { SignUp } from "./pages/SignUp/SignUp";
+import Leaderboard from "./pages/Leaderboard/Leaderboard";
 
 export const homeLinks = {
   loginUrl: "/api/token",
@@ -36,6 +38,14 @@ const router = createBrowserRouter([
         path: "logout",
         element: <Logout />,
       },
+      {
+        path: "signup",
+        element: <SignUp />,
+      },
+      {
+        path: "top",
+        element: <Leaderboard/>,
+      }
     ],
   },
 ]);

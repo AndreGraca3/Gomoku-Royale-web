@@ -21,14 +21,19 @@ export default function Header() {
   };
 
   const links: Array<PageLink> = [
+    //TODO - Change to variable limit
     {
-      to: "/about",
-      title: "About",
+      to: "/top?limit=10",
+      title: "Leaderboard"
     },
     {
       to: "/play",
       title: "Play",
     },
+    {
+      to: "/about",
+      title: "About",
+    }
   ];
 
   return (
