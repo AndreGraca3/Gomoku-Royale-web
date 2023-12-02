@@ -5,159 +5,118 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.server.http.Uris
-import pt.isel.gomoku.server.http.model.problem.UserProblem
-import pt.isel.gomoku.server.http.model.siren.*
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions.CREATE_TOKEN_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions.CREATE_USER_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions.DELETE_USER_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions.GET_USER_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.UserActions.UPDATE_USER_ACTION
-import pt.isel.gomoku.server.http.model.user.*
+import pt.isel.gomoku.server.http.model.*
+import pt.isel.gomoku.server.http.response.problem.UserProblem
+import pt.isel.gomoku.server.http.response.siren.Siren
+import pt.isel.gomoku.server.http.response.siren.actions.UserActions.getDeleteUserAction
+import pt.isel.gomoku.server.http.response.siren.actions.UserActions.getUpdateUserAction
+import pt.isel.gomoku.server.http.response.siren.SirenLink
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails
+import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.service.UserService
-import pt.isel.gomoku.server.service.error.user.UserCreationError
+import pt.isel.gomoku.server.service.errors.user.UserCreationError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
+import java.net.URI
 
 @RestController
-@RequestMapping(Uris.Users.BASE)
 class UserController(private val service: UserService) {
 
-    @PostMapping()
-    fun createUser(@RequestBody input: UserCreateInput): ResponseEntity<*> {
+    @PostMapping(Uris.Users.BASE)
+    fun createUser(@RequestBody input: UserCreationInputModel): ResponseEntity<*> {
         return when (val res = service.createUser(input.name, input.email, input.password, input.avatarUrl)) {
-            is Success -> ResponseEntity.status(201).body(
-                SirenEntity(
-                    clazz = listOf("user"),
-                    properties = res.value,
-                    entities = listOf(
-                        EmbeddedLink(
-                            rel = listOf("stats"),
-                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
-                        )
-                    ),
+            is Success -> UserIdOutputModel(id = res.value.id)
+                .toSirenObject(
                     links = listOf(
-                        SirenLink.self(href = "${Uris.Users.BASE}/${res.value.id}")
-                    ),
-                    actions = listOf(
-                        GET_USER_ACTION,
-                        UPDATE_USER_ACTION,
-                        DELETE_USER_ACTION,
-                        CREATE_TOKEN_ACTION
+                        SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.value.id))
                     )
-                )
-            )
+                ).toResponseEntity(201)
 
             is Failure -> when (res.value) {
-                is UserCreationError.InsecurePassword -> UserProblem.InsecurePassword(res.value).response()
-                is UserCreationError.EmailAlreadyInUse -> UserProblem.UserAlreadyExists(res.value).response()
-                is UserCreationError.InvalidEmail -> UserProblem.InvalidEmail(res.value).response()
+                is UserCreationError.InsecurePassword -> UserProblem.InsecurePassword(res.value).toResponseEntity()
+                is UserCreationError.EmailAlreadyInUse -> UserProblem.UserAlreadyExists(res.value).toResponseEntity()
+                is UserCreationError.InvalidEmail -> UserProblem.InvalidEmail(res.value).toResponseEntity()
             }
         }
     }
 
-    @GetMapping(Uris.Users.ME)
-    fun getUserHome(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        val res = service.getUserByToken(authenticatedUser.token)
-        return if (res != null)
-            SirenEntity(
-                clazz = listOf("user"),
-                properties = res.toUserDetails(),
-                entities = listOf(
-                    EmbeddedLink(
-                        rel = listOf("stats"),
-                        href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.id}"
-                    )
-                ),
-                links = listOf(
-                    SirenLink.self(
-                        href = "${Uris.Users.BASE}/${res.id}"
-                    )
-                ),
-                actions = listOf(
-                    UPDATE_USER_ACTION,
-                    DELETE_USER_ACTION,
-                )
-            ).let { ResponseEntity.status(200).body(it) }
-        else UserProblem.InvalidToken.response()
+    @GetMapping(Uris.Users.BASE)
+    fun getUsers(@RequestParam role: String?, @RequestParam page: Int?, @RequestParam limit: Int?): ResponseEntity<*> {
+        val usersInfo = service.getUsers(role, page, limit)
+        return usersInfo.toSirenObject(
+            links = Uris.Pagination.getPaginationSirenLinks(
+                uri = URI(Uris.Users.BASE),
+                page = usersInfo.page,
+                limit = usersInfo.limit,
+                pageSize = usersInfo.users.size,
+                collectionSize = usersInfo.collectionSize,
+            )
+        ).toResponseEntity(200)
     }
 
-    @GetMapping(Uris.ID)
+    @GetMapping(Uris.Users.AUTHENTICATED_USER)
+    fun getAuthenticatedUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
+        val res = service.getUserByTokenValue(authenticatedUser.token.tokenValue)
+        return if (res != null) UserInfoOutputModel(
+            id = res.user.id,
+            name = res.user.name,
+            avatarUrl = res.user.avatarUrl,
+            role = res.user.role,
+            rank = res.user.rank,
+            createdAt = res.user.createdAt,
+        ).toSirenObject(
+            links = listOf(
+                SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.user.id)),
+                SirenLink(href = Uris.Stats.buildStatsByUserIdUri(res.user.id), rel = listOf("stats"))
+            ),
+            actions = listOf(
+                getUpdateUserAction(res.user.id),
+                getDeleteUserAction(),
+            )
+        ).toResponseEntity(200)
+        else UserProblem.InvalidToken.toResponseEntity()
+    }
+
+    @GetMapping(Uris.Users.USER_BY_ID)
     fun getUserById(@PathVariable id: Int): ResponseEntity<*> {
         return when (val res = service.getUserById(id)) {
-            is Success -> ResponseEntity.status(200).body(
-                SirenEntity(
-                    clazz = listOf("user"),
-                    properties = res.value,
-                    entities = listOf(
-                        EmbeddedLink(
-                            rel = listOf("stats"),
-                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
-                        )
-                    ),
-                    links = listOf(
-                        SirenLink.self(
-                            href = Uris.Users.BASE + Uris.ID
-                        )
-                    ),
-                    actions = listOf(
-                        UPDATE_USER_ACTION,
-                        DELETE_USER_ACTION,
-                    )
+            is Success -> res.value.toOutputModel().toSirenObject(
+                links = listOf(
+                    SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.value.id)),
+                    SirenLink(href = Uris.Stats.buildStatsByUserIdUri(res.value.id), rel = listOf("stats"))
                 )
-            )
+            ).toResponseEntity(200)
 
-            is Failure -> UserProblem.UserByIdNotFound(res.value).response()
+            is Failure -> UserProblem.UserByIdNotFound(res.value).toResponseEntity()
         }
     }
 
-    @PatchMapping()
+    @PatchMapping(Uris.Users.BASE)
     fun updateUser(
         authenticatedUser: AuthenticatedUser,
-        @RequestBody userInput: UserUpdateInput,
+        @RequestBody userInput: UserUpdateInputModel,
     ): ResponseEntity<*> {
         return when (val res =
             service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
-            is Success -> ResponseEntity.status(200).body(
-                SirenEntity(
-                    clazz = listOf("user"),
-                    properties = res.value,
-                    entities = listOf(
-                        EmbeddedLink(
-                            rel = listOf("stats"),
-                            href = "${Uris.Stats.BASE}${Uris.Users.BASE}${res.value.id}"
-                        )
-                    ),
-                    links = listOf(
-                        SirenLink.self(href = "${Uris.Users.BASE}/${res.value.id}")
-                    ),
-                    actions = listOf(
-                        GET_USER_ACTION,
-                        DELETE_USER_ACTION,
-                        CREATE_TOKEN_ACTION
-                    )
+            is Success -> Siren(
+                properties = null,
+                links = listOf(
+                    SirenLink.self(href = Uris.Users.buildUuserByIdUri(authenticatedUser.user.id)),
+                    SirenLink(href = Uris.Stats.buildStatsByUserIdUri(authenticatedUser.user.id), rel = listOf("stats"))
+                ),
+                actions = listOf(
+                    getDeleteUserAction(),
                 )
-            )
+            ).toResponseEntity(200)
 
-            is Failure -> UserProblem.InvalidValues(res.value).response()
+            is Failure -> UserProblem.InvalidValues(res.value).toResponseEntity()
         }
     }
 
-    @DeleteMapping()
+    @DeleteMapping(Uris.Users.BASE)
     fun deleteUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        return when (val res = service.deleteUser(authenticatedUser.user.id)) {
-            is Success -> ResponseEntity.status(200).body(
-                SirenEntity(
-                    clazz = listOf("user"),
-                    properties = null,
-                    actions = listOf(
-                        CREATE_USER_ACTION
-                    )
-                )
-            )
-
-            is Failure -> UserProblem.UserByIdNotFound(res.value).response()
-        }
+        service.deleteUser(authenticatedUser.user.id)
+        return ResponseEntity.status(200).body(null)
     }
 
     @PutMapping(Uris.Users.TOKEN)
@@ -174,31 +133,10 @@ class UserController(private val service: UserService) {
                         maxAge = 3600
                     }
                 )
-                ResponseEntity.status(201).body(
-                    SirenEntity(
-                        clazz = listOf("user"),
-                        properties = null,
-                        entities = listOf(
-                            EmbeddedLink(
-                                rel = listOf("stats"),
-                                href = "${Uris.Stats.BASE}${Uris.Users.BASE}/${res.value.userId}"
-                            )
-                        ),
-                        links = listOf(
-                            SirenLink.self(
-                                href = "${Uris.Users.BASE}/${res.value.userId}"
-                            )
-                        ),
-                        actions = listOf(
-                            GET_USER_ACTION,
-                            UPDATE_USER_ACTION,
-                            DELETE_USER_ACTION
-                        )
-                    )
-                )
+                ResponseEntity.status(200).body(null)
             }
 
-            is Failure -> UserProblem.InvalidCredentials(res.value).response()
+            is Failure -> UserProblem.InvalidCredentials(res.value).toResponseEntity()
         }
     }
 }

@@ -9,6 +9,6 @@ import java.sql.SQLException
 class MatchStateMapper : ColumnMapper<MatchState> {
     @Throws(SQLException::class)
     override fun map(r: ResultSet, columnNumber: Int, ctx: StatementContext?): MatchState {
-        return MatchState.from(r.getString(columnNumber))
+        return MatchState.fromString(r.getString(columnNumber))
     }
 }

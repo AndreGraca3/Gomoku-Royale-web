@@ -16,7 +16,7 @@ export function AuthnContainer({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const user = localStorage.getItem("loggedIn");
     if (user) {
-      userData.getUserHome().then((res) => {
+      userData.getUserHome().then(({ properties: res }) => {
         setUser({ name: res.name, avatarUrl: res.avatarUrl });
       });
     }

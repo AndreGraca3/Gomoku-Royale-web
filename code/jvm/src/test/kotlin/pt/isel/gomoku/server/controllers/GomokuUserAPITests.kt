@@ -7,11 +7,8 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.event.annotation.AfterTestClass
-import org.springframework.test.context.event.annotation.AfterTestExecution
-import org.springframework.test.context.event.annotation.BeforeTestClass
 import org.springframework.test.web.reactive.server.WebTestClient
-import pt.isel.gomoku.server.http.model.user.*
+import pt.isel.gomoku.server.http.model.*
 
 
 @ActiveProfiles("test")
@@ -30,7 +27,7 @@ class GomokuUserAPITests {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         idDummy = client.post().uri("/users")
             .bodyValue(
-                UserCreateInput(
+                UserCreationInputModel(
                     "Dummy",
                     "dummy@gmail.com",
                     "dummy123",
@@ -38,16 +35,18 @@ class GomokuUserAPITests {
                 )
             ).exchange()
             .expectStatus().isCreated
-            .expectBody(UserIdOutput::class.java)
+            .expectBody(UserIdOutputModel::class.java)
             .returnResult().responseBody!!.id
 
         idToken = client.put().uri("/users/token")
-            .bodyValue(UserCredentialsInput(
+            .bodyValue(
+                UserCredentialsInput(
                 "dummy@gmail.com",
                 "dummy123"
-            )).exchange()
+            )
+            ).exchange()
             .expectStatus().isCreated
-            .expectBody(TokenCreateOutput::class.java)
+            .expectBody(TokenCreationOutput::class.java)
             .returnResult().responseBody!!.token
     }
 
@@ -67,14 +66,14 @@ class GomokuUserAPITests {
         val user = client.patch().uri("/users")
             .header("Authorization", "Bearer $idToken")
             .bodyValue(
-                UserUpdateInput(
+                UserUpdateInputModel(
                     "DummyChanged",
                     null
                 )
             )
             .exchange()
             .expectStatus().isOk
-            .expectBody(UserInfo::class.java)
+            .expectBody(UserInfoOutputModel::class.java)
     }
 
     @Test
@@ -83,7 +82,7 @@ class GomokuUserAPITests {
 
         val userInternal = client.post().uri("/users")
             .bodyValue(
-                UserCreateInput(
+                UserCreationInputModel(
                     "Dummy1",
                     "dummy1@gmail.com",
                     "dummy123",
@@ -92,15 +91,17 @@ class GomokuUserAPITests {
             )
             .exchange()
             .expectStatus().isCreated
-            .expectBody(UserIdOutput::class.java)
+            .expectBody(UserIdOutputModel::class.java)
 
         val idTokenInternal = client.put().uri("/users/token")
-            .bodyValue(UserCredentialsInput(
+            .bodyValue(
+                UserCredentialsInput(
                 "dummy1@gmail.com",
                 "dummy123"
-            )).exchange()
+            )
+            ).exchange()
             .expectStatus().isCreated
-            .expectBody(TokenCreateOutput::class.java)
+            .expectBody(TokenCreationOutput::class.java)
             .returnResult().responseBody!!.token
 
         client.delete().uri("/users")
@@ -116,7 +117,7 @@ class GomokuUserAPITests {
 
         client.post().uri("/users")
             .bodyValue(
-                UserCreateInput(
+                UserCreationInputModel(
                     "Dummy",
                     "invalid_email",
                     "dummy123",
@@ -134,7 +135,7 @@ class GomokuUserAPITests {
             .header("Authorization", "Bearer $idToken"
             ).exchange()
             .expectStatus().isOk
-            .expectBody(UserInfo::class.java)
+            .expectBody(UserInfoOutputModel::class.java)
     }
 
     @Test
@@ -145,6 +146,6 @@ class GomokuUserAPITests {
             .header("Authorization", "Bearer $idToken"
             ).exchange()
             .expectStatus().isNotFound
-            .expectBody(UserInfo::class.java)
+            .expectBody(UserInfoOutputModel::class.java)
     }
 }

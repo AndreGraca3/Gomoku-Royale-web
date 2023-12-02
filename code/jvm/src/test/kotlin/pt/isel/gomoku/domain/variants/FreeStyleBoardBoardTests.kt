@@ -2,12 +2,12 @@ package pt.isel.gomoku.domain.variants
 
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import pt.isel.gomoku.domain.Player
-import pt.isel.gomoku.domain.board.FreeStyleBoard
-import pt.isel.gomoku.domain.board.BoardWinner
-import pt.isel.gomoku.domain.cell.Dot
-import pt.isel.gomoku.domain.board.print
-import pt.isel.gomoku.domain.cell.Stone
+import pt.isel.gomoku.domain.game.Player
+import pt.isel.gomoku.domain.game.board.FreeStyleBoard
+import pt.isel.gomoku.domain.game.board.BoardWinner
+import pt.isel.gomoku.domain.game.cell.Dot
+import pt.isel.gomoku.domain.game.board.print
+import pt.isel.gomoku.domain.game.cell.Stone
 
 class FreeStyleBoardBoardTests {
 

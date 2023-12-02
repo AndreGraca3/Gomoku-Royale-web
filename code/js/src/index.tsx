@@ -5,6 +5,15 @@ import Home from "./pages/Home/Home";
 import Layout from "./layouts/Layout";
 import { Login } from "./pages/Login/Login";
 import Logout from "./pages/Login/Logout";
+import { fetchAPI } from "./utils/http";
+
+export const homeLinks = {
+  loginUrl: "/api/token",
+};
+
+fetchAPI("").then((res) => {
+  console.log(res);
+});
 
 const router = createBrowserRouter([
   {
@@ -26,7 +35,7 @@ const router = createBrowserRouter([
       {
         path: "logout",
         element: <Logout />,
-      }
+      },
     ],
   },
 ]);

@@ -1,9 +1,9 @@
 package pt.isel.gomoku.domain
 
-import pt.isel.gomoku.domain.board.Board
-import pt.isel.gomoku.domain.board.FreeStyleBoard
-import pt.isel.gomoku.domain.exception.GomokuGameException
-import pt.isel.gomoku.domain.exception.requireOrThrow
+import pt.isel.gomoku.domain.game.board.Board
+import pt.isel.gomoku.domain.game.board.FreeStyleBoard
+import pt.isel.gomoku.domain.game.exception.GomokuGameException
+import pt.isel.gomoku.domain.game.exception.requireOrThrow
 
 enum class Variant {
 
@@ -18,11 +18,13 @@ enum class Variant {
     // Add more variants here
 
     companion object {
-        fun from(variant: String): Variant = values().find { it.name.equals(variant, true) }
+        fun fromString(variant: String): Variant = values().find { it.name.equals(variant, true) }
             ?: throw GomokuGameException.InvalidVariant(variant)
 
         fun getRandom(): Variant = values().random()
     }
+
+    override fun toString() = name
 
     abstract val sizes: List<Int>
     abstract fun createBoard(size: Int?): Board

@@ -6,11 +6,11 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
-import pt.isel.gomoku.server.http.model.problem.Problem
-import pt.isel.gomoku.server.http.model.problem.UserProblem
-import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
+import pt.isel.gomoku.server.http.response.problem.Problem
+import pt.isel.gomoku.server.http.response.problem.UserProblem
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_AUTHORIZATION_COOKIE
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails.Companion.NAME_WWW_AUTHENTICATE_HEADER
+import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 
 @Component
 class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) : HandlerInterceptor {
@@ -27,7 +27,7 @@ class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) : Han
             return if (user == null) {
                 response.status = 401
                 response.addHeader(NAME_WWW_AUTHENTICATE_HEADER, "cookie")
-                response.contentType = Problem.MEDIA_TYPE.toString()
+                response.contentType = Problem.MEDIA_TYPE
                 response.writer.write(objectMapper.writeValueAsString(UserProblem.InvalidToken))
                 false
             } else {

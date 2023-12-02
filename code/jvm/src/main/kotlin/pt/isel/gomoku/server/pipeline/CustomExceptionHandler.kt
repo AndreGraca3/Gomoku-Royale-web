@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
-import pt.isel.gomoku.domain.exception.GomokuGameException
-import pt.isel.gomoku.server.http.model.problem.BadRequestProblem
-import pt.isel.gomoku.server.http.model.problem.MatchProblem
-import pt.isel.gomoku.server.service.error.match.MatchCreationError
-import pt.isel.gomoku.server.service.error.match.MatchPlayError
+import pt.isel.gomoku.domain.game.exception.GomokuGameException
+import pt.isel.gomoku.server.http.response.problem.BadRequestProblem
+import pt.isel.gomoku.server.http.response.problem.MatchProblem
+import pt.isel.gomoku.server.http.response.problem.Problem
+import pt.isel.gomoku.server.http.response.problem.ServerProblem
+import pt.isel.gomoku.server.service.errors.match.MatchCreationError
+import pt.isel.gomoku.server.service.errors.match.MatchPlayError
 
 @RestControllerAdvice
 class CustomExceptionHandler : ResponseEntityExceptionHandler() {
@@ -26,7 +28,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any> {
         log.info("Handling MethodArgumentNotValidException: {}", ex.message)
-        return BadRequestProblem.InvalidMethod().response()
+        return BadRequestProblem.InvalidMethod().toResponseEntity()
     }
 
     override fun handleHttpMessageNotReadable(
@@ -36,7 +38,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any> {
         log.info("Handling HttpMessageNotReadableException: {}", ex.message)
-        return BadRequestProblem.InvalidRequestContent().response()
+        return BadRequestProblem.InvalidRequestContent().toResponseEntity()
     }
 
     @ExceptionHandler(GomokuGameException::class)
@@ -46,21 +48,27 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
             is GomokuGameException.InvalidPlay -> MatchProblem.InvalidPlay(
                 ex.message,
                 MatchPlayError.InvalidPlay(ex.dst)
-            ).response()
+            ).toResponseEntity()
 
             is GomokuGameException.InvalidBoardSize -> MatchProblem.InvalidBoardSize(
                 MatchCreationError.InvalidBoardSize(ex.variant, ex.size, ex.sizes)
-            ).response()
+            ).toResponseEntity()
 
             is GomokuGameException.InvalidVariant -> MatchProblem.InvalidVariant(
                 MatchCreationError.InvalidVariant(ex.variant)
-            ).response()
+            ).toResponseEntity()
 
             is GomokuGameException.NotEnoughPlayers -> MatchProblem.NotEnoughPlayers(
                 MatchPlayError.NotStarted(ex.matchId)
-            ).response()
+            ).toResponseEntity()
         }
     }
+
+    /*@ExceptionHandler(Exception::class)
+    fun handleException(ex: Exception): ResponseEntity<Any> {
+        log.info("Handling Internal Exception: {}", ex.message)
+        return ServerProblem.InternalServerError().toResponseEntity()
+    }*/
 
     companion object {
         private val log = LoggerFactory.getLogger(CustomExceptionHandler::class.java)

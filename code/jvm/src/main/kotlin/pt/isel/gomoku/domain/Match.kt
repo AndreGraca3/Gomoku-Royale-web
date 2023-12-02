@@ -1,8 +1,9 @@
 package pt.isel.gomoku.domain
 
-import pt.isel.gomoku.domain.board.Board
-import pt.isel.gomoku.domain.cell.Dot
-import pt.isel.gomoku.domain.exception.GomokuGameException
+import pt.isel.gomoku.domain.game.Player
+import pt.isel.gomoku.domain.game.board.Board
+import pt.isel.gomoku.domain.game.cell.Dot
+import pt.isel.gomoku.domain.game.exception.GomokuGameException
 
 data class Match(
     val id: String,
@@ -18,7 +19,7 @@ data class Match(
         return copy(board = board.play(dst, player))
     }
 
-    fun getPlayer(userId: Int) = if(blackId == userId) Player.BLACK else Player.WHITE
+    fun getPlayer(userId: Int) = if (blackId == userId) Player.BLACK else Player.WHITE
 }
 
 enum class MatchState {
@@ -27,6 +28,7 @@ enum class MatchState {
     FINISHED;
 
     companion object {
-        fun from(state: String): MatchState = valueOf(state)
+        fun fromString(state: String): MatchState = valueOf(state)
     }
+    override fun toString() = name
 }

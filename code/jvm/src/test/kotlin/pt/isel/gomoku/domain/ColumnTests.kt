@@ -2,8 +2,8 @@ package pt.isel.gomoku.domain
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import pt.isel.gomoku.domain.cell.Column
-import pt.isel.gomoku.domain.cell.toColumn
+import pt.isel.gomoku.domain.game.cell.Column
+import pt.isel.gomoku.domain.game.cell.toColumn
 
 class ColumnTests {
 

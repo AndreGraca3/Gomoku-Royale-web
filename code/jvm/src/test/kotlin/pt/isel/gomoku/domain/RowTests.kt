@@ -3,8 +3,8 @@ package pt.isel.gomoku.domain
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import pt.isel.gomoku.domain.cell.Row
-import pt.isel.gomoku.domain.cell.toRow
+import pt.isel.gomoku.domain.game.cell.Row
+import pt.isel.gomoku.domain.game.cell.toRow
 
 class RowTests {
 

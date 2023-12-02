@@ -13,6 +13,15 @@ export type UserInfo = {
   rank: string;
 };
 
+export type UserHome = {
+  id: number;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  role: string;
+  rank: string;
+};
+
 export type UserAvatar = {
   name: string;
   avatarUrl: string;

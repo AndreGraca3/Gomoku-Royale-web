@@ -3,7 +3,7 @@ package pt.isel.gomoku.server.repository.jdbi.statements
 object StatsStatements {
 
     const val GET_TOP_RANKS = """
-        SELECT id, u.name as userName, r.name as rankName, r.icon_url as rankImage
+        SELECT id, u.name as userName, r.name as rankName, r.rank_icon_url as rankImage
         FROM "user" u
         INNER JOIN rank r on u.rank = r.name
         ORDER BY u.mmr DESC
