@@ -68,7 +68,7 @@ const selectImage = async (): Promise<string> => {
       //setLoggedIn(true);
       //localStorage.setItem("loggedIn", "true");
       console.log("Signed up!");
-      // setRedirect("/me"); // Redirect to the desired page after signup
+      setRedirect("/login"); // Redirect to the desired page after signup
     } catch (error) {
       setIsSubmitting(false);
       setError(error.detail);
