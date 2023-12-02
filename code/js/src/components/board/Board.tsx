@@ -1,5 +1,5 @@
 import Cell from "./Cell";
-import {BoardType, getStoneOrNull} from "../../domain/board";
+import {BoardType, getStoneOrNull} from '../../types/board';
 import {createContext, useContext, useState} from "react";
 import * as React from "react";
 
