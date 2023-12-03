@@ -31,7 +31,7 @@ class MatchService(private val trManager: TransactionManager) {
         return trManager.run {
             when (it.matchRepository.getMatchStatusFromUser(userId)?.state) {
                 MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
-                MatchState.ONGOING -> return@run failure(MatchCreationError.AlreadyInMatch(userId))
+                MatchState.ONGOING -> return@run failure(MatchCreationError.UserAlreadyPlaying(userId))
                 else -> Unit
             }
 
@@ -54,7 +54,7 @@ class MatchService(private val trManager: TransactionManager) {
                                 whiteId = userId,
                                 state = MatchState.ONGOING.name
                             ),
-                            MatchState.ONGOING.name
+                            MatchState.ONGOING
                         )
                     )
                 }
@@ -70,7 +70,7 @@ class MatchService(private val trManager: TransactionManager) {
                         newBoard.size,
                         newBoard::class.java.simpleName
                     ),
-                    MatchState.SETUP.name
+                    MatchState.SETUP
                 )
             )
         }
@@ -78,32 +78,45 @@ class MatchService(private val trManager: TransactionManager) {
 
     fun joinPrivateMatch(id: String, userId: Int): Either<MatchError, MatchCreationOutputModel> {
         return trManager.run {
-            val matchStatus = it.matchRepository.getMatchStatusFromUser(userId)
-            when (matchStatus?.state) {
-                MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
-                MatchState.ONGOING -> return@run success(
-                    MatchCreationOutputModel(matchStatus.id, MatchState.ONGOING.name)
-                )
+            val currentMatchStatus = it.matchRepository.getMatchStatusFromUser(userId)
 
-                MatchState.FINISHED -> return@run failure(MatchJoiningError.FinishedMatch(id))
-                else -> Unit
+            when (currentMatchStatus?.state) {
+                MatchState.SETUP -> {
+                    if (currentMatchStatus.id == id) return@run success(
+                        MatchCreationOutputModel(currentMatchStatus.id, MatchState.SETUP)
+                    )
+                    return@run failure(MatchCreationError.AlreadyInQueue(userId))
+                }
+
+                MatchState.ONGOING, MatchState.FINISHED ->
+                    return@run success(
+                        MatchCreationOutputModel(currentMatchStatus.id, MatchState.ONGOING)
+                    )
+
+                null -> Unit // user is not in a match
             }
 
+            // if it's not in a match, then join the private match
             val match = it.matchRepository.getMatchById(id)
                 ?: return@run failure(MatchFetchingError.MatchByIdNotFound(id))
 
-            if (!match.isPrivate) return@run failure(MatchJoiningError.MatchIsNotPrivate(id))
+            when (match.state) {
+                MatchState.SETUP -> {
+                    if (!match.isPrivate) return@run failure(MatchJoiningError.MatchIsNotPrivate(id))
+                    return@run success(
+                        MatchCreationOutputModel(
+                            it.matchRepository.updateMatch(
+                                id,
+                                whiteId = userId,
+                                state = MatchState.ONGOING.toString()
+                            ),
+                            MatchState.ONGOING
+                        )
+                    )
+                }
 
-            success(
-                MatchCreationOutputModel(
-                    it.matchRepository.updateMatch(
-                        id,
-                        whiteId = userId,
-                        state = MatchState.ONGOING.name
-                    ),
-                    MatchState.ONGOING.name
-                )
-            )
+                MatchState.ONGOING, MatchState.FINISHED -> return@run failure(MatchJoiningError.AlreadyStarted(id))
+            }
         }
     }
 
@@ -119,16 +132,13 @@ class MatchService(private val trManager: TransactionManager) {
         }
     }
 
-    fun getMatchesFromUser(idUser: Int): MatchesFromUserOutputModel {
-        return trManager.run {
-            it.matchRepository.getMatchesFromUser(idUser).map {
-                MatchItemOutputModel(
-                    it.id,
-                    it.isPrivate,
-                    it.variant.toString(),
-                    it.board.size
-                )
-            }.let { MatchesFromUserOutputModel(it) }
+    fun getMatchesFromUser(idUser: Int, skip: Int, limit: Int): MatchesFromUserOutputModel {
+        return trManager.run { transaction ->
+            val matchesCollection = transaction.matchRepository.getMatchesFromUser(idUser, skip, limit)
+            MatchesFromUserOutputModel(
+                matches = matchesCollection.results.map { it.toOutputModel() },
+                total = matchesCollection.total,
+            )
         }
     }
 

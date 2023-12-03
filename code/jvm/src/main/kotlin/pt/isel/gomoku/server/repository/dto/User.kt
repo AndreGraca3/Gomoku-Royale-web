@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.repository.dto
 
+import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.Rank
 import pt.isel.gomoku.domain.User
 import java.time.LocalDateTime
@@ -9,7 +10,16 @@ data class UserInfo(
     val name: String,
     val avatarUrl: String?,
     val role: String,
+    val createdAt: LocalDateTime,
     val rank: Rank,
+)
+
+data class UserDetails(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val avatarUrl: String?,
+    val role: String,
     val createdAt: LocalDateTime,
 )
 
@@ -17,19 +27,12 @@ data class UserItem(
     val id: Int,
     val name: String,
     val role: String,
-    val rank: Rank,
+    val count: Int? = null,
 )
 
 data class AuthenticatedUser(
     val user: User,
     val token: Token,
-)
-
-class Token(
-    val tokenValue: String,
-    val userId: Int,
-    val createdAt: LocalDateTime,
-    val lastUsed: LocalDateTime,
 )
 
 data class UserAndToken(

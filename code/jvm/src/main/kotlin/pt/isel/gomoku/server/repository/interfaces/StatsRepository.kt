@@ -1,14 +1,15 @@
 package pt.isel.gomoku.server.repository.interfaces
 
-import pt.isel.gomoku.server.http.model.stats.MatchesStats
-import pt.isel.gomoku.server.http.model.stats.Rank
-import pt.isel.gomoku.server.http.model.stats.RawWinStats
-import pt.isel.gomoku.server.http.model.stats.UserRank
+import pt.isel.gomoku.domain.Rank
+import pt.isel.gomoku.server.repository.dto.MatchesStats
+import pt.isel.gomoku.server.repository.dto.PaginationResult
+import pt.isel.gomoku.server.repository.dto.RawWinStats
+import pt.isel.gomoku.server.repository.dto.UserItem
 
 interface StatsRepository {
     fun createStatsEntry(userId: Int)
 
-    fun getTopRanks(limit: Int?): List<UserItem>
+    fun getTopRanks(skip: Int, limit: Int): PaginationResult<UserItem>
 
     fun getScoreStatsByUser(userId: Int): RawWinStats
 

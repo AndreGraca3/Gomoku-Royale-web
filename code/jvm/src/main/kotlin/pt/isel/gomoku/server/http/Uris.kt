@@ -16,12 +16,12 @@ object Uris {
         const val AUTHENTICATED_USER = "$BASE/me"
         const val USER_BY_ID = "$BASE/{id}"
 
-        fun buildUuserByIdUri(id: Int) = UriTemplate(USER_BY_ID).expand(id)
+        fun buildUserByIdUri(id: Int) = UriTemplate(USER_BY_ID).expand(id)
     }
 
     object Matches {
         const val BASE = "$API_BASE/matches"
-        const val MATCH_BY_ID = "/$BASE/{id}"
+        const val MATCH_BY_ID = "$BASE/{id}"
 
         fun buildMatchByIdUri(id: String) = UriTemplate(MATCH_BY_ID).expand(id)
     }
@@ -29,44 +29,50 @@ object Uris {
     object Stats {
         const val BASE = "$API_BASE/stats"
         const val STATS_BY_USER_ID = "$BASE/users/{id}"
-        const val TOP = "$BASE/top"
+        const val TOP = "$BASE/users/top"
 
         fun buildStatsByUserIdUri(id: Int) = UriTemplate(STATS_BY_USER_ID).expand(id)
     }
 
     object Pagination {
-        private const val PAGINATION_QUERY = "?page={page}&limit={limit}"
+        private const val PAGINATION_QUERY = "?skip={skip}&limit={limit}"
+        const val MAX_LIMIT = 50
 
         fun getPaginationSirenLinks(
             uri: URI,
-            page: Int,
+            skip: Int,
             limit: Int,
-            pageSize: Int,
-            collectionSize: Int,
+            total: Int,
         ): List<SirenLink> {
-            val toReturn = mutableListOf(
-                SirenLink(listOf("self"), UriTemplate("${uri}$PAGINATION_QUERY").expand(page, limit)),
+            if (skip !in 0 until total) return listOf(
+                SirenLink(
+                    listOf("self"),
+                    UriTemplate("${uri}$PAGINATION_QUERY").expand(0, MAX_LIMIT)
+                ),
+            )
+            val links = mutableListOf(
+                SirenLink(listOf("self"), UriTemplate("${uri}$PAGINATION_QUERY").expand(skip, limit)),
             )
 
-            if (page > 0 && collectionSize > 0)
-                toReturn.add(
+            if (skip > 0)
+                links.add(
                     SirenLink(
                         listOf("prev"),
                         UriTemplate("${uri}$PAGINATION_QUERY")
-                            .expand(page - 1, limit)
+                            .expand(skip - 1, limit)
                     )
                 )
 
-            if (collectionSize > ((page + 1) * limit) && pageSize > 0)
-                toReturn.add(
+            if (total - 1 > skip)
+                links.add(
                     SirenLink(
                         listOf("next"),
                         UriTemplate("${uri}$PAGINATION_QUERY")
-                            .expand(page + 1, limit)
+                            .expand(skip + 1, limit)
                     )
                 )
 
-            return toReturn
+            return links
         }
     }
 }

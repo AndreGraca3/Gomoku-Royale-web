@@ -8,12 +8,12 @@ import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 @Component
 class StatsService(private val trManager: TransactionManager) {
 
-    fun getTopRanks(limit: Int?) = trManager.run {
-        it.statsRepository.getTopRanks(limit)
+    fun getTopRanks(skip: Int, limit: Int) = trManager.run {
+        it.statsRepository.getTopRanks(skip, limit)
     }
 
     fun getUserStats(userId: Int) = trManager.run {
-        TODO("Return either with possible errors")
+        // TODO: Return either with possible errors
         val rawWinStats = it.statsRepository.getScoreStatsByUser(userId)
         val matchStats = it.statsRepository.getMatchesStatsByUser(userId)
         val totalWins = rawWinStats.winsAsBlack + rawWinStats.winsAsWhite

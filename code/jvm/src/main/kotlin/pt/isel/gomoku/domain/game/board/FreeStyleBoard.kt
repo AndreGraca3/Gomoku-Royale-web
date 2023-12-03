@@ -13,17 +13,7 @@ class FreeStyleBoard(size: Int, stones: List<Stone> = emptyList(), turn: Player 
         const val PIECES_TO_WIN = 5
     }
 
-    override fun play(dst: Dot, player: Player): Board {
-        requireOrThrow(turn == player, GomokuGameException.InvalidPlay(dst) {
-            "It's not $player's turn."
-        })
-        requireOrThrow(isIdxInBoard(dst.row.index) && isIdxInBoard(dst.column.index),
-            GomokuGameException.InvalidPlay(dst) { "$dst is outside of board's limits." }
-        )
-        requireOrThrow(getStoneOrNull(dst) == null, GomokuGameException.InvalidPlay(dst) {
-            "$dst is already occupied."
-        })
-
+    override fun applyRules(dst: Dot, player: Player): Board {
         val m = Stone(player, dst)
         val newStones = stones + m
         return when {

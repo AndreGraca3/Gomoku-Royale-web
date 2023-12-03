@@ -2,6 +2,7 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
+import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
 import pt.isel.gomoku.server.repository.dto.*
 import pt.isel.gomoku.server.repository.interfaces.UserRepository
@@ -42,16 +43,16 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
             .singleOrNull()
     }
 
-    override fun getUsers(role: String?, paginationInputs: PaginationInputsWrapper): CollectionWrapper<UserItem> {
+    override fun getUsers(role: String?, skip: Int, limit: Int): PaginationResult<UserItem> {
         val users = handle.createQuery(UserStatements.GET_USERS)
             .bind("role", role)
-            .bind("skip", paginationInputs.skip)
-            .bind("limit", paginationInputs.limit)
+            .bind("skip", skip)
+            .bind("limit", limit)
             .mapTo(UserItem::class.java)
             .list()
 
-        return CollectionWrapper(
-            collectionSize = users.size,
+        return PaginationResult(
+            total = if (users.isEmpty()) 0 else users[0].count!!,
             results = users
         )
     }

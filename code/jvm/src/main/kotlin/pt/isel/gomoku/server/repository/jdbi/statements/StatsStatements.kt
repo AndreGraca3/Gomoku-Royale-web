@@ -6,12 +6,9 @@ object StatsStatements {
     """
 
     const val GET_TOP_RANKS = """
-        SELECT id, u.name as userName, r.name as rankName, r.icon_url as iconUrl
-        FROM "user" u
-        INNER JOIN stats s on u.id = s.user_id
-        INNER JOIN rank r on s.rank = r.name
+        ${UserStatements.GET_USER_ITEM_BASE}
         ORDER BY u.mmr DESC
-        LIMIT :limit
+        ${PaginationStatements.PAGINATION_SUFFIX}
     """
 
     const val GET_WINS_BY_USER = """

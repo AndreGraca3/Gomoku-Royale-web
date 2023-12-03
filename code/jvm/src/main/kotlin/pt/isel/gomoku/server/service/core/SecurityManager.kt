@@ -1,7 +1,7 @@
 package pt.isel.gomoku.server.service.core
 
 import org.springframework.security.crypto.password.PasswordEncoder
-import pt.isel.gomoku.server.repository.dto.Token
+import pt.isel.gomoku.domain.Token
 import java.security.SecureRandom
 import java.time.Duration
 import java.time.LocalDateTime

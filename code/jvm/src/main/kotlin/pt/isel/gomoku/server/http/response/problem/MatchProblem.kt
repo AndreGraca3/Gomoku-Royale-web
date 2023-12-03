@@ -54,7 +54,7 @@ sealed class MatchProblem(
         data
     )
 
-    class AlreadyInMatch(data: MatchCreationError.AlreadyInMatch) : MatchProblem(
+    class AlreadyInMatch(data: MatchCreationError.UserAlreadyPlaying) : MatchProblem(
         409,
         "already-in-match",
         "User already in match",
@@ -70,7 +70,15 @@ sealed class MatchProblem(
         data
     )
 
-    class MatchIsNotPrivate(data: MatchJoiningError.MatchIsNotPrivate) : MatchProblem(
+    class AlreadyStarted(data: MatchJoiningError.AlreadyStarted) : MatchProblem(
+        409,
+        "match-already-started",
+        "Match already started",
+        "Match with id ${data.matchId} already started",
+        data
+    )
+
+    class IsNotPrivate(data: MatchJoiningError.MatchIsNotPrivate) : MatchProblem(
         400,
         "match-is-not-private",
         "Match is not private",
@@ -98,7 +106,7 @@ sealed class MatchProblem(
         409,
         "match-finished",
         "Match already finished",
-        reason
+        reason,
     )
 
     class NotEnoughPlayers(data: MatchPlayError.NotStarted) : MatchProblem(

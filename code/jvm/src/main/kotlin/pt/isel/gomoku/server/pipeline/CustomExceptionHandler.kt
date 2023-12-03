@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -13,29 +14,35 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import pt.isel.gomoku.domain.game.exception.GomokuGameException
 import pt.isel.gomoku.server.http.response.problem.BadRequestProblem
 import pt.isel.gomoku.server.http.response.problem.MatchProblem
-import pt.isel.gomoku.server.http.response.problem.Problem
-import pt.isel.gomoku.server.http.response.problem.ServerProblem
 import pt.isel.gomoku.server.service.errors.match.MatchCreationError
 import pt.isel.gomoku.server.service.errors.match.MatchPlayError
 
 @RestControllerAdvice
 class CustomExceptionHandler : ResponseEntityExceptionHandler() {
 
+    override fun handleHttpRequestMethodNotSupported(
+        ex: HttpRequestMethodNotSupportedException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest,
+    ): ResponseEntity<Any>? {
+        return BadRequestProblem.InvalidMethod().toResponseEntity()
+    }
+
     override fun handleMethodArgumentNotValid(
         ex: MethodArgumentNotValidException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
-        log.info("Handling MethodArgumentNotValidException: {}", ex.message)
-        return BadRequestProblem.InvalidMethod().toResponseEntity()
+        return BadRequestProblem.InvalidRequestContent().toResponseEntity()
     }
 
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
         headers: HttpHeaders,
         status: HttpStatusCode,
-        request: WebRequest
+        request: WebRequest,
     ): ResponseEntity<Any> {
         log.info("Handling HttpMessageNotReadableException: {}", ex.message)
         return BadRequestProblem.InvalidRequestContent().toResponseEntity()
@@ -48,6 +55,15 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
             is GomokuGameException.InvalidPlay -> MatchProblem.InvalidPlay(
                 ex.message,
                 MatchPlayError.InvalidPlay(ex.dst)
+            ).toResponseEntity()
+
+            is GomokuGameException.InvalidTurn -> MatchProblem.InvalidTurn(
+                ex.message,
+                MatchPlayError.InvalidTurn(ex.turn)
+            ).toResponseEntity()
+
+            is GomokuGameException.AlreadyFinished -> MatchProblem.AlreadyFinished(
+                ex.message,
             ).toResponseEntity()
 
             is GomokuGameException.InvalidBoardSize -> MatchProblem.InvalidBoardSize(

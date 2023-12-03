@@ -8,7 +8,7 @@ sealed class MatchCreationError : MatchError() {
 
     class AlreadyInQueue(val playerId: Int) : MatchCreationError()
 
-    class AlreadyInMatch(val playerId: Int): MatchCreationError()
+    class UserAlreadyPlaying(val playerId: Int): MatchCreationError()
 
     class InvalidPrivateMatch(val size: Int?, val variant: String?) : MatchCreationError()
 }

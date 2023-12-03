@@ -1,7 +1,9 @@
 package pt.isel.gomoku.server.repository.interfaces
 
 import pt.isel.gomoku.domain.Match
+import pt.isel.gomoku.server.repository.dto.MatchItem
 import pt.isel.gomoku.server.repository.dto.MatchStatus
+import pt.isel.gomoku.server.repository.dto.PaginationResult
 
 interface MatchRepository {
 
@@ -13,7 +15,7 @@ interface MatchRepository {
         type: String
     ): String
 
-    fun getMatchesFromUser(userId: Int): List<Match>
+    fun getMatchesFromUser(userId: Int, skip: Int, limit: Int): PaginationResult<MatchItem>
 
     fun getMatchById(id: String): Match?
 

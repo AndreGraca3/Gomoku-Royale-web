@@ -5,13 +5,25 @@ object UserStatements {
     const val GET_USER_BASE = """
         select id, u.name, email, password, role, avatar_url, created_at, rank, icon_url
         from "user" u
-        join rank on u.rank = rank.name
+        join stats s on u.id = s.user_id
+        join rank r on s.rank = r.name
     """
 
     const val GET_USER_INFO_BASE = """
-        select id, u.name, email, avatar_url, role, rank, icon_url, created_at
+        select id, u.name, email, avatar_url, role, created_at, rank, icon_url
         from "user" u
-        join rank on u.rank = rank.name
+        join stats s on u.id = s.user_id
+        join rank r on s.rank = r.name
+    """
+
+    const val GET_USER_DETAILS_BASE = """
+        select id, name, email, avatar_url, role, created_at
+        from "user" u
+    """
+
+    const val GET_USER_ITEM_BASE = """
+        select id, name, role, ${PaginationStatements.PAGINATION_PREFIX}
+        from "user" u
     """
 
     const val CREATE_USER =
@@ -19,9 +31,7 @@ object UserStatements {
 
     const val GET_USER_BY_ID =
         """
-            select id, name, email, avatar_url, role, s.rank as rank 
-            from \"user\" u 
-            INNER JOIN stats s on u.id = s.user_id
+            $GET_USER_INFO_BASE
             where id = :id
         """
 
@@ -33,10 +43,9 @@ object UserStatements {
 
     const val GET_USERS =
         """
-        select id, u.name, role, rank, icon_url from "user" u join rank on u.rank = rank.name
+        $GET_USER_ITEM_BASE
         where role = coalesce(:role, role)
-        OFFSET :skip
-        LIMIT :limit
+        ${PaginationStatements.PAGINATION_SUFFIX}
         """
 
     const val UPDATE_USER =
@@ -57,7 +66,8 @@ object UserStatements {
                 select id, u.name, email, password, role, avatar_url, rank, icon_url, u.created_at as user_created_at,
                 t.token_value, t.created_at as token_created_at, t.last_used
                 from "user" u
-                join rank on u.rank = rank.name
+                join stats as s on u.id = s.user_id
+                join rank as r on s.rank = r.name
                 join token as t
                 on u.id = t.user_id
                 where token_value = :token_value

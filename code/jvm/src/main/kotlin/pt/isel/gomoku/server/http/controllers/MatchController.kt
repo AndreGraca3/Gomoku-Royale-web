@@ -5,8 +5,10 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.domain.MatchState
 import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.server.http.Uris
+import pt.isel.gomoku.server.http.Uris.Pagination.getPaginationSirenLinks
 import pt.isel.gomoku.server.http.model.MatchCreationInputModel
 import pt.isel.gomoku.server.http.model.MatchOutputModel
+import pt.isel.gomoku.server.http.model.PaginationInputs
 import pt.isel.gomoku.server.http.response.problem.MatchProblem
 import pt.isel.gomoku.server.http.response.siren.*
 import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getDeleteMatchAction
@@ -38,12 +40,12 @@ class MatchController(private val service: MatchService) {
                         SirenLink.self(href = Uris.Matches.buildMatchByIdUri(res.value.id))
                     ),
                     actions = when (res.value.state) {
-                        MatchState.SETUP.name -> listOf(
+                        MatchState.SETUP -> listOf(
                             getJoinPrivateMatchAction(res.value.id),
                             getDeleteMatchAction()
                         )
 
-                        MatchState.ONGOING.name -> listOf(getPlayMatchAction(res.value.id))
+                        MatchState.ONGOING -> listOf(getPlayMatchAction(res.value.id))
                         else -> null
                     },
                 ).toResponseEntity(201)
@@ -53,7 +55,7 @@ class MatchController(private val service: MatchService) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).toResponseEntity()
                 is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).toResponseEntity()
                 is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).toResponseEntity()
-                is MatchCreationError.AlreadyInMatch -> MatchProblem.AlreadyInMatch(res.value).toResponseEntity()
+                is MatchCreationError.UserAlreadyPlaying -> MatchProblem.AlreadyInMatch(res.value).toResponseEntity()
                 is MatchCreationError.InvalidPrivateMatch -> MatchProblem.InvalidPrivateMatch(res.value)
                     .toResponseEntity()
             }
@@ -74,8 +76,9 @@ class MatchController(private val service: MatchService) {
 
             is Failure -> when (res.value) {
                 is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
-                is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.MatchIsNotPrivate(res.value).toResponseEntity()
-                else -> throw IllegalStateException("Unexpected error")
+                is MatchJoiningError.AlreadyStarted -> MatchProblem.AlreadyStarted(res.value).toResponseEntity()
+                is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.IsNotPrivate(res.value).toResponseEntity()
+                else -> throw IllegalStateException("Unexpected error: " + res.value::class.java.simpleName)
             }
         }
     }
@@ -99,13 +102,13 @@ class MatchController(private val service: MatchService) {
                     EmbeddedLink(
                         clazz = listOf(SirenClass.match),
                         rel = listOf("playerBlack"),
-                        href = Uris.Users.buildUuserByIdUri(res.value.blackId),
+                        href = Uris.Users.buildUserByIdUri(res.value.blackId),
                     ),
                     if (res.value.whiteId != null)
                         EmbeddedLink(
                             clazz = listOf(SirenClass.match),
                             rel = listOf("playerWhite"),
-                            href = Uris.Users.buildUuserByIdUri(res.value.whiteId),
+                            href = Uris.Users.buildUserByIdUri(res.value.whiteId),
                         )
                     else null
                 )
@@ -114,7 +117,7 @@ class MatchController(private val service: MatchService) {
                     res.value.id,
                     res.value.isPrivate,
                     res.value.variant.toString(),
-                    res.value.state.toString(),
+                    res.value.state,
                     res.value.board,
                 ).toSirenObject(
                     links = listOf(
@@ -133,11 +136,20 @@ class MatchController(private val service: MatchService) {
     }
 
     @GetMapping(Uris.Matches.BASE)
-    fun getMatchesFromUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        return service.getMatchesFromUser(authenticatedUser.user.id).toSirenObject(
-            links = listOf(
-                SirenLink.self(href = URI(Uris.Matches.BASE))
-            )
+    fun getMatchesFromUser(
+        authenticatedUser: AuthenticatedUser,
+        paginationInputs: PaginationInputs,
+    ): ResponseEntity<*> {
+        val matchesCollection =
+            service.getMatchesFromUser(authenticatedUser.user.id, paginationInputs.skip, paginationInputs.limit)
+
+        return matchesCollection.toSirenObject(
+            links = getPaginationSirenLinks(
+                URI(Uris.Matches.BASE),
+                paginationInputs.skip,
+                paginationInputs.limit,
+                matchesCollection.total
+            ),
         ).toResponseEntity(200)
     }
 
@@ -162,7 +174,7 @@ class MatchController(private val service: MatchService) {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping(Uris.Matches.BASE)
     fun deleteSetupMatch(
         authenticatedUser: AuthenticatedUser,
     ): ResponseEntity<*> {

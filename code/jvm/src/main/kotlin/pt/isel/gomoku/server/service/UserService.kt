@@ -1,8 +1,8 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
+import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
-import pt.isel.gomoku.server.repository.dto.Token
 import pt.isel.gomoku.server.http.model.UserIdOutputModel
 import pt.isel.gomoku.server.http.model.UsersOutputModel
 import pt.isel.gomoku.server.http.model.toOutputModel
@@ -47,14 +47,12 @@ class UserService(
         }
     }
 
-    fun getUsers(role: String? = null, page: Int?, limit: Int?): UsersOutputModel {
+    fun getUsers(role: String? = null, skip: Int, limit: Int): UsersOutputModel {
         return trManager.run { transaction ->
-            val usersCollection = transaction.userRepository.getUsers(role)
+            val usersCollection = transaction.userRepository.getUsers(role, skip, limit)
             UsersOutputModel(
-                collectionSize = usersCollection.collectionSize,
                 users = usersCollection.results.map { it.toOutputModel() },
-                page = page ?: 0,
-                limit = limit ?: usersCollection.collectionSize,
+                total = usersCollection.total,
             )
         }
     }

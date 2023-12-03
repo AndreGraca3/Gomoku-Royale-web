@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.repository.interfaces
 
+import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
 import pt.isel.gomoku.server.repository.dto.*
 import java.time.LocalDateTime
@@ -14,7 +15,7 @@ interface UserRepository {
 
     fun getUserByEmail(email: String): User?
 
-    fun getUsers(role: String? = null, paginationInputs: PaginationInputsWrapper): CollectionWrapper<UserItem>
+    fun getUsers(role: String? = null, skip: Int, limit: Int): PaginationResult<UserItem>
 
     fun updateUser(id: Int, name: String?, avatarUrl: String?)
 

@@ -2,7 +2,9 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import pt.isel.gomoku.domain.Match
+import pt.isel.gomoku.server.repository.dto.MatchItem
 import pt.isel.gomoku.server.repository.dto.MatchStatus
+import pt.isel.gomoku.server.repository.dto.PaginationResult
 import pt.isel.gomoku.server.repository.interfaces.MatchRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.BoardStatements
 import pt.isel.gomoku.server.repository.jdbi.statements.MatchStatements
@@ -14,9 +16,9 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
         isPrivate: Boolean,
         serializedVariant: String,
         size: Int,
-        type: String
+        type: String,
     ): String {
-        val matchId =  handle.createUpdate(MatchStatements.CREATE_MATCH)
+        val matchId = handle.createUpdate(MatchStatements.CREATE_MATCH)
             .bind("isPrivate", isPrivate)
             .bind("variant", serializedVariant)
             .bind("black_id", blackId)
@@ -48,11 +50,18 @@ class JdbiMatchRepository(private val handle: Handle) : MatchRepository {
             .singleOrNull()
     }
 
-    override fun getMatchesFromUser(userId: Int): List<Match> {
-        return handle.createQuery(MatchStatements.GET_MATCHES_BY_USER_ID)
+    override fun getMatchesFromUser(userId: Int, skip: Int, limit: Int): PaginationResult<MatchItem> {
+        val matches = handle.createQuery(MatchStatements.GET_MATCHES_BY_USER_ID)
             .bind("userId", userId)
-            .mapTo(Match::class.java)
+            .bind("skip", skip)
+            .bind("limit", limit)
+            .mapTo(MatchItem::class.java)
             .list()
+
+        return PaginationResult(
+            results = matches,
+            total = if (matches.isEmpty()) 0 else matches[0].count!!
+        )
     }
 
     override fun updateMatch(id: String, blackId: Int?, whiteId: Int?, state: String?): String {

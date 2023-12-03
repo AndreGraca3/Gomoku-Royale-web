@@ -28,7 +28,7 @@ class UserController(private val service: UserService) {
             is Success -> UserIdOutputModel(id = res.value.id)
                 .toSirenObject(
                     links = listOf(
-                        SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.value.id))
+                        SirenLink.self(href = Uris.Users.buildUserByIdUri(res.value.id))
                     )
                 ).toResponseEntity(201)
 
@@ -41,40 +41,37 @@ class UserController(private val service: UserService) {
     }
 
     @GetMapping(Uris.Users.BASE)
-    fun getUsers(@RequestParam role: String?, @RequestParam page: Int?, @RequestParam limit: Int?): ResponseEntity<*> {
-        val usersInfo = service.getUsers(role, page, limit)
-        return usersInfo.toSirenObject(
+    fun getUsers(@RequestParam role: String?, paginationInputs: PaginationInputs): ResponseEntity<*> {
+        val usersCollection = service.getUsers(role, paginationInputs.skip, paginationInputs.limit)
+        return usersCollection.toSirenObject(
             links = Uris.Pagination.getPaginationSirenLinks(
                 uri = URI(Uris.Users.BASE),
-                page = usersInfo.page,
-                limit = usersInfo.limit,
-                pageSize = usersInfo.users.size,
-                collectionSize = usersInfo.collectionSize,
+                skip = paginationInputs.skip,
+                limit = paginationInputs.limit,
+                total = usersCollection.total,
             )
         ).toResponseEntity(200)
     }
 
     @GetMapping(Uris.Users.AUTHENTICATED_USER)
     fun getAuthenticatedUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        val res = service.getUserByTokenValue(authenticatedUser.token.tokenValue)
-        return if (res != null) UserInfoOutputModel(
-            id = res.user.id,
-            name = res.user.name,
-            avatarUrl = res.user.avatarUrl,
-            role = res.user.role,
-            rank = res.user.rank,
-            createdAt = res.user.createdAt,
+        return UserInfoOutputModel(
+            id = authenticatedUser.user.id,
+            name = authenticatedUser.user.name,
+            avatarUrl = authenticatedUser.user.avatarUrl,
+            role = authenticatedUser.user.role,
+            rank = authenticatedUser.user.rank,
+            createdAt = authenticatedUser.user.createdAt,
         ).toSirenObject(
             links = listOf(
-                SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.user.id)),
-                SirenLink(href = Uris.Stats.buildStatsByUserIdUri(res.user.id), rel = listOf("stats"))
+                SirenLink.self(href = Uris.Users.buildUserByIdUri(authenticatedUser.user.id)),
+                SirenLink(href = Uris.Stats.buildStatsByUserIdUri(authenticatedUser.user.id), rel = listOf("stats"))
             ),
             actions = listOf(
-                getUpdateUserAction(res.user.id),
+                getUpdateUserAction(authenticatedUser.user.id),
                 getDeleteUserAction(),
             )
         ).toResponseEntity(200)
-        else UserProblem.InvalidToken.toResponseEntity()
     }
 
     @GetMapping(Uris.Users.USER_BY_ID)
@@ -82,7 +79,7 @@ class UserController(private val service: UserService) {
         return when (val res = service.getUserById(id)) {
             is Success -> res.value.toOutputModel().toSirenObject(
                 links = listOf(
-                    SirenLink.self(href = Uris.Users.buildUuserByIdUri(res.value.id)),
+                    SirenLink.self(href = Uris.Users.buildUserByIdUri(res.value.id)),
                     SirenLink(href = Uris.Stats.buildStatsByUserIdUri(res.value.id), rel = listOf("stats"))
                 )
             ).toResponseEntity(200)
@@ -101,7 +98,7 @@ class UserController(private val service: UserService) {
             is Success -> Siren(
                 properties = null,
                 links = listOf(
-                    SirenLink.self(href = Uris.Users.buildUuserByIdUri(authenticatedUser.user.id)),
+                    SirenLink.self(href = Uris.Users.buildUserByIdUri(authenticatedUser.user.id)),
                     SirenLink(href = Uris.Stats.buildStatsByUserIdUri(authenticatedUser.user.id), rel = listOf("stats"))
                 ),
                 actions = listOf(
