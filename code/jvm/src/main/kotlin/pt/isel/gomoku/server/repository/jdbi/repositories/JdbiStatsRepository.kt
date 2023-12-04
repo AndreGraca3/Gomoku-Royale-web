@@ -1,10 +1,11 @@
 package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
-import pt.isel.gomoku.server.http.model.stats.MatchesStats
-import pt.isel.gomoku.server.http.model.stats.Rank
-import pt.isel.gomoku.server.http.model.stats.RawWinStats
-import pt.isel.gomoku.server.http.model.stats.UserRank
+import pt.isel.gomoku.domain.Rank
+import pt.isel.gomoku.server.repository.dto.MatchesStats
+import pt.isel.gomoku.server.repository.dto.PaginationResult
+import pt.isel.gomoku.server.repository.dto.RawWinStats
+import pt.isel.gomoku.server.repository.dto.UserItem
 import pt.isel.gomoku.server.repository.interfaces.StatsRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.StatsStatements
 
@@ -15,11 +16,17 @@ class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
             .execute()
     }
 
-    override fun getTopRanks(limit: Int?): List<UserRank> {
-        return handle.createQuery(StatsStatements.GET_TOP_RANKS)
+    override fun getTopRanks(skip: Int, limit: Int): PaginationResult<UserItem> {
+        val usersCollection = handle.createQuery(StatsStatements.GET_TOP_RANKS)
+            .bind("skip", skip)
             .bind("limit", limit)
-            .mapTo(UserRank::class.java)
+            .mapTo(UserItem::class.java)
             .list()
+
+        return PaginationResult(
+            results = usersCollection,
+            total = usersCollection.size
+        )
     }
 
     override fun getScoreStatsByUser(userId: Int): RawWinStats {

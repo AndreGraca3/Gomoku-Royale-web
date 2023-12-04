@@ -1,8 +1,10 @@
 import { fetchReq } from "../utils/http";
 import {UserStats} from "../types/stats";
 
-async function top(limit: number = 10): Promise<void> {
-  return await fetchReq(`/top?limit=${limit}`, "GET", null);
+async function top(limit: number = 10) {
+  var ret = await fetchReq(`/stats/top?limit=${limit}`, "GET", null);
+  console.log(ret)
+  return ret
 }
 
 async function getUserStats(id: number){

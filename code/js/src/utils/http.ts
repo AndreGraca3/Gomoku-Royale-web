@@ -1,3 +1,5 @@
+import { SirenEntity } from "../types/siren";
+
 const BASE_URL = "/api";
 
 /**
@@ -9,11 +11,11 @@ const BASE_URL = "/api";
  * @returns {Promise<any>} - A promise that resolves to the parsed JSON response.
  * @throws {any} - Throws an error if the response is not successful.
  */
-export async function fetchReq(
+export async function fetchAPI<T>(
   path: string,
   method: string = "GET",
   body?: Object
-) {
+): Promise<SirenEntity<T>> {
   const headers = {
     "Content-Type": "application/json",
   };

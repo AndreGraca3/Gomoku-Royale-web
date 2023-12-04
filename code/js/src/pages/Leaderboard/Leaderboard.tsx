@@ -10,79 +10,79 @@ const Leaderboard = () => {
     try {
       let data;
 
-      if (process.env.NODE_ENV === "development") {
-        // Use test data for development
-        data = [
-          {
-            id: 1,
-            userName: "User1",
-            rank: {
-              name: "Bronze",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-1.png",
-            },
-          },
-          {
-            id: 2,
-            userName: "User2",
-            rank: {
-              name: "Silver",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-4.png",
-            },
-          },
-          {
-            id: 3,
-            userName: "User3",
-            rank: {
-              name: "Gold",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-7.png",
-            },
-          },
-          {
-            id: 4,
-            userName: "User4",
-            rank: {
-              name: "Platinum",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-10.png",
-            },
-          },
-          {
-            id: 5,
-            userName: "User5",
-            rank: {
-              name: "Diamond",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
-            },
-          },
-          {
-            id: 6,
-            userName: "User6",
-            rank: {
-              name: "Champion",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-16.png",
-            },
-          },
-          {
-            id: 7,
-            userName: "User7",
-            rank: {
-              name: "Grand Champion",
-              iconUrl:
-                "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank19.png",
-            },
-          },
-        ];
-      //} else {
+      // if (process.env.NODE_ENV === "development") {
+      //   // Use test data for development
+      //   data = [
+      //     {
+      //       id: 1,
+      //       userName: "User1",
+      //       rank: {
+      //         name: "Bronze",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-1.png",
+      //       },
+      //     },
+      //     {
+      //       id: 2,
+      //       userName: "User2",
+      //       rank: {
+      //         name: "Silver",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-4.png",
+      //       },
+      //     },
+      //     {
+      //       id: 3,
+      //       userName: "User3",
+      //       rank: {
+      //         name: "Gold",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-7.png",
+      //       },
+      //     },
+      //     {
+      //       id: 4,
+      //       userName: "User4",
+      //       rank: {
+      //         name: "Platinum",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-10.png",
+      //       },
+      //     },
+      //     {
+      //       id: 5,
+      //       userName: "User5",
+      //       rank: {
+      //         name: "Diamond",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-13.png",
+      //       },
+      //     },
+      //     {
+      //       id: 6,
+      //       userName: "User6",
+      //       rank: {
+      //         name: "Champion",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s4-16.png",
+      //       },
+      //     },
+      //     {
+      //       id: 7,
+      //       userName: "User7",
+      //       rank: {
+      //         name: "Grand Champion",
+      //         iconUrl:
+      //           "https://trackercdn.com/cdn/tracker.gg/rocket-league/ranks/s15rank19.png",
+      //       },
+      //     },
+      //   ];
+      // } else {
         // Fetch actual data from the API with the selected top limit
         data = await statsData.top(selectedTop);
-      }
+      //}
 
-      setLeaderboard(data);
+      setLeaderboard(data.properties);
 
       // Fetch all images and create a dictionary
       const images = await Promise.all(

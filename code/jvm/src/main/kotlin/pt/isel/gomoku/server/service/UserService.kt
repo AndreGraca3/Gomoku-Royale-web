@@ -1,16 +1,19 @@
 package pt.isel.gomoku.server.service
 
 import org.springframework.stereotype.Component
-import pt.isel.gomoku.server.http.model.user.Token
-import pt.isel.gomoku.server.http.model.user.User
-import pt.isel.gomoku.server.http.model.user.UserIdOutput
-import pt.isel.gomoku.server.http.model.user.UserInfo
+import pt.isel.gomoku.domain.Token
+import pt.isel.gomoku.domain.User
+import pt.isel.gomoku.server.http.model.UserIdOutputModel
+import pt.isel.gomoku.server.http.model.UsersOutputModel
+import pt.isel.gomoku.server.http.model.toOutputModel
+import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
+import pt.isel.gomoku.server.repository.dto.UserInfo
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.core.SecurityManager
-import pt.isel.gomoku.server.service.error.user.TokenCreationError
-import pt.isel.gomoku.server.service.error.user.UserCreationError
-import pt.isel.gomoku.server.service.error.user.UserFetchingError
-import pt.isel.gomoku.server.service.error.user.UserUpdateError
+import pt.isel.gomoku.server.service.errors.user.TokenCreationError
+import pt.isel.gomoku.server.service.errors.user.UserCreationError
+import pt.isel.gomoku.server.service.errors.user.UserFetchingError
+import pt.isel.gomoku.server.service.errors.user.UserUpdateError
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
 import pt.isel.gomoku.server.utils.success
@@ -19,19 +22,19 @@ import java.time.LocalDateTime
 @Component
 class UserService(
     private val trManager: TransactionManager,
-    private val securityManager: SecurityManager
+    private val securityManager: SecurityManager,
 ) {
 
     fun createUser(
         name: String,
         email: String,
         password: String,
-        avatar: String?
-    ): Either<UserCreationError, UserIdOutput> {
+        avatar: String?,
+    ): Either<UserCreationError, UserIdOutputModel> {
         if (!securityManager.isSafePassword(password))
             return failure(UserCreationError.InsecurePassword(password))
 
-        if(verifyEmail(email))
+        if (verifyEmail(email))
             return failure(UserCreationError.InvalidEmail(email))
 
         return trManager.run {
@@ -40,21 +43,29 @@ class UserService(
 
             val id = it.userRepository.createUser(name, email, password, avatar)
             it.statsRepository.createStatsEntry(id)
-            success(UserIdOutput(id))
+            success(UserIdOutputModel(id))
         }
     }
 
-    fun getUsers(role: String? = null) = trManager.run { it.userRepository.getUsers(role) }
+    fun getUsers(role: String? = null, skip: Int, limit: Int): UsersOutputModel {
+        return trManager.run { transaction ->
+            val usersCollection = transaction.userRepository.getUsers(role, skip, limit)
+            UsersOutputModel(
+                users = usersCollection.results.map { it.toOutputModel() },
+                total = usersCollection.total,
+            )
+        }
+    }
 
     fun getUserById(id: Int): Either<UserFetchingError.UserByIdNotFound, UserInfo> {
         return trManager.run {
-            val user: UserInfo? = it.userRepository.getUserById(id)
+            val user = it.userRepository.getUserById(id)
             if (user != null) success(user)
             else failure(UserFetchingError.UserByIdNotFound(id))
         }
     }
 
-    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, UserInfo> {
+    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, Unit> {
         if (newName?.isBlank() == true || newAvatar?.isBlank() == true)
             return failure(UserUpdateError.InvalidValues)
 
@@ -93,24 +104,20 @@ class UserService(
         }
     }
 
-    fun deleteUser(id: Int): Either<UserFetchingError.UserByIdNotFound, Unit> {
+    fun deleteUser(id: Int) {
         return trManager.run {
-            val user: UserInfo? = it.userRepository.getUserById(id)
-            if (user != null) {
-                it.userRepository.deleteUser(id)
-                success(Unit)
-            } else failure(UserFetchingError.UserByIdNotFound(id))
+            it.userRepository.deleteUser(id)
         }
     }
 
-    // Service function, does not return Either
-    fun getUserByToken(token: String): User? {
+    // Helper function, does not return Either
+    fun getUserByTokenValue(token: String): AuthenticatedUser? {
         return trManager.run {
             val userAndToken =
                 it.userRepository.getUserAndTokenByTokenValue(token)
-            if (userAndToken != null && securityManager.isTokenTimeValid(userAndToken.second)) {
-                it.userRepository.updateTokenLastUsed(userAndToken.second, LocalDateTime.now())
-                userAndToken.first
+            if (userAndToken != null && securityManager.isTokenTimeValid(userAndToken.token)) {
+                it.userRepository.updateTokenLastUsed(userAndToken.token, LocalDateTime.now())
+                userAndToken
             } else null
         }
     }

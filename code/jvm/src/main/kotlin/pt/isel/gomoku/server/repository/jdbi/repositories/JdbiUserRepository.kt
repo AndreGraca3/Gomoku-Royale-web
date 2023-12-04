@@ -2,11 +2,9 @@ package pt.isel.gomoku.server.repository.jdbi.repositories
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.gomoku.server.http.model.user.Token
-import pt.isel.gomoku.server.http.model.user.User
-import pt.isel.gomoku.server.http.model.user.UserAndToken
-import pt.isel.gomoku.server.http.model.user.UserIdAndName
-import pt.isel.gomoku.server.http.model.user.UserInfo
+import pt.isel.gomoku.domain.Token
+import pt.isel.gomoku.domain.User
+import pt.isel.gomoku.server.repository.dto.*
 import pt.isel.gomoku.server.repository.interfaces.UserRepository
 import pt.isel.gomoku.server.repository.jdbi.statements.UserStatements
 import java.time.LocalDateTime
@@ -45,21 +43,26 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
             .singleOrNull()
     }
 
-    override fun getUsers(role: String?): List<UserIdAndName> {
-        return handle.createQuery(UserStatements.GET_USERS)
+    override fun getUsers(role: String?, skip: Int, limit: Int): PaginationResult<UserItem> {
+        val users = handle.createQuery(UserStatements.GET_USERS)
             .bind("role", role)
-            .mapTo(UserIdAndName::class.java)
+            .bind("skip", skip)
+            .bind("limit", limit)
+            .mapTo(UserItem::class.java)
             .list()
+
+        return PaginationResult(
+            total = if (users.isEmpty()) 0 else users[0].count!!,
+            results = users
+        )
     }
 
-    override fun updateUser(id: Int, name: String?, avatarUrl: String?): UserInfo {
-        return handle.createUpdate(UserStatements.UPDATE_USER)
+    override fun updateUser(id: Int, name: String?, avatarUrl: String?) {
+        handle.createUpdate(UserStatements.UPDATE_USER)
             .bind("id", id)
             .bind("name", name)
             .bind("avatar_url", avatarUrl)
-            .executeAndReturnGeneratedKeys()
-            .mapTo<UserInfo>()
-            .one()
+            .execute()
     }
 
     override fun deleteUser(id: Int) {
@@ -77,7 +80,7 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
             .one()
     }
 
-    override fun getUserAndTokenByTokenValue(token: String): Pair<User, Token>? {
+    override fun getUserAndTokenByTokenValue(token: String): AuthenticatedUser? {
         return handle.createQuery(UserStatements.GET_USER_AND_TOKEN_BY_TOKEN_VALUE)
             .bind("token_value", token)
             .mapTo(UserAndToken::class.java)

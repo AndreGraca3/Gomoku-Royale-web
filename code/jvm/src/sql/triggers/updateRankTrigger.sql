@@ -3,7 +3,7 @@ create or replace function updateRank() returns trigger
 $$
 declare
     newRank varchar(20);
-    rank record;
+    rank    record;
 begin
 
     if (TG_OP <> 'UPDATE' and TG_OP <> 'INSERT') then
@@ -11,7 +11,8 @@ begin
     end if;
 
     if (TG_TABLE_NAME = 'user') then
-        select name into newRank
+        select name
+        into newRank
         from rank r
         where new.mmr >= r.min_mmr
         order by r.min_mmr DESC;
@@ -26,3 +27,8 @@ $$;
 create trigger updateRank
 after update of mmr on "user"
 for each row execute procedure updateRank();
+
+-- test scripts
+--select id, u.name, role, rank, icon_url, count(*) over() from "user" u join rank on u.rank = rank.name
+--where role = coalesce(:role, role)
+

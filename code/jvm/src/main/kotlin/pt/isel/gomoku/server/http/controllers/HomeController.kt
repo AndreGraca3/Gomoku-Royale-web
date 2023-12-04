@@ -1,38 +1,41 @@
 package pt.isel.gomoku.server.http.controllers
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.gomoku.server.http.model.siren.SirenEntity
-import pt.isel.gomoku.server.http.model.siren.SirenLink
+import pt.isel.gomoku.server.http.Uris
+import pt.isel.gomoku.server.http.model.HomeOutputModel
+import pt.isel.gomoku.server.http.response.siren.SirenLink
+import java.lang.management.ManagementFactory
+import java.net.URI
+import java.time.OffsetDateTime
 
 @RestController
 class HomeController {
 
-    @GetMapping()
+    private val runTimeBean = ManagementFactory.getRuntimeMXBean()
+
+    @Autowired
+    private val env: Environment? = null
+
+    @GetMapping(Uris.API_BASE)
     fun home(): ResponseEntity<*> {
-        return ResponseEntity.status(200).body(
-            SirenEntity<Unit>(
-                clazz = listOf("home"),
-                links = listOf(
-                    SirenLink.self(
-                        href = ""
-                    ),
-                    SirenLink(
-                        rel = listOf("users"),
-                        href = "/users"
-                    ),
-                    SirenLink(
-                        rel = listOf("matches"),
-                        href = "/matches"
-                    ),
-                    SirenLink(
-                        rel = listOf("stats"),
-                        href = "/stats"
-                    ),
-                ),
+        return HomeOutputModel(
+            name = "Gomoku Royale",
+            description = "Gomoku Royale is a platform to play Gomoku online",
+            version = env?.getProperty("app.version")?.toDouble() ?: 0.0,
+            uptimeMs = runTimeBean.uptime,
+            time = OffsetDateTime.now(),
+            authors = listOf("André Graça", "Diogo Santos", "Daniel Caseiro")
+        ).toSirenObject(
+            links = listOf(
+                SirenLink(listOf("authenticatedUser"), URI(Uris.Users.AUTHENTICATED_USER)),
+                SirenLink(listOf("token"), URI(Uris.Users.TOKEN)),
+                SirenLink(listOf("user"), URI(Uris.Users.BASE)),
+                SirenLink(listOf("leaderboard"), URI(Uris.Stats.TOP)),
             )
-        )
+        ).toResponseEntity(200)
     }
 }

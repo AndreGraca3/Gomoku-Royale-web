@@ -5,8 +5,8 @@ import org.jdbi.v3.core.statement.StatementContext
 import pt.isel.gomoku.domain.Match
 import pt.isel.gomoku.domain.MatchState
 import pt.isel.gomoku.domain.Variant
-import pt.isel.gomoku.domain.board.Board
-import pt.isel.gomoku.domain.toPlayer
+import pt.isel.gomoku.domain.game.board.Board
+import pt.isel.gomoku.domain.game.toPlayer
 import java.sql.ResultSet
 import java.sql.SQLException
 
@@ -23,10 +23,10 @@ class MatchMapper : RowMapper<Match> {
         return Match(
             r.getString("id"),
             r.getBoolean("isPrivate"),
-            Variant.from(r.getString("variant")),
+            Variant.fromString(r.getString("variant")),
             r.getInt("black_id"),
             if(r.getInt("white_id") == 0) null else r.getInt("white_id"),
-            MatchState.from(r.getString("state")),
+            MatchState.fromString(r.getString("state")),
             board
         )
     }

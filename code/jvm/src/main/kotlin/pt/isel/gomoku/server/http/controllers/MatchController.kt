@@ -3,199 +3,182 @@ package pt.isel.gomoku.server.http.controllers
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.gomoku.domain.MatchState
-import pt.isel.gomoku.domain.cell.Dot
+import pt.isel.gomoku.domain.game.cell.Dot
 import pt.isel.gomoku.server.http.Uris
-import pt.isel.gomoku.server.http.model.match.MatchCreationInput
-import pt.isel.gomoku.server.http.model.problem.MatchProblem
-import pt.isel.gomoku.server.http.model.siren.SirenEntity
-import pt.isel.gomoku.server.http.model.siren.SirenLink
-import pt.isel.gomoku.server.http.model.siren.actions.MatchActions.CREATE_PUBLIC_MATCH_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.MatchActions.JOIN_PRIVATE_MATCH_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.MatchActions.DELETE_MATCH_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.MatchActions.GET_MATCH_ACTION
-import pt.isel.gomoku.server.http.model.siren.actions.MatchActions.PLAY_MATCH_ACTION
-import pt.isel.gomoku.server.http.model.user.AuthenticatedUser
+import pt.isel.gomoku.server.http.Uris.Pagination.getPaginationSirenLinks
+import pt.isel.gomoku.server.http.model.MatchCreationInputModel
+import pt.isel.gomoku.server.http.model.MatchOutputModel
+import pt.isel.gomoku.server.http.model.PaginationInputs
+import pt.isel.gomoku.server.http.response.problem.MatchProblem
+import pt.isel.gomoku.server.http.response.siren.*
+import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getDeleteMatchAction
+import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getJoinPrivateMatchAction
+import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getPlayMatchAction
+import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.service.MatchService
-import pt.isel.gomoku.server.service.error.match.MatchCreationError
-import pt.isel.gomoku.server.service.error.match.MatchFetchingError
-import pt.isel.gomoku.server.service.error.match.MatchJoiningError
+import pt.isel.gomoku.server.service.errors.match.MatchCreationError
+import pt.isel.gomoku.server.service.errors.match.MatchFetchingError
+import pt.isel.gomoku.server.service.errors.match.MatchJoiningError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
+import java.net.URI
 
 @RestController
-@RequestMapping(Uris.Matches.BASE)
 class MatchController(private val service: MatchService) {
 
-    @PostMapping()
-    fun createMatch(@RequestBody input: MatchCreationInput, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
+    @PostMapping(Uris.Matches.BASE)
+    fun createMatch(
+        @RequestBody input: MatchCreationInputModel,
+        authenticatedUser: AuthenticatedUser,
+    ): ResponseEntity<*> {
         return when (val res =
             service.createMatch(authenticatedUser.user.id, input.isPrivate, input.size, input.variant)
         ) {
             is Success -> {
-                val actionsList = mutableListOf(
-                    GET_MATCH_ACTION,
-                )
-                when (res.value.state) {
-                    MatchState.SETUP.name -> {
-                        actionsList.add(JOIN_PRIVATE_MATCH_ACTION)
-                        actionsList.add(DELETE_MATCH_ACTION)
-                    }
-                    MatchState.ONGOING.name -> actionsList.add(PLAY_MATCH_ACTION)
-                }
+                res.value.toSirenObject(
+                    links = listOf(
+                        SirenLink.self(href = Uris.Matches.buildMatchByIdUri(res.value.id))
+                    ),
+                    actions = when (res.value.state) {
+                        MatchState.SETUP -> listOf(
+                            getJoinPrivateMatchAction(res.value.id),
+                            getDeleteMatchAction()
+                        )
 
-                ResponseEntity.status(201).body(
-                    SirenEntity(
-                        clazz = listOf("match"),
-                        properties = res.value,
-                        links = listOf(
-                            SirenLink.self(
-                                href = "${Uris.Matches.BASE}/${res.value.id}"
-                            )
-                        ),
-                        actions = actionsList
-                    )
-                )
+                        MatchState.ONGOING -> listOf(getPlayMatchAction(res.value.id))
+                        else -> null
+                    },
+                ).toResponseEntity(201)
             }
 
             is Failure -> when (res.value) {
-                is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).response()
-                is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).response()
-                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).response()
-                is MatchCreationError.AlreadyInMatch -> MatchProblem.AlreadyInMatch(res.value).response()
-                is MatchCreationError.InvalidPrivateMatch -> MatchProblem.InvalidPrivateMatch(res.value).response()
+                is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).toResponseEntity()
+                is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).toResponseEntity()
+                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).toResponseEntity()
+                is MatchCreationError.UserAlreadyPlaying -> MatchProblem.AlreadyInMatch(res.value).toResponseEntity()
+                is MatchCreationError.InvalidPrivateMatch -> MatchProblem.InvalidPrivateMatch(res.value)
+                    .toResponseEntity()
             }
         }
     }
 
-    @PutMapping(Uris.ID)
+    @PutMapping(Uris.Matches.MATCH_BY_ID)
     fun joinPrivateMatch(@PathVariable id: String, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         return when (val res = service.joinPrivateMatch(id, authenticatedUser.user.id)) {
-            is Success -> ResponseEntity.status(200).body(
-                SirenEntity(
-                    clazz = listOf("match"),
-                    properties = res.value,
-                    links = listOf(
-                        SirenLink.self(
-                            href = "${Uris.Matches.BASE}/${res.value.id}"
-                        )
-                    ),
-                    actions = listOf(
-                        CREATE_PUBLIC_MATCH_ACTION,
-                        GET_MATCH_ACTION,
-                        PLAY_MATCH_ACTION
-                    )
-                )
-            )
+            is Success -> res.value.toSirenObject(
+                links = listOf(
+                    SirenLink.self(href = Uris.Matches.buildMatchByIdUri(res.value.id))
+                ),
+                actions = listOf(
+                    getPlayMatchAction(res.value.id)
+                ),
+            ).toResponseEntity(200)
 
             is Failure -> when (res.value) {
-                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).response()
-                is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.MatchIsNotPrivate(res.value).response()
-                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).response()
-                else -> throw IllegalStateException("Unexpected error")
+                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
+                is MatchJoiningError.AlreadyStarted -> MatchProblem.AlreadyStarted(res.value).toResponseEntity()
+                is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.IsNotPrivate(res.value).toResponseEntity()
+                else -> throw IllegalStateException("Unexpected error: " + res.value::class.java.simpleName)
             }
         }
     }
 
-    @GetMapping(Uris.ID)
+    @GetMapping(Uris.Matches.MATCH_BY_ID)
     fun getMatchById(@PathVariable id: String, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         return when (val res = service.getMatchById(id, authenticatedUser.user.id)) {
             is Success -> {
-                val actionsList = mutableListOf(JOIN_PRIVATE_MATCH_ACTION)
+                val actions = mutableListOf<SirenAction>()
                 when (res.value.state) {
                     MatchState.SETUP -> {
-                        actionsList.add(DELETE_MATCH_ACTION)
-                        if (res.value.isPrivate) actionsList.add(JOIN_PRIVATE_MATCH_ACTION)
+                        actions.add(getDeleteMatchAction())
+                        if (res.value.isPrivate) actions.add(getJoinPrivateMatchAction(res.value.id))
                     }
-                    MatchState.ONGOING -> actionsList.add(PLAY_MATCH_ACTION)
+
+                    MatchState.ONGOING -> actions.add(getPlayMatchAction(res.value.id))
                     else -> Unit
                 }
 
-                ResponseEntity.status(200).body(
-                    SirenEntity(
-                        clazz = listOf("match"),
-                        properties = res.value,
-                        links = listOf(
-                            SirenLink.self(
-                                href = Uris.Matches.BASE + Uris.ID
-                            )
-                        ),
-                        actions = actionsList
-                    )
+                val entities = listOfNotNull(
+                    EmbeddedLink(
+                        clazz = listOf(SirenClass.match),
+                        rel = listOf("playerBlack"),
+                        href = Uris.Users.buildUserByIdUri(res.value.blackId),
+                    ),
+                    if (res.value.whiteId != null)
+                        EmbeddedLink(
+                            clazz = listOf(SirenClass.match),
+                            rel = listOf("playerWhite"),
+                            href = Uris.Users.buildUserByIdUri(res.value.whiteId),
+                        )
+                    else null
                 )
+
+                MatchOutputModel(
+                    res.value.id,
+                    res.value.isPrivate,
+                    res.value.variant.toString(),
+                    res.value.state,
+                    res.value.board,
+                ).toSirenObject(
+                    links = listOf(
+                        SirenLink.self(href = Uris.Matches.buildMatchByIdUri(res.value.id))
+                    ),
+                    entities = entities,
+                    actions = actions,
+                ).toResponseEntity(200)
             }
 
             is Failure -> when (res.value) {
-                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).response()
-                is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).response()
+                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
+                is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).toResponseEntity()
             }
         }
     }
 
-    @GetMapping()
-    fun getMatchesFromUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        return ResponseEntity.status(200).body(
-            SirenEntity(
-                clazz = listOf("match"),
-                properties = service.getMatchesFromUser(authenticatedUser.user.id),
-                links = listOf(
-                    SirenLink.self(
-                        href = Uris.Matches.BASE + Uris.ID
-                    )
-                ),
-                actions = listOf(
-                    CREATE_PUBLIC_MATCH_ACTION,
-                    GET_MATCH_ACTION,
-                )
-            )
-        )
+    @GetMapping(Uris.Matches.BASE)
+    fun getMatchesFromUser(
+        authenticatedUser: AuthenticatedUser,
+        paginationInputs: PaginationInputs,
+    ): ResponseEntity<*> {
+        val matchesCollection =
+            service.getMatchesFromUser(authenticatedUser.user.id, paginationInputs.skip, paginationInputs.limit)
+
+        return matchesCollection.toSirenObject(
+            links = getPaginationSirenLinks(
+                URI(Uris.Matches.BASE),
+                paginationInputs.skip,
+                paginationInputs.limit,
+                matchesCollection.total
+            ),
+        ).toResponseEntity(200)
     }
 
-    @PostMapping(Uris.ID)
+    @PostMapping(Uris.Matches.MATCH_BY_ID)
     fun play(
         authenticatedUser: AuthenticatedUser,
         @PathVariable id: String,
         @RequestBody move: Dot,
     ): ResponseEntity<*> {
         return when (val res = service.play(authenticatedUser.user.id, id, move)) {
-            is Success -> ResponseEntity.status(200).body(
-                SirenEntity(
-                    clazz = listOf("match"),
-                    properties = service.getMatchesFromUser(authenticatedUser.user.id),
+            is Success ->
+                res.value.toSirenObject(
                     links = listOf(
-                        SirenLink.self(
-                            href = Uris.Matches.BASE + Uris.ID
-                        )
+                        SirenLink.self(href = Uris.Matches.buildMatchByIdUri(id))
                     ),
-                    actions = listOf(
-                        GET_MATCH_ACTION,
-                    )
-                )
-            )
+                ).toResponseEntity(200)
 
             is Failure -> when (res.value) {
-                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).response()
-                is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).response()
+                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
+                is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).toResponseEntity()
             }
         }
     }
 
-    @DeleteMapping
-    fun deleteMatch(
+    @DeleteMapping(Uris.Matches.BASE)
+    fun deleteSetupMatch(
         authenticatedUser: AuthenticatedUser,
     ): ResponseEntity<*> {
-        return ResponseEntity.status(204).body(
-            SirenEntity(
-                clazz = listOf("match"),
-                properties = service.getMatchesFromUser(authenticatedUser.user.id),
-                links = listOf(
-                    SirenLink.self(
-                        href = Uris.Matches.BASE + Uris.ID
-                    )
-                ),
-                actions = listOf(
-                    CREATE_PUBLIC_MATCH_ACTION,
-                )
-            )
-        )
+        service.deleteSetupMatch(authenticatedUser.user.id)
+        return ResponseEntity.status(200).body(null)
     }
 }

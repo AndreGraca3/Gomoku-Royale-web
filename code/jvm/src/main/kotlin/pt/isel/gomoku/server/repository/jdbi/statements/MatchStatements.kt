@@ -21,9 +21,10 @@ object MatchStatements {
     """
 
     const val GET_MATCHES_BY_USER_ID = """
-        SELECT id, isPrivate, board, black_id, white_id, winner_id 
+        SELECT id, isPrivate, variant, ${PaginationStatements.PAGINATION_PREFIX} 
         FROM match
         where black_id = :userId or white_id = :userId
+        ${PaginationStatements.PAGINATION_SUFFIX}
     """
 
     const val UPDATE_MATCH = """

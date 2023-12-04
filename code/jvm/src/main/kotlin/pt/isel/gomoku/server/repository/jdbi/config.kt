@@ -14,6 +14,6 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
         .installPlugin(PostgresPlugin())
         .registerColumnMapper(VariantMapper())
         .registerColumnMapper(MatchStateMapper())
+        .registerColumnMapper(RankMapper())
         .registerRowMapper(MatchMapper())
-        .registerRowMapper(RankMapper())
 }

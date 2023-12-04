@@ -1,14 +1,37 @@
 package pt.isel.gomoku.server.repository.jdbi.statements
 
 object UserStatements {
+
+    const val GET_USER_BASE = """
+        select id, u.name, email, password, role, avatar_url, created_at, rank, icon_url
+        from "user" u
+        join stats s on u.id = s.user_id
+        join rank r on s.rank = r.name
+    """
+
+    const val GET_USER_INFO_BASE = """
+        select id, u.name, email, avatar_url, role, created_at, rank, icon_url
+        from "user" u
+        join stats s on u.id = s.user_id
+        join rank r on s.rank = r.name
+    """
+
+    const val GET_USER_DETAILS_BASE = """
+        select id, name, email, avatar_url, role, created_at
+        from "user" u
+    """
+
+    const val GET_USER_ITEM_BASE = """
+        select id, name, role, ${PaginationStatements.PAGINATION_PREFIX}
+        from "user" u
+    """
+
     const val CREATE_USER =
         "insert into \"user\" (name, email, password, avatar_url) values (:name, :email, :password, :avatar_url)"
 
     const val GET_USER_BY_ID =
         """
-            select id, name, email, avatar_url, role, s.rank as rank 
-            from \"user\" u 
-            INNER JOIN stats s on u.id = s.user_id
+            $GET_USER_INFO_BASE
             where id = :id
         """
 
@@ -16,16 +39,20 @@ object UserStatements {
         "select id, name, email, avatar_url, role from \"user\" where name = :name"
 
     const val GET_USER_BY_EMAIL =
-        "select id, name, email, password, avatar_url, role from \"user\" where email = :email"
+        "$GET_USER_BASE where email = :email"
 
     const val GET_USERS =
-        "select id, name from \"user\" where role = :role OR :role IS NULL"
+        """
+        $GET_USER_ITEM_BASE
+        where role = coalesce(:role, role)
+        ${PaginationStatements.PAGINATION_SUFFIX}
+        """
 
     const val UPDATE_USER =
         """
-                update "user"
-                set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url)
-                where id = :id
+        update "user"
+        set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url)
+        where id = :id
         """
 
     const val DELETE_USER =
@@ -36,9 +63,12 @@ object UserStatements {
 
     const val GET_USER_AND_TOKEN_BY_TOKEN_VALUE =
         """
-                select id, name, email, password, role, avatar_url, t.token_value, t.created_at, t.last_used
+                select id, u.name, email, password, role, avatar_url, rank, icon_url, u.created_at as user_created_at,
+                t.token_value, t.created_at as token_created_at, t.last_used
                 from "user" u
-                inner join token as t
+                join stats as s on u.id = s.user_id
+                join rank as r on s.rank = r.name
+                join token as t
                 on u.id = t.user_id
                 where token_value = :token_value
         """

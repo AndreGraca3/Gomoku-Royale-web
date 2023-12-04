@@ -9,6 +9,6 @@ import java.sql.SQLException
 class VariantMapper : ColumnMapper<Variant> {
     @Throws(SQLException::class)
     override fun map(r: ResultSet, columnNumber: Int, ctx: StatementContext?): Variant {
-        return Variant.from(r.getString(columnNumber))
+        return Variant.fromString(r.getString(columnNumber))
     }
 }

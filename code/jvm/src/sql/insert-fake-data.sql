@@ -18,6 +18,11 @@ VALUES ('Daniel', 'daniel@gmail.com', 'password123', 'user', 120, 'daniel_avatar
        ('Diogo', 'diogo@gmail.com', 'password123', 'user', 210, 'diogo_avatar_url', NOW()),
        ('Andre', 'andre@gmail.com', 'password', 'admin', 80, 'andre_avatar_url', NOW());
 
+INSERT INTO stats(user_id)
+VALUES (1),
+       (2),
+       (3);
+
 INSERT INTO token (token_value, created_at, last_used, user_id)
 VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
        ('5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1', NOW(), NOW(), 2),
@@ -26,7 +31,7 @@ VALUES ('0Txy7bYpM9fZaEjKsLpQrVwXuT6jM0fD', NOW(), NOW(), 1),
 INSERT INTO match (id, isprivate, variant, created_at, black_id, white_id, state)
 VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', false, 'FreeStyle', NOW(), 1, 2, 'FINISHED'),
        ('bf4b911a-38ad-45a9-8680-135a25e40e99', true, 'FreeStyle', NOW(), 2, 3, 'FINISHED'),
-       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', false, 'FreeStyle',NOW(), 1, 3, 'FINISHED');
+       ('71180c7a-2e18-4f36-a497-ba4b6842d96a', false, 'FreeStyle', NOW(), 1, 3, 'FINISHED');
 
 INSERT INTO board (match_id, turn, size, stones, type)
 VALUES ('81e598e9-5031-4858-8d2c-f7f77b1264d3', 'B', 15, '', 'FreeStyleBoard'),
