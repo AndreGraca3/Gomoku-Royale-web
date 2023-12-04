@@ -1,8 +1,8 @@
-import {PlayerCard} from "../components/players/PlayerCard";
-import {ReversedPlayerCard} from "../components/players/ReversedPlayerCard";
-import Board, {setBoard} from "../components/board/Board";
+import {PlayerCard} from "../../components/players/PlayerCard";
+import {ReversedPlayerCard} from "../../components/players/ReversedPlayerCard";
+import Board, {setBoard} from "../../components/board/Board";
 import * as React from "react";
-import {BoardType, Stone} from '../types/board';
+import {BoardType, Stone} from '../../types/board';
 
 export function Match(props) {
     const match = props.match

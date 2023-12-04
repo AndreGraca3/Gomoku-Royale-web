@@ -37,6 +37,9 @@ class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
     }
 
     override fun getUserRank(userId: Int): Rank {
-        TODO("Not yet implemented")
+        return handle.createQuery(StatsStatements.GET_RANK)
+            .bind("userId", userId)
+            .mapTo(Rank::class.java)
+            .one()
     }
 }

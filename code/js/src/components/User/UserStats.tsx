@@ -1,4 +1,4 @@
-export function UserStats({userStats}) {
+export function UserStatsView({userStats}) {
     return (
         <div>
             {propertyToHtml(userStats)}
@@ -19,24 +19,4 @@ function propertyToHtml(object: Object) {
                 return <p className="indent-8">{it + ": " + object[it]}</p>
         }
     )
-}
-
-export type UserStats = {
-    winStats: WinStats,
-    matchesStats: MatchesStats
-}
-
-export type WinStats = {
-    totalWins: number,
-    winsAsBlack: number,
-    winsAsWhite: number,
-    winRate: number,
-    draws: number,
-    loses: number
-}
-
-export type MatchesStats = {
-    totalMatches: number,
-    matchesAsBlack: number,
-    matchesAsWhite: number
 }

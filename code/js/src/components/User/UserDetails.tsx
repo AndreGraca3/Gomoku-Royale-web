@@ -1,4 +1,4 @@
-export function UserDetails(props) {
+export function UserDetailsView(props) {
     const user = props.user
 
     return (

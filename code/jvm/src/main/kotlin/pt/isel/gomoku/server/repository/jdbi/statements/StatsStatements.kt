@@ -25,4 +25,12 @@ object StatsStatements {
         FROM stats 
         WHERE user_id = :userId;
     """
+
+    const val GET_RANK = """
+        SELECT r.name, r.icon_url as iconUrl
+        FROM "user" u
+        INNER JOIN stats s on u.id = s.user_id
+        INNER JOIN rank r on s.rank = r.name
+        where user_id = :userId;
+    """
 }

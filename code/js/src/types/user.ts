@@ -1,3 +1,5 @@
+import {Rank} from "./stats";
+
 export type UserCreationInput = {
   name: string;
   email: string;
@@ -17,3 +19,12 @@ export type UserAvatar = {
   name: string;
   avatarUrl: string;
 };
+
+export type UserDetails = {
+  id: number;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+  role: string;
+  rank: Rank;
+}

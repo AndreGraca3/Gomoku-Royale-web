@@ -7,6 +7,7 @@ import { Login } from "./pages/Login/Login";
 import Logout from "./pages/Login/Logout";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
+import {User} from "./pages/User/User";
 
 const router = createBrowserRouter([
   {
@@ -36,9 +37,13 @@ const router = createBrowserRouter([
       {
         path: "top",
         element: <Leaderboard/>,
+      },
+      {
+        path: "me",
+        element: <User />
       }
     ],
-  },
+  }
 ]);
 
 const root = createRoot(document.getElementById("container"));
