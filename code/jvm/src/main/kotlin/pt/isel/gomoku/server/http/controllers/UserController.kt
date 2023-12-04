@@ -113,7 +113,9 @@ class UserController(private val service: UserService) {
     @DeleteMapping(Uris.Users.BASE)
     fun deleteUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         service.deleteUser(authenticatedUser.user.id)
-        return ResponseEntity.status(200).body(null)
+        return ResponseEntity.status(200).body(
+            Siren<Nothing>()
+        )
     }
 
     @PutMapping(Uris.Users.TOKEN)
@@ -130,7 +132,9 @@ class UserController(private val service: UserService) {
                         maxAge = 3600
                     }
                 )
-                ResponseEntity.status(200).body(null)
+                ResponseEntity.status(200).body(
+                    Siren<Nothing>()
+                )
             }
 
             is Failure -> UserProblem.InvalidCredentials(res.value).toResponseEntity()

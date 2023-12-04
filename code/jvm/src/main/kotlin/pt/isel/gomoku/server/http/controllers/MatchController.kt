@@ -179,6 +179,8 @@ class MatchController(private val service: MatchService) {
         authenticatedUser: AuthenticatedUser,
     ): ResponseEntity<*> {
         service.deleteSetupMatch(authenticatedUser.user.id)
-        return ResponseEntity.status(200).body(null)
+        return ResponseEntity.status(200).body(
+            Siren<Nothing>()
+        )
     }
 }
