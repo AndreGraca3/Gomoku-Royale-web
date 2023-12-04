@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.HomeOutputModel
 import pt.isel.gomoku.server.http.response.siren.SirenLink
+import pt.isel.gomoku.server.http.response.siren.actions.UserActions
 import java.lang.management.ManagementFactory
 import java.net.URI
 import java.time.OffsetDateTime
@@ -30,6 +31,10 @@ class HomeController {
             time = OffsetDateTime.now(),
             authors = listOf("André Graça", "Diogo Santos", "Daniel Caseiro")
         ).toSirenObject(
+            actions = listOf(
+                UserActions.getCreateUserAction(),
+                UserActions.getCreateTokenAction()
+            ),
             links = listOf(
                 SirenLink(listOf("authenticatedUser"), URI(Uris.Users.AUTHENTICATED_USER)),
                 SirenLink(listOf("token"), URI(Uris.Users.TOKEN)),

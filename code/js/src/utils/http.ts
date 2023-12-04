@@ -1,7 +1,5 @@
 import { SirenEntity } from "../types/siren";
 
-const BASE_URL = "/api";
-
 /**
  * Makes an HTTP request to the specified path with the given method, body, and authentication token.
  *
@@ -27,7 +25,7 @@ export async function fetchAPI<T>(
 
   if (body) options["body"] = JSON.stringify(body);
 
-  const rsp = await fetch(BASE_URL + path, options);
+  const rsp = await fetch(path, options);
   const content = await rsp.json();
 
   if (!rsp.ok) throw content;

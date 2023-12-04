@@ -14,7 +14,7 @@ class Siren<T>(
     @JsonProperty("class") val clazz: List<SirenClass>? = null,
     val properties: T? = null,
     val entities: List<SubEntity>? = null,
-    val links: List<SirenLink>,
+    val links: List<SirenLink>? = null,
     val actions: List<SirenAction>? = null,
     val title: String? = null,
 ) : Response() {
