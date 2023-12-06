@@ -14,20 +14,12 @@ data class UserInfo(
     val rank: Rank,
 )
 
-data class UserDetails(
-    val id: Int,
-    val name: String,
-    val email: String,
-    val avatarUrl: String?,
-    val role: String,
-    val createdAt: LocalDateTime,
-)
-
 data class UserItem(
     val id: Int,
     val name: String,
     val role: String,
     val count: Int? = null,
+    val rank: Rank
 )
 
 data class AuthenticatedUser(

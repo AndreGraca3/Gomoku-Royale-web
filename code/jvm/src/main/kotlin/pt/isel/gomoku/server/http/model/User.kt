@@ -14,6 +14,7 @@ class UserItemOutputModel(
     val id: Int,
     val name: String,
     val role: String,
+    val rank: Rank
 ) : OutputModel() {
     override fun getSirenClasses() = listOf(SirenClass.user)
 }
@@ -22,6 +23,7 @@ fun UserItem.toOutputModel() = UserItemOutputModel(
     id = id,
     name = name,
     role = role,
+    rank = rank
 )
 
 class UserInfoOutputModel(
@@ -49,6 +51,18 @@ class UsersOutputModel(
     val total: Int,
 ) : OutputModel() {
     override fun getSirenClasses() = listOf(SirenClass.user, SirenClass.collection)
+}
+
+
+class UserDetailsOutputModel(
+    val id: Int,
+    val name: String,
+    val email: String,
+    val avatarUrl: String?,
+    val role: String,
+    val createdAt: LocalDateTime,
+): OutputModel() {
+    override fun getSirenClasses() = listOf(SirenClass.user, SirenClass.info)
 }
 
 data class UserCreationInputModel(

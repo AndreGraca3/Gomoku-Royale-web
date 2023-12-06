@@ -38,8 +38,8 @@ create table if not exists match
     isPrivate  Boolean                    not null,
     variant    VARCHAR(20)                not null,
     created_at timestamp                  not null default now(),
-    black_id   int references "user" (id) not null,
-    white_id   int references "user" (id),
+    black_id   int references "user" (id) on delete set null,
+    white_id   int references "user" (id) on delete set null,
     state      VARCHAR(20)                not null
 );
 
@@ -54,7 +54,7 @@ create table if not exists board
 
 create table if not exists stats
 (
-    user_id          int references "user" (id) primary key,
+    user_id          int references "user" (id) on delete cascade primary key,
     rank             varchar(20) references rank (name) not null default 'Bronze',
     matches_as_black int                                         default 0,
     wins_as_black    int                                         default 0,

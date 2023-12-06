@@ -22,8 +22,10 @@ object UserStatements {
     """
 
     const val GET_USER_ITEM_BASE = """
-        select id, name, role, ${PaginationStatements.PAGINATION_PREFIX}
+        select id, u.name, role, rank, icon_url, ${PaginationStatements.PAGINATION_PREFIX}
         from "user" u
+        join stats s on u.id = s.user_id
+        join rank r on s.rank = r.name
     """
 
     const val CREATE_USER =

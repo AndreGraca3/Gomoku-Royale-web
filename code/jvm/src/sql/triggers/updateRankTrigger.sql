@@ -25,10 +25,7 @@ end;
 $$;
 
 create trigger updateRank
-after update of mmr on "user"
-for each row execute procedure updateRank();
-
--- test scripts
---select id, u.name, role, rank, icon_url, count(*) over() from "user" u join rank on u.rank = rank.name
---where role = coalesce(:role, role)
-
+    after update of mmr
+    on "user"
+    for each row
+execute procedure updateRank();

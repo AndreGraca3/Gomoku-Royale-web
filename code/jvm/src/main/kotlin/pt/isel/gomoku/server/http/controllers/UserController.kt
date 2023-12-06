@@ -8,9 +8,9 @@ import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.*
 import pt.isel.gomoku.server.http.response.problem.UserProblem
 import pt.isel.gomoku.server.http.response.siren.Siren
+import pt.isel.gomoku.server.http.response.siren.SirenLink
 import pt.isel.gomoku.server.http.response.siren.actions.UserActions.getDeleteUserAction
 import pt.isel.gomoku.server.http.response.siren.actions.UserActions.getUpdateUserAction
-import pt.isel.gomoku.server.http.response.siren.SirenLink
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails
 import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.service.UserService
@@ -55,12 +55,12 @@ class UserController(private val service: UserService) {
 
     @GetMapping(Uris.Users.AUTHENTICATED_USER)
     fun getAuthenticatedUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        return UserInfoOutputModel(
+        return UserDetailsOutputModel(
             id = authenticatedUser.user.id,
             name = authenticatedUser.user.name,
+            email = authenticatedUser.user.email,
             avatarUrl = authenticatedUser.user.avatarUrl,
             role = authenticatedUser.user.role,
-            rank = authenticatedUser.user.rank,
             createdAt = authenticatedUser.user.createdAt,
         ).toSirenObject(
             links = listOf(
@@ -112,10 +112,13 @@ class UserController(private val service: UserService) {
 
     @DeleteMapping(Uris.Users.BASE)
     fun deleteUser(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        service.deleteUser(authenticatedUser.user.id)
-        return ResponseEntity.status(200).body(
-            Siren<Nothing>()
-        )
+        return when (service.deleteUser(authenticatedUser.user.id)) {
+            is Success -> ResponseEntity.status(200).body(
+                Siren<Nothing>()
+            )
+
+            is Failure -> UserProblem.UserInAnOngoingMatch.toResponseEntity()
+        }
     }
 
     @PutMapping(Uris.Users.TOKEN)

@@ -1,9 +1,6 @@
 package pt.isel.gomoku.server.http.response.problem
 
-import pt.isel.gomoku.server.service.errors.user.TokenCreationError
-import pt.isel.gomoku.server.service.errors.user.UserCreationError
-import pt.isel.gomoku.server.service.errors.user.UserFetchingError
-import pt.isel.gomoku.server.service.errors.user.UserUpdateError
+import pt.isel.gomoku.server.service.errors.user.*
 
 sealed class UserProblem(
     status: Int,
@@ -66,5 +63,12 @@ sealed class UserProblem(
         "Invalid values",
         "The values for user fields are invalid",
         data
+    )
+
+    object UserInAnOngoingMatch: UserProblem(
+        403,
+        "user-in-an-ongoing-match",
+        "User in an ongoing match",
+        "User can't be deleted until he finished current match",
     )
 }

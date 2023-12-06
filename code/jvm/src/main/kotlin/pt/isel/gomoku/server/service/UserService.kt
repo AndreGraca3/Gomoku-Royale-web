@@ -10,10 +10,7 @@ import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.repository.dto.UserInfo
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.core.SecurityManager
-import pt.isel.gomoku.server.service.errors.user.TokenCreationError
-import pt.isel.gomoku.server.service.errors.user.UserCreationError
-import pt.isel.gomoku.server.service.errors.user.UserFetchingError
-import pt.isel.gomoku.server.service.errors.user.UserUpdateError
+import pt.isel.gomoku.server.service.errors.user.*
 import pt.isel.gomoku.server.utils.Either
 import pt.isel.gomoku.server.utils.failure
 import pt.isel.gomoku.server.utils.success
@@ -104,9 +101,12 @@ class UserService(
         }
     }
 
-    fun deleteUser(id: Int) {
+    fun deleteUser(id: Int): Either<UserDeleteError, Unit> {
         return trManager.run {
-            it.userRepository.deleteUser(id)
+            if (it.matchRepository.getMatchStatusFromUser(id) == null) {
+                return@run success(it.userRepository.deleteUser(id))
+            }
+            failure(UserDeleteError.UserInAnOngoingMatch)
         }
     }
 

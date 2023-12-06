@@ -25,7 +25,7 @@ class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
 
         return PaginationResult(
             results = usersCollection,
-            total = usersCollection.size
+            total = usersCollection.firstOrNull()?.count ?: 0
         )
     }
 
