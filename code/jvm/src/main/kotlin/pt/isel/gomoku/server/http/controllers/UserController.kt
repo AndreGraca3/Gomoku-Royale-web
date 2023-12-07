@@ -68,7 +68,7 @@ class UserController(private val service: UserService) {
                 SirenLink(href = Uris.Stats.buildStatsByUserIdUri(authenticatedUser.user.id), rel = listOf("stats"))
             ),
             actions = listOf(
-                getUpdateUserAction(authenticatedUser.user.id),
+                getUpdateUserAction(),
                 getDeleteUserAction(),
             )
         ).toResponseEntity(200)

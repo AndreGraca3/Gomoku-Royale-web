@@ -2,6 +2,7 @@ const colors = {
   yellow: "text-black bg-gr-yellow hover:text-gr-yellow hover:border-gr-yellow",
   green: "text-black bg-green-600 hover:text-green-600 hover:border-green-600",
   black: "bg-black hover:text-black hover:border-black",
+  red: "text-black bg-red-600 hover:text-red-600 hover:border-red-600",
 };
 
 export default function ScaledButton({
@@ -15,7 +16,7 @@ export default function ScaledButton({
   disabled?: boolean;
   type?: "submit" | "reset" | "button";
   text: string;
-  color?: "yellow" | "green" | "black";
+  color?: "yellow" | "green" | "black" | "red";
 }) {
   return (
     <button

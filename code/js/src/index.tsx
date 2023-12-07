@@ -9,14 +9,18 @@ import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import {User} from "./pages/User/User";
+import {SirenEntity} from "./types/siren";
+import {HomeData} from "./data/homeData";
+import {Loading} from "./pages/Loading/Loading";
 
-export const homeLinks = {
-  loginUrl: "/api/token",
-};
+export let homeLinks: HomeData;
 
-fetchAPI("").then((res) => {
-  console.log(res);
-});
+fetchAPI("/api")
+    .then((res) => {
+      homeLinks = new HomeData(res);
+      const root = createRoot(document.getElementById("container"));
+      root.render(<RouterProvider router={router} />);
+    });
 
 const router = createBrowserRouter([
   {
@@ -54,6 +58,3 @@ const router = createBrowserRouter([
     ],
   }
 ]);
-
-const root = createRoot(document.getElementById("container"));
-root.render(<RouterProvider router={router} />);

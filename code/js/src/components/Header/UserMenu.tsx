@@ -56,7 +56,7 @@ export default function UserMenu() {
 
   useEffect(() => {
     if (loggedIn) {
-      userData.getUserHome().then((res) => {
+      userData.getAuthenticatedUser().then((res) => {
         console.log("Got user home from UserMenu");
         setAvatar(res.properties.avatarUrl);
       });

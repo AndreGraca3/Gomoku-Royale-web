@@ -34,9 +34,9 @@ object UserActions {
         )
     )
 
-    fun getUpdateUserAction(id: Int) = SirenAction(
+    fun getUpdateUserAction() = SirenAction(
         name = "update-user",
-        href = Uris.Users.buildUserByIdUri(id),
+        href = URI(Uris.Users.BASE),
         method = HttpMethod.PATCH,
         type = INPUT_CONTENT_TYPE,
         fields = listOf(

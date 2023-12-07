@@ -1,29 +1,25 @@
-import {UserCreationInput, UserDetails, UserInfo} from "../types/user";
 import { SirenEntity } from "../types/siren";
-import { UserInfo } from "../types/user";
 import { fetchAPI } from "../utils/http";
-import {UserCreationInput, UserInfo} from "../types/user";
-import { fetchReq } from "../utils/http";
+import {UserCreationInput, UserDetails, UserInfo} from "../types/user";
+import {homeLinks} from "../index";
 
-async function login(email: string, password: string): Promise<SirenEntity<void>> {
-  return await fetchAPI("/users/token", "PUT", { email, password });
+async function login(email: string, password: string): Promise<any> {
+  const loginAction = homeLinks.createToken();
+  return await fetchAPI(loginAction.href, loginAction.method, { email, password });
 }
 
-async function getUserHome(): Promise<SirenEntity<UserInfo>> {
-  return await fetchAPI("/users/me");
+async function getAuthenticatedUser(): Promise<SirenEntity<UserDetails>> {
+  const userLink = homeLinks.authenticatedUser();
+  return await fetchAPI(userLink.href);
 }
 
-async function signUp(user: UserCreationInput): Promise<void> {
-  return await fetchAPI("/users", "POST", user);
-}
-
-async function getAuthenticatedUser(){
-  return await fetchReq("/users/me", "GET", null);
+async function signUp(user: UserCreationInput) {
+  const signUpAction = homeLinks.createUser();
+  return await fetchAPI(signUpAction.href, signUpAction.method, user);
 }
 
 export default {
   login,
-  getUserHome,
-  signUp,
-  getAuthenticatedUser
+  getAuthenticatedUser,
+  signUp
 };
