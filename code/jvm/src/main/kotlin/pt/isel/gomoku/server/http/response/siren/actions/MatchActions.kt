@@ -12,7 +12,7 @@ object MatchActions {
 
     fun getCreatePublicMatchAction() = SirenAction(
         name = "create-public-match",
-        href = URI("/matches"),
+        href = URI(Uris.Matches.BASE),
         method = HttpMethod.POST,
         type = INPUT_CONTENT_TYPE,
         fields = listOf(

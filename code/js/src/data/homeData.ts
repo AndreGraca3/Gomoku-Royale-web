@@ -47,4 +47,12 @@ export class HomeData {
             }
         );
     };
+
+    createMatch(): SirenAction {
+        return this.homeContent.actions.find(
+            (it) => {
+                return it.name == "create-public-match"
+            }
+        )
+    }
 }

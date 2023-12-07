@@ -3,45 +3,42 @@ import {ReversedPlayerCard} from "../../components/players/ReversedPlayerCard";
 import Board, {setBoard} from "../../components/board/Board";
 import * as React from "react";
 import {BoardType, Stone} from '../../types/board';
+import {useEffect, useState} from "react";
+import {Loading} from "../Loading/Loading";
+import {homeLinks} from "../../index";
+import {fetchAPI} from "../../utils/http";
+import userData from "../../data/userData";
+import matchData from "../../data/matchData";
 
-export function Match(props) {
-    const match = props.match
-    const board = match.board
-    const user1 = match.user1
-    const user2 = match.user2
+export function Match() {
+    const [isLoading, setIsLoading] = useState(true)
 
-    function play() {
-        let newStones: Array<Stone> = board.stones
-        newStones.push({
-            player: {
-                symbol: "w"
-            },
-            dot: {
-                rowIdx: 3,
-                colIdx: 4
-            }
-        })
-        const newBoard: BoardType = {
-            size: board.size,
-            stones: newStones,
-            turn: {
-                symbol: "b"
-            }
-        }
-        const setBoardFunction = setBoard()
-        setBoardFunction(newBoard)
+    const polling = async () => {
+        const userSiren = await userData.getAuthenticatedUser()
+        //const matchSiren = matchData.createMatch()
+        // get match, esta operação é obtida após criação da match/entrada na queue
+
+
+    }
+
+    useEffect(() => {
+
+    }, []);
+
+    if (isLoading) {
+        return <Loading message="Searching for other player..." onCancel={undefined}/>
     }
 
     return (
         <div className="grid gap-y-8">
             <div className="flex justify-center items-center">
                 <div className="grid grid-cols-2 gap-x-120">
-                    <PlayerCard user={user1}></PlayerCard>
-                    <ReversedPlayerCard user={user2}></ReversedPlayerCard>
+                    <PlayerCard user={undefined}></PlayerCard>
+                    <ReversedPlayerCard user={undefined}></ReversedPlayerCard>
                 </div>
             </div>
-            <Board board={board}></Board>
-            <button onClick={play}>
+            <Board board={undefined}></Board>
+            <button onClick={undefined}>
                 <p>Play!</p>
             </button>
         </div>

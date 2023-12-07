@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.HomeOutputModel
 import pt.isel.gomoku.server.http.response.siren.SirenLink
+import pt.isel.gomoku.server.http.response.siren.actions.MatchActions
 import pt.isel.gomoku.server.http.response.siren.actions.UserActions
 import java.lang.management.ManagementFactory
 import java.net.URI
@@ -33,7 +34,8 @@ class HomeController {
         ).toSirenObject(
             actions = listOf(
                 UserActions.getCreateUserAction(),
-                UserActions.getCreateTokenAction()
+                UserActions.getCreateTokenAction(),
+                MatchActions.getCreatePublicMatchAction()
             ),
             links = listOf(
                 SirenLink(listOf("authenticatedUser"), URI(Uris.Users.AUTHENTICATED_USER)),

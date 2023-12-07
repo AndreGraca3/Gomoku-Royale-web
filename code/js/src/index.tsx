@@ -9,9 +9,9 @@ import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import {User} from "./pages/User/User";
-import {SirenEntity} from "./types/siren";
 import {HomeData} from "./data/homeData";
-import {Loading} from "./pages/Loading/Loading";
+import {Match} from "./pages/Match/Match";
+import {Preferences} from "./pages/Menu/Preferences";
 
 export let homeLinks: HomeData;
 
@@ -54,6 +54,14 @@ const router = createBrowserRouter([
       {
         path: "me",
         element: <User />
+      },
+      {
+        path: "play",
+        element: <Preferences />
+      },
+      {
+        path: "public",
+        element: <Match/>
       }
     ],
   }
