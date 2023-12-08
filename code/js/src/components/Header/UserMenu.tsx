@@ -1,4 +1,4 @@
-import { Menu, Transition } from '@headlessui/react';
+import { Menu, Transition } from "@headlessui/react";
 import Avatar from "../Avatar";
 import { useLoggedIn } from "../../hooks/Auth/AuthnStatus";
 import { Fragment, useEffect, useState } from "react";
@@ -60,6 +60,8 @@ export default function UserMenu() {
         console.log("Got user home from UserMenu");
         setAvatar(res.properties.avatarUrl);
       });
+    } else {
+      setAvatar(undefined);
     }
   }, [loggedIn]);
 

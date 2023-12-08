@@ -123,8 +123,10 @@ class UserController(private val service: UserService) {
 
     @PutMapping(Uris.Users.TOKEN)
     fun createToken(@RequestBody input: UserCredentialsInput, response: HttpServletResponse): ResponseEntity<*> {
+        println("Creating token for user ${input.email}")
         return when (val res = service.createToken(input.email, input.password)) {
             is Success -> {
+                println("Created token ${res.value.tokenValue}")
                 response.addCookie(
                     Cookie(
                         AuthenticationDetails.NAME_AUTHORIZATION_COOKIE,
