@@ -2,7 +2,6 @@ import {useState} from "react";
 import {Navigate} from "react-router-dom";
 import {MatchCard} from "../../components/preferences/MatchCard";
 import {SizeSelector} from "../../components/preferences/SizeSelector";
-import {homeLinks} from "../../index";
 import matchData from "../../data/matchData";
 
 export function Preferences() {

@@ -11,7 +11,7 @@ import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import {User} from "./pages/User/User";
 import {HomeData} from "./data/homeData";
 import {Match} from "./pages/Match/Match";
-import {Preferences} from "./pages/Menu/Preferences";
+import {Preferences} from "./pages/Preferences/Preferences";
 
 export let homeLinks: HomeData;
 
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
         element: <Preferences />
       },
       {
-        path: "public",
+        path: "match/:id",
         element: <Match/>
       }
     ],

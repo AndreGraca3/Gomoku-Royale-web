@@ -5,6 +5,7 @@ import org.springframework.core.env.Environment
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriTemplate
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.HomeOutputModel
 import pt.isel.gomoku.server.http.response.siren.SirenLink
@@ -12,6 +13,7 @@ import pt.isel.gomoku.server.http.response.siren.actions.MatchActions
 import pt.isel.gomoku.server.http.response.siren.actions.UserActions
 import java.lang.management.ManagementFactory
 import java.net.URI
+import java.net.URLEncoder
 import java.time.OffsetDateTime
 
 @RestController
@@ -42,6 +44,7 @@ class HomeController {
                 SirenLink(listOf("token"), URI(Uris.Users.TOKEN)),
                 SirenLink(listOf("user"), URI(Uris.Users.BASE)),
                 SirenLink(listOf("leaderboard"), URI(Uris.Stats.TOP)),
+                SirenLink(listOf("match"), URI("${Uris.Matches.BASE}/:id"))
             )
         ).toResponseEntity(200)
     }
