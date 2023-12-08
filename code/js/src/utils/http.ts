@@ -32,3 +32,18 @@ export async function fetchAPI<T>(
 
   return content;
 }
+
+export function requestBuilder(UriTemplate: string, args: Array<any>): string {
+  let url = UriTemplate.split("/").map(
+    (it) => {
+      if (it.indexOf(":") != -1) return args.shift()
+      return it
+    }
+  ).toString()
+
+  while(url.indexOf(",") != -1) {
+    url = url.replace(",", "/")
+  }
+  console.log("request builder called!")
+  return url
+}

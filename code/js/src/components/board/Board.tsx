@@ -3,10 +3,9 @@ import {BoardType, getStoneOrNull} from '../../types/board';
 import {createContext, useContext, useState} from "react";
 import * as React from "react";
 
-export default function Board(props) {
+export default function Board({board}: {board: BoardType}) {
     const setBoardFunction = setBoard()
-    setBoardFunction(props.board)
-    const board = props.board
+    setBoardFunction(board)
 
     let arr = Array(board.size * board.size);
 

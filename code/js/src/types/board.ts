@@ -1,15 +1,3 @@
-export type User = {
-    name: string,
-    email: string
-    rank: string
-}
-
-export type match = {
-    board: BoardType,
-    user1: User,
-    user2: User
-}
-
 export type BoardType = {
     size: number;
     stones: Array<Stone>;

@@ -32,6 +32,18 @@ export class HomeData {
         );
     };
 
+    matchById(): SirenLink {
+        return this.homeContent.links.find(
+            (it) => {
+                return it.rel.find(
+                    (it) => {
+                        return it == "match"
+                    }
+                )
+            }
+        );
+    };
+
     createToken(): SirenAction {
         return this.homeContent.actions.find(
             (it) => {
