@@ -9,6 +9,7 @@ import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import {User} from "./pages/User/User";
+import About from "./pages/About/About";
 
 export const homeLinks = {
   loginUrl: "/api/token",
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <div>About Page</div>,
+        element: <About />
       },
       {
         path: "login",
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
         element: <User />
       }
     ],
-  }
+  },
 ]);
 
 const root = createRoot(document.getElementById("container"));

@@ -10,7 +10,7 @@ export function SignUp() {
     name: "",
     email: "",
     password: "",
-    avatar: "",
+    avatarUrl: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +24,7 @@ export function SignUp() {
     setError(undefined);
   };
 
-const selectImage = async (): Promise<string> => {
+  const selectImage = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
       const input = document.createElement("input");
       input.type = "file";
@@ -45,11 +45,11 @@ const selectImage = async (): Promise<string> => {
       input.click();
     });
   };
-  
+
   const handleImageClick = async () => {
     try {
       const selectedImageUrl = await selectImage();
-      setInputs({ ...inputs, avatar: selectedImageUrl });
+      setInputs({ ...inputs, avatarUrl: selectedImageUrl });
     } catch (error) {
       console.error(error);
     }
@@ -59,11 +59,11 @@ const selectImage = async (): Promise<string> => {
     ev.preventDefault();
     setIsSubmitting(true);
 
-    const { name, email, password, avatar } = inputs;
+    const { name, email, password, avatarUrl } = inputs;
 
     try {
       // Make an API request to create a new user
-      await userData.signUp({ name, email, password, avatar });
+      await userData.signUp({ name, email, password, avatarUrl });
       setIsSubmitting(false);
       //setLoggedIn(true);
       //localStorage.setItem("loggedIn", "true");
@@ -81,16 +81,18 @@ const selectImage = async (): Promise<string> => {
 
   return (
     <div className="flex flex-col space-y-4">
-      <h1 className="text-3xl font-bold text-center mb-4">Be a New Royal! 👁👃🏿👁</h1>
+      <h1 className="text-3xl font-bold text-center mb-4">
+        Be a New Royale! 👑
+      </h1>
       <div className="flex items-center justify-center">
         <button
           onClick={handleImageClick}
           className="focus:outline-0 hover:scale-110 transition-all duration-300"
           type="button"
         >
-          {inputs.avatar ? (
+          {inputs.avatarUrl ? (
             <img
-              src={inputs.avatar}
+              src={inputs.avatarUrl}
               alt="User Avatar"
               className="border rounded-full w-32 h-32 cursor-pointer transition-all duration-200 ease-in-out"
             />

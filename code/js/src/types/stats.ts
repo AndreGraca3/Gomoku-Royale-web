@@ -23,3 +23,20 @@ export type MatchesStats = {
     matchesAsBlack: number,
     matchesAsWhite: number
 }
+
+export type PaginationResult<T> = {
+    results: T[];
+    total: number;
+}
+  
+export type UserItem = {
+    id: number;
+    name: string;
+    role: string;
+    count?: number | null;
+    rank: {
+        name: string;
+        iconUrl: string;
+    }
+}
+
