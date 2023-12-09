@@ -11,9 +11,19 @@ async function login(email: string, password: string): Promise<any> {
   });
 }
 
+async function logout() : Promise<any> {
+  const logoutAction = homeLinks.deleteToken();
+  return await fetchAPI(logoutAction.href, logoutAction.method);
+}
+
 async function getAuthenticatedUser(): Promise<SirenEntity<UserDetails>> {
   const userLink = homeLinks.authenticatedUser();
   return await fetchAPI(userLink.href);
+}
+
+async function verifyAuthentication() : Promise<SirenEntity<any>> {
+  const authLink = homeLinks.verifyAuth();
+  return await fetchAPI(authLink.href)
 }
 
 async function signUp(user: UserCreationInput) {
@@ -44,8 +54,10 @@ function getDeleteUserAction(siren): SirenAction {
 export default {
   login,
   getAuthenticatedUser,
+  verifyAuthentication,
   signUp,
   getStatsHref,
   getUpdateUserAction,
   getDeleteUserAction,
+  logout,
 };

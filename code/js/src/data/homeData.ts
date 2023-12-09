@@ -37,6 +37,18 @@ export class HomeData {
     });
   }
 
+  deleteToken(): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "delete-token";
+    });
+  }
+
+  verifyAuth(): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "verify-auth";
+    });
+  }
+
   createUser(): SirenAction {
     return this.homeContent.actions.find((it) => {
       return it.name == "create-user";

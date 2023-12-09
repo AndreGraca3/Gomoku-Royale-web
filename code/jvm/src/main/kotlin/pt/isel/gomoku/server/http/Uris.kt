@@ -15,6 +15,7 @@ object Uris {
         const val TOKEN = "$BASE/token"
         const val AUTHENTICATED_USER = "$BASE/me"
         const val USER_BY_ID = "$BASE/{id}"
+        const val AUTH_VERIFY = "$API_BASE/auth/verify"
 
         fun buildUserByIdUri(id: Int) = UriTemplate(USER_BY_ID).expand(id)
     }

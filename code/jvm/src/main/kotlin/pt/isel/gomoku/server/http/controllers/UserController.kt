@@ -145,4 +145,29 @@ class UserController(private val service: UserService) {
             is Failure -> UserProblem.InvalidCredentials(res.value).toResponseEntity()
         }
     }
+
+    @DeleteMapping(Uris.Users.TOKEN)
+    fun deleteToken(authenticatedUser: AuthenticatedUser, response: HttpServletResponse): ResponseEntity<*> {
+        response.addCookie(
+            Cookie(
+                AuthenticationDetails.NAME_AUTHORIZATION_COOKIE,
+                ""
+            ).apply {
+                path = "/"
+                isHttpOnly = true
+                maxAge = 3600
+            }
+        )
+        service.deleteToken(authenticatedUser.token.tokenValue)
+        return ResponseEntity.status(200).body(
+            Siren<Nothing>()
+        )
+    }
+
+    @GetMapping(Uris.Users.AUTH_VERIFY)
+    fun getAuthenticated(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
+        return ResponseEntity.status(200).body(
+            Siren<Nothing>()
+        )
+    }
 }

@@ -35,6 +35,8 @@ class HomeController {
             actions = listOf(
                 UserActions.getCreateUserAction(),
                 UserActions.getCreateTokenAction(),
+                UserActions.getDeleteTokenAction(),
+                UserActions.getVerifyAuthAction(),
                 MatchActions.getCreatePublicMatchAction()
             ),
             links = listOf(

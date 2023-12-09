@@ -50,7 +50,7 @@ export function User() {
       return async () => {
         const deleteUserAction = userData.getDeleteUserAction(userSiren);
         await fetchAPI(deleteUserAction.href, deleteUserAction.method);
-        localStorage.removeItem("loggedIn");
+        userData.logout()
         setRedirect(true);
       };
     });

@@ -52,7 +52,6 @@ export function Login() {
       .then(() => {
         dispatch({ type: "success", inputs: state.inputs });
         setLoggedIn(true);
-        localStorage.setItem("loggedIn", "true");
         setTimeout(() => {
           navigate("/me");
         }, 1000);

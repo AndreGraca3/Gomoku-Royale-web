@@ -71,6 +71,15 @@ class UserService(
         }
     }
 
+    fun deleteUser(id: Int): Either<UserDeleteError, Unit> {
+        return trManager.run {
+            if (it.matchRepository.getMatchStatusFromUser(id) == null) {
+                return@run success(it.userRepository.deleteUser(id))
+            }
+            failure(UserDeleteError.UserInAnOngoingMatch)
+        }
+    }
+
     fun createToken(email: String, password: String): Either<TokenCreationError.InvalidCredentials, Token> {
         if (email.isBlank() || password.isBlank())
             failure(TokenCreationError.InvalidCredentials(email, password))
@@ -101,14 +110,12 @@ class UserService(
         }
     }
 
-    fun deleteUser(id: Int): Either<UserDeleteError, Unit> {
+    fun deleteToken(token: String) {
         return trManager.run {
-            if (it.matchRepository.getMatchStatusFromUser(id) == null) {
-                return@run success(it.userRepository.deleteUser(id))
-            }
-            failure(UserDeleteError.UserInAnOngoingMatch)
+            it.userRepository.deleteToken(token)
         }
     }
+
 
     // Helper function, does not return Either
     fun getUserByTokenValue(token: String): AuthenticatedUser? {

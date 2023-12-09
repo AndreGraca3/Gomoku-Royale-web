@@ -65,8 +65,6 @@ export function SignUp() {
       // Make an API request to create a new user
       await userData.signUp({ name, email, password, avatarUrl });
       setIsSubmitting(false);
-      //setLoggedIn(true);
-      //localStorage.setItem("loggedIn", "true");
       console.log("Signed up!");
       setRedirect("/login"); // Redirect to the desired page after signup
     } catch (error) {

@@ -3,7 +3,9 @@ import {
     useState,
     createContext,
     useContext,
+    useEffect,
 } from 'react'
+import userData from '../../data/userData'
 
 // The state that will be in the context
 type AuthnContextType = {
@@ -19,8 +21,15 @@ const AuthnContext = createContext<AuthnContextType>({
 })
 
 export function AuthnStatusProvider({children}: {children: React.ReactNode}) {
-    const [observedLoggedIn, setLoggedIn] = useState(localStorage.getItem("loggedIn") === "true")
-
+    const [observedLoggedIn, setLoggedIn] = useState(false)
+    
+    useEffect(() => {
+        userData.verifyAuthentication()
+        .then(() => {
+            setLoggedIn(true)
+        }).catch(() =>{})
+    },[])
+     
     return (
         <AuthnContext.Provider value={{loggedIn: observedLoggedIn, setLoggedIn: setLoggedIn}}>
             {children}
