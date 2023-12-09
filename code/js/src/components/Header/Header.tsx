@@ -24,7 +24,7 @@ export default function Header() {
     //TODO - Change to variable limit
     {
       to: "/top?limit=10",
-      title: "Leaderboard"
+      title: "Leaderboard",
     },
     {
       to: "/play",
@@ -33,7 +33,7 @@ export default function Header() {
     {
       to: "/about",
       title: "About",
-    }
+    },
   ];
 
   return (

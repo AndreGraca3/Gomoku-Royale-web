@@ -24,7 +24,7 @@ export function SignUp() {
     setError(undefined);
   };
 
-const selectImage = async (): Promise<string> => {
+  const selectImage = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
       const input = document.createElement("input");
       input.type = "file";
@@ -45,7 +45,7 @@ const selectImage = async (): Promise<string> => {
       input.click();
     });
   };
-  
+
   const handleImageClick = async () => {
     try {
       const selectedImageUrl = await selectImage();
@@ -81,7 +81,9 @@ const selectImage = async (): Promise<string> => {
 
   return (
     <div className="flex flex-col space-y-4">
-      <h1 className="text-3xl font-bold text-center mb-4">Be a New Royal! 👁👃🏿👁</h1>
+      <h1 className="text-3xl font-bold text-center mb-4">
+        Be a New Royal! 👁👃🏿👁
+      </h1>
       <div className="flex items-center justify-center">
         <button
           onClick={handleImageClick}

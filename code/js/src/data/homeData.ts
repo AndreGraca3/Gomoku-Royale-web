@@ -1,70 +1,51 @@
-import {SirenAction, SirenEntity, SirenLink} from "../types/siren";
+import { SirenAction, SirenEntity, SirenLink } from "../types/siren";
 
 export class HomeData {
+  homeContent: SirenEntity<any>;
 
-    homeContent: SirenEntity<any>;
+  constructor(homeContent: SirenEntity<any>) {
+    this.homeContent = homeContent;
+  }
 
-    constructor(homeContent: SirenEntity<any>) {
-        this.homeContent = homeContent;
-    };
+  leaderboard(): SirenLink {
+    return this.homeContent.links.find((it) => {
+      return it.rel.find((it) => {
+        return it == "leaderboard";
+      });
+    });
+  }
 
-    leaderboard(): SirenLink {
-        return this.homeContent.links.find(
-            (it) => {
-                return it.rel.find(
-                    (it) => {
-                        return it == "leaderboard"
-                    }
-                )
-            }
-        )
-    }
+  authenticatedUser(): SirenLink {
+    return this.homeContent.links.find((it) => {
+      return it.rel.find((it) => {
+        return it == "authenticatedUser";
+      });
+    });
+  }
 
-    authenticatedUser(): SirenLink {
-        return this.homeContent.links.find(
-            (it) => {
-                return it.rel.find(
-                    (it) => {
-                        return it == "authenticatedUser"
-                    }
-                )
-            }
-        );
-    };
+  matchById(): SirenLink {
+    return this.homeContent.links.find((it) => {
+      return it.rel.find((it) => {
+        return it == "match";
+      });
+    });
+  }
 
-    matchById(): SirenLink {
-        return this.homeContent.links.find(
-            (it) => {
-                return it.rel.find(
-                    (it) => {
-                        return it == "match"
-                    }
-                )
-            }
-        );
-    };
+  createToken(): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "create-token";
+    });
+  }
 
-    createToken(): SirenAction {
-        return this.homeContent.actions.find(
-            (it) => {
-                return it.name == "create-token";
-            }
-        );
-    };
+  createUser(): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "create-user";
+    });
+  }
 
-    createUser(): SirenAction {
-        return this.homeContent.actions.find(
-            (it) => {
-                return it.name == "create-user";
-            }
-        );
-    };
-
-    createMatch(): SirenAction {
-        return this.homeContent.actions.find(
-            (it) => {
-                return it.name == "create-public-match"
-            }
-        )
-    }
+  createMatch(): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "create-public-match";
+    });
+  }
 }

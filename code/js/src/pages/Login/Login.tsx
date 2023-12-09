@@ -41,10 +41,10 @@ export function Login() {
       .then(() => {
         setIsSubmitting(false);
         setLoggedIn(true);
-      //  userData.getUserHome()
-      //      .then((res) => {
-//
-      //      });
+        //  userData.getUserHome()
+        //      .then((res) => {
+        //
+        //      });
         localStorage.setItem("loggedIn", "true");
         console.log("Logged in!");
         setRedirect("/me");

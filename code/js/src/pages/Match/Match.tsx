@@ -1,128 +1,110 @@
-import {PlayerCard} from "../../components/players/PlayerCard";
-import {ReversedPlayerCard} from "../../components/players/ReversedPlayerCard";
+import { PlayerCard } from "../../components/players/PlayerCard";
+import { ReversedPlayerCard } from "../../components/players/ReversedPlayerCard";
 import Board from "../../components/board/Board";
-import * as React from "react";
-import {useEffect, useState} from "react";
-import {Navigate, useParams} from "react-router-dom";
-import {homeLinks} from "../../index";
-import {fetchAPI, requestBuilder} from "../../utils/http";
-import {SirenEntity} from "../../types/siren";
-import {Match} from "../../types/match";
-import {Loading} from "../Loading/Loading";
-import {BoardProvider} from "../../hooks/Board/Board";
+import { useEffect, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
+import { homeLinks } from "../../index";
+import { fetchAPI, requestBuilder } from "../../utils/http";
+import { SirenEntity } from "../../types/siren";
+import { Match } from "../../types/match";
 import userData from "../../data/userData";
-import {UserInfo} from "../../types/user";
+import { UserInfo } from "../../types/user";
+import { Loading } from "../Loading/Loading";
+import matchData from "../../data/matchData";
 
 export function Match() {
-    const {id} = useParams()
+  const { id } = useParams();
 
-    const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
 
-    const [match, setMatch] = useState(undefined)
-    const [currentUser, setCurrentUser] = useState(undefined)
+  const [board, setBoard] = useState(undefined);
 
-    const [oppositeUser, setOppositeUser] = useState(undefined)
-    const [deleteMatch, setDeleteMatch] = useState(undefined)
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [oppositeUser, setOppositeUser] = useState(undefined);
 
-    const [redirect, setRedirect] = useState(undefined)
+  const [deleteMatch, setDeleteMatch] = useState(undefined);
+  const [playMatch, setPlayMatch] = useState(undefined);
 
+  const [redirect, setRedirect] = useState(undefined);
 
-    async function polling(request: string) {
-        const matchSiren: SirenEntity<Match> = await fetchAPI(request)
-        const match = matchSiren.properties
-        setMatch(match)
-        setDeleteMatch((prev) => {
-            return async () => {
-                const deleteMatchAction = getDeleteMatchAction(matchSiren)
-                await fetchAPI(deleteMatchAction.href, deleteMatchAction.method)
-                setRedirect("/play")
-            }
-        })
+  async function polling(request: string) {
+    const matchSiren: SirenEntity<Match> = await fetchAPI(request);
+    const match = matchSiren.properties;
+    const currentBoard = match.board;
+    setBoard((prev) => {
+      return currentBoard;
+    });
+    setDeleteMatch((prev) => {
+      return async () => {
+        const deleteMatchAction = matchData.getDeleteMatchAction(matchSiren);
+        await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
+        setRedirect("/play");
+      };
+    });
 
-        const currentUser = (await userData.getAuthenticatedUser()).properties
-        setCurrentUser(currentUser)
+    setPlayMatch((prev) => {
+      return async (rowNumber, columnSymbol) => {
+        const playMatchAction = matchData.getPlayMatchAction(matchSiren);
+        return await fetchAPI(playMatchAction.href, playMatchAction.method, {
+          row: {
+            number: rowNumber,
+          },
+          column: {
+            symbol: columnSymbol,
+          },
+        });
+      };
+    });
 
-        if (match.state == "ONGOING") {
-            const blackPlayer: UserInfo = (await fetchAPI<UserInfo>(getBlackPlayerHref(matchSiren))).properties
-            if (currentUser.id == blackPlayer.id) {
-                const whitePlayer: UserInfo = (await fetchAPI<UserInfo>(getWhitePlayerHref(matchSiren))).properties
-                setOppositeUser(whitePlayer)
-            } else {
-                setOppositeUser(blackPlayer)
-            }
+    if (match.state == "ONGOING") {
+      const fetchedCurrentUser = await userData.getAuthenticatedUser();
+      const blackPlayer: UserInfo = (
+        await fetchAPI<UserInfo>(matchData.getBlackPlayerHref(matchSiren))
+      ).properties;
+      const whitePlayer: UserInfo = (
+        await fetchAPI<UserInfo>(matchData.getWhitePlayerHref(matchSiren))
+      ).properties;
+      if (fetchedCurrentUser.properties.id == blackPlayer.id) {
+        setCurrentUser(blackPlayer);
+        setOppositeUser(whitePlayer);
+      } else {
+        setOppositeUser(blackPlayer);
+        setCurrentUser(whitePlayer);
+      }
 
-            setIsLoading(false)
-        }
+      setIsLoading(false);
     }
+    console.log(board);
+  }
 
-    function getBlackPlayerHref(siren: SirenEntity<any>) {
-        return siren.links.find(
-            (it) => {
-                return it.rel.find(
-                    (it) => {
-                        return it == "playerBlack"
-                    }
-                )
-            }
-        ).href;
-    }
+  useEffect(() => {
+    const url = requestBuilder(homeLinks.matchById().href, [id]);
+    const tid = setInterval(() => {
+      console.log("I'm polling");
+      polling(url);
+    }, 2000);
+    return () => clearInterval(tid);
+  }, []);
 
-    function getWhitePlayerHref(siren: SirenEntity<any>) {
-        return siren.links.find(
-            (it) => {
-                return it.rel.find(
-                    (it) => {
-                        return it == "whitePlayer"
-                    }
-                )
-            }
-        ).href;
-    }
+  if (redirect) {
+    return <Navigate to={redirect} replace={true} />;
+  }
 
-    function getDeleteMatchAction(siren: SirenEntity<any>) {
-        return siren.actions.find(
-            (it) => {
-                return it.name == "delete-match"
-            }
-        )
-    }
-
-    useEffect(() => {
-        const url = requestBuilder(homeLinks.matchById().href, [id])
-        const tid = setInterval(
-            () => {
-                polling(url)
-                    .then(r => {
-                            if (match && match.state != "SETUP") {
-                                setIsLoading(false)
-                            }
-                        }
-                    )
-            },
-            500
-        )
-        return () => clearInterval(tid)
-    }, []);
-
-    if (isLoading) {
-        return <Loading message="Searching for other player..." onCancel={deleteMatch}/>
-    }
-
-    if (redirect) {
-        return <Navigate to={redirect} replace={true}/>
-    }
-
+  if (isLoading) {
     return (
-        <div className="grid gap-y-8">
-            <div className="flex justify-center items-center">
-                <div className="grid grid-cols-2 gap-x-120">
-                    <PlayerCard user={currentUser}></PlayerCard>
-                    <ReversedPlayerCard user={oppositeUser}></ReversedPlayerCard>
-                </div>
-            </div>
-            <BoardProvider>
-                <Board board={match.board}></Board>
-            </BoardProvider>
+      <Loading message="Searching for other player..." onCancel={deleteMatch} />
+    );
+  }
+
+  return (
+    <div className="grid gap-y-4">
+      <div className="flex justify-center items-center">
+        <div className="grid grid-cols-2 gap-x-120">
+          <PlayerCard user={currentUser}></PlayerCard>
+          <ReversedPlayerCard user={oppositeUser}></ReversedPlayerCard>
         </div>
-    )
+      </div>
+      <Board board={board} play={playMatch}></Board>
+    </div>
+  );
 }
