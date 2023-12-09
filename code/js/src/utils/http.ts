@@ -25,7 +25,7 @@ export async function fetchAPI<T>(
 
   if (body) options["body"] = JSON.stringify(body);
 
-  const rsp = await fetch("/api" + path, options);
+  const rsp = await fetch(path, options);
   const content = await rsp.json();
 
   if (!rsp.ok) throw content;
