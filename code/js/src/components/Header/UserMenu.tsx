@@ -60,6 +60,8 @@ export default function UserMenu() {
         console.log("Got user home from UserMenu");
         setAvatar(res.properties.avatarUrl);
       });
+    } else {
+      setAvatar(undefined);
     }
   }, [loggedIn]);
 

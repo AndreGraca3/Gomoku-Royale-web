@@ -4,7 +4,7 @@ export type UserCreationInput = {
   name: string;
   email: string;
   password: string;
-  avatar: string;
+  avatarUrl: string;
 };
 
 export type UserInfo = {

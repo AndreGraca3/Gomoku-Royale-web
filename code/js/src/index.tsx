@@ -12,6 +12,7 @@ import {User} from "./pages/User/User";
 import {HomeData} from "./data/homeData";
 import {Match} from "./pages/Match/Match";
 import {Preferences} from "./pages/Preferences/Preferences";
+import About from "./pages/About/About";
 
 export let homeLinks: HomeData;
 
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <div>About Page</div>,
+        element: <About />
       },
       {
         path: "login",
@@ -64,5 +65,5 @@ const router = createBrowserRouter([
         element: <Match/>
       }
     ],
-  }
+  },
 ]);

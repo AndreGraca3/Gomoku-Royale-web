@@ -4,9 +4,11 @@ import Nprogress from "../../../dist/nprogress/nprogress";
 import NavItem from "./NavItem";
 import HeaderBrand from "./HeaderBrand";
 import UserMenu from "./UserMenu";
+import { useLoggedIn } from "../../hooks/Auth/AuthnStatus";
 
 export default function Header() {
   const location = useLocation();
+  const isLoggedIn = useLoggedIn();
 
   useEffect(() => {
     Nprogress.done();
@@ -23,18 +25,21 @@ export default function Header() {
   const links: Array<PageLink> = [
     //TODO - Change to variable limit
     {
-      to: "/top?limit=10",
+      to: "/top",
       title: "Leaderboard",
-    },
-    {
-      to: "/play",
-      title: "Play",
     },
     {
       to: "/about",
       title: "About",
     },
   ];
+
+  if (isLoggedIn) {
+    links.push({
+      to: "/play",
+      title: "Play",
+    });
+  }
 
   return (
     <header className="items-center bg-theme-color border-b border-dark-theme-color flex px-2 fixed w-full h-14 shadow-2xl">

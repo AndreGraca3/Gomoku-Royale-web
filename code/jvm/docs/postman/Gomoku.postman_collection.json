@@ -66,7 +66,59 @@
 					"response": []
 				},
 				{
-					"name": "Get User",
+					"name": "Get Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/users",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Authenticated User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}{{port}}/api/users/me",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Id",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -94,39 +146,10 @@
 					"response": []
 				},
 				{
-					"name": "Get User Home",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{host}}{{port}}/api/users/me",
-							"host": [
-								"{{host}}{{port}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"me"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update User",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "PATCH",
 						"header": [],
@@ -220,14 +243,7 @@
 					"name": "Create Match",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "9PwQ3zHsUeLmWxN7aRyV2bYjO5iK8tSf",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [],
@@ -281,7 +297,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "e26ec8ad-1eac-4ddc-9500-4e75552c7f47"
+									"value": "071533c6-5a3a-4ac9-8bde-1c0cc5782352"
 								}
 							]
 						}
@@ -316,7 +332,46 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "d313a1a2-8c98-4730-a998-8dce05cb18f8"
+									"value": "071533c6-5a3a-4ac9-8bde-1c0cc5782352"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Matches From User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "Authorization=k78IHgzZBLjlGD2OUAHWDqhkYvpuIR6OOAuny-_ZkDU=",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{host}}{{port}}/api/matches?skip=1",
+							"host": [
+								"{{host}}{{port}}"
+							],
+							"path": [
+								"api",
+								"matches"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "56",
+									"disabled": true
 								}
 							]
 						}
@@ -360,7 +415,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "56036014-c845-4485-bef4-b59276d5dd11"
+									"value": "071533c6-5a3a-4ac9-8bde-1c0cc5782352"
 								}
 							]
 						}
@@ -371,14 +426,7 @@
 					"name": "Delete Match",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "5Rz2vWqFpYhN6sTbGmCjXeZrU0gO4oA1",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "DELETE",
 						"header": [],
@@ -398,41 +446,6 @@
 			]
 		},
 		{
-			"name": "/system",
-			"item": [
-				{
-					"name": "Get System Info",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Daniel\",\r\n    \"email\": \"Daniel@gmail.com\",\r\n    \"password\": \"456\",\r\n    \"avatar\" : null\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{host}}{{port}}/api/system",
-							"host": [
-								"{{host}}{{port}}"
-							],
-							"path": [
-								"api",
-								"system"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "/stats",
 			"item": [
 				{
@@ -441,13 +454,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{host}}{{port}}/api/stats/top",
+							"raw": "{{host}}{{port}}/api/stats/users/top",
 							"host": [
 								"{{host}}{{port}}"
 							],
 							"path": [
 								"api",
 								"stats",
+								"users",
 								"top"
 							]
 						}
