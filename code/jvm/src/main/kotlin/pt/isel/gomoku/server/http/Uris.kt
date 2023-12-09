@@ -35,7 +35,7 @@ object Uris {
     }
 
     object Pagination {
-        private const val PAGINATION_QUERY = "?skip={skip}&limit={limit}"
+        const val PAGINATION_QUERY = "?skip={skip}&limit={limit}"
         const val MAX_LIMIT = 50
 
         fun getPaginationSirenLinks(

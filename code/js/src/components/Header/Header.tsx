@@ -25,7 +25,7 @@ export default function Header() {
   const links: Array<PageLink> = [
     //TODO - Change to variable limit
     {
-      to: "/top?limit=10",
+      to: "/top",
       title: "Leaderboard",
     },
     {

@@ -1,26 +1,51 @@
-import {UserCreationInput, UserInfo} from "../types/user";
-import { SirenEntity } from "../types/siren";
+import { SirenAction, SirenEntity } from "../types/siren";
 import { fetchAPI } from "../utils/http";
+import { UserCreationInput, UserDetails } from "../types/user";
+import { homeLinks } from "../index";
 
-async function login(email: string, password: string): Promise<SirenEntity<void>> {
-  return await fetchAPI("/users/token", "PUT", { email, password });
+async function login(email: string, password: string): Promise<any> {
+  const loginAction = homeLinks.createToken();
+  return await fetchAPI(loginAction.href, loginAction.method, {
+    email,
+    password,
+  });
 }
 
-async function getUserHome(): Promise<SirenEntity<UserInfo>> {
-  return await fetchAPI("/users/me");
+async function getAuthenticatedUser(): Promise<SirenEntity<UserDetails>> {
+  const userLink = homeLinks.authenticatedUser();
+  return await fetchAPI(userLink.href);
 }
 
-async function signUp(user: UserCreationInput): Promise<void> {
-  await fetchAPI("/users", "POST", user);
+async function signUp(user: UserCreationInput) {
+  const signUpAction = homeLinks.createUser();
+  return await fetchAPI(signUpAction.href, signUpAction.method, user);
 }
 
-async function getAuthenticatedUser(){
-  return await fetchAPI("/users/me", "GET", null);
+function getStatsHref(siren) {
+  return siren.links.find((it) => {
+    return it.rel.find((it) => {
+      return it == "stats";
+    });
+  }).href;
+}
+
+function getUpdateUserAction(siren): SirenAction {
+  return siren.actions.find((it) => {
+    return it.name == "update-user";
+  });
+}
+
+function getDeleteUserAction(siren): SirenAction {
+  return siren.actions.find((it) => {
+    return it.name == "delete-user";
+  });
 }
 
 export default {
   login,
-  getUserHome,
+  getAuthenticatedUser,
   signUp,
-  getAuthenticatedUser
+  getStatsHref,
+  getUpdateUserAction,
+  getDeleteUserAction,
 };

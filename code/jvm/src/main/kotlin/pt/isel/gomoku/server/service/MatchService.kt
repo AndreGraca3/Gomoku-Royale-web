@@ -163,7 +163,7 @@ class MatchService(private val trManager: TransactionManager) {
                 newBoard.stones.serialize(),
                 newBoard.turn.symbol
             )
-            success(PlayOutputModel(Stone(player, dot), newState.name))
+            success(PlayOutputModel(Stone(player, dot), newState.name, newBoard.turn))
         }
     }
 

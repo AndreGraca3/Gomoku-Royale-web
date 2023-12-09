@@ -3,6 +3,7 @@ package pt.isel.gomoku.server.http.model
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer
 import pt.isel.gomoku.domain.MatchState
+import pt.isel.gomoku.domain.game.Player
 import pt.isel.gomoku.domain.game.board.Board
 import pt.isel.gomoku.domain.game.cell.Stone
 import pt.isel.gomoku.server.http.response.siren.SirenClass
@@ -42,7 +43,7 @@ class MatchesFromUserOutputModel(
     override fun getSirenClasses() = listOf(SirenClass.match, SirenClass.collection)
 }
 
-class PlayOutputModel(val stone: Stone, val matchState: String) : OutputModel() {
+class PlayOutputModel(val stone: Stone, val matchState: String, val turn: Player) : OutputModel() {
     override fun getSirenClasses() = listOf(SirenClass.match)
 }
 

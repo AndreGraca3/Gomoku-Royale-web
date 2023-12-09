@@ -9,14 +9,19 @@ import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import {User} from "./pages/User/User";
+import {HomeData} from "./data/homeData";
+import {Match} from "./pages/Match/Match";
+import {Preferences} from "./pages/Preferences/Preferences";
+import About from "./pages/About/About";
 
-export const homeLinks = {
-  loginUrl: "/api/token",
-};
+export let homeLinks: HomeData;
 
-fetchAPI("").then((res) => {
-  console.log(res);
-});
+fetchAPI("/api")
+    .then((res) => {
+      homeLinks = new HomeData(res);
+      const root = createRoot(document.getElementById("container"));
+      root.render(<RouterProvider router={router} />);
+    });
 
 const router = createBrowserRouter([
   {
@@ -29,7 +34,7 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <div>About Page</div>,
+        element: <About />
       },
       {
         path: "login",
@@ -50,10 +55,15 @@ const router = createBrowserRouter([
       {
         path: "me",
         element: <User />
+      },
+      {
+        path: "play",
+        element: <Preferences />
+      },
+      {
+        path: "match/:id",
+        element: <Match/>
       }
     ],
-  }
+  },
 ]);
-
-const root = createRoot(document.getElementById("container"));
-root.render(<RouterProvider router={router} />);

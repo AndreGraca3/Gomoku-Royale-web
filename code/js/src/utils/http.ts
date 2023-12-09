@@ -25,10 +25,27 @@ export async function fetchAPI<T>(
 
   if (body) options["body"] = JSON.stringify(body);
 
-  const rsp = await fetch("/api" + path, options);
+  const rsp = await fetch(path, options);
   const content = await rsp.json();
 
   if (!rsp.ok) throw content;
 
   return content;
+}
+
+export function requestBuilder(UriTemplate: string, args: Array<any>): string {
+  let url = UriTemplate.split("/")
+    .map((it) => {
+      if (it.indexOf(":") != -1) return args.shift();
+      return it;
+    })
+    .toString();
+
+  console.log(url);
+
+  while (url.indexOf(",") != -1) {
+    url = url.replace(",", "/");
+  }
+  console.log("request builder called!");
+  return url;
 }
