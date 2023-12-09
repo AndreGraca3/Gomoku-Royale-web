@@ -7,9 +7,9 @@ import { homeLinks } from "../index";
 //   return await fetchAPI(requestBuilder(leaderBoardLink, [limit]));
 // }
 
-async function top(limit: number = 10): Promise<SirenEntity<any>>  {
-  var ret = await fetchAPI(`/stats/users/top?limit=${limit}`, "GET", null);
-  console.log(ret);
+async function top(limit: number): Promise<SirenEntity<any>>  {
+  console.log("HEREEE")
+  var ret = await fetchAPI(`api/stats/users/top?limit=${limit}`, "GET");
   return ret;
 }
 

@@ -5,15 +5,11 @@ const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [selectedTop, setSelectedTop] = useState(10);
 
-  const fetchLeaderboard = async ()      => {
+  const fetchLeaderboard = async () => {
     try {
-      let data;
-      
         // Fetch actual data from the API with the selected top limit
-        data = await statsData.top(selectedTop);
+        const data = await statsData.top(selectedTop);
 
-        console.log(data)
-        
         setLeaderboard(data.properties.ranks);
 
     } catch (error) {

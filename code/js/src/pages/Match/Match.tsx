@@ -74,7 +74,10 @@ export function Match() {
 
       setIsLoading(false);
     }
-    console.log(board);
+    console.log(matchSiren)
+    console.log(match)
+    console.log(currentBoard)
+    console.log(board)
   }
 
   useEffect(() => {
