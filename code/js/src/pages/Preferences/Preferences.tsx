@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { MatchCard } from "../../components/preferences/MatchCard";
 import { SizeSelector } from "../../components/preferences/SizeSelector";
 import matchData from "../../data/matchData";
+import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 
 export function Preferences() {
   const [redirect, setRedirect] = useState(undefined);
@@ -24,24 +25,29 @@ export function Preferences() {
   }
 
   return (
-    <div>
-      <div className="flex justify-center items-center">
-        <div className="grid grid-rows-2">
-          <SizeSelector sizeSelected={selectedSize} onClick={setSelectedSize} />
+    <RequireAuthn>
+      <div>
+        <div className="flex justify-center items-center">
+          <div className="grid grid-rows-2">
+            <SizeSelector
+              sizeSelected={selectedSize}
+              onClick={setSelectedSize}
+            />
+          </div>
+        </div>
+        <div className="flex justify-center items-center">
+          <div className="grid grid-cols-2 gap-x-4">
+            <MatchCard
+              text="⚫ Public Match ⚪"
+              onClick={() => createMatch(false)}
+            />
+            <MatchCard
+              text="👥 Private Match 🔐"
+              onClick={() => createMatch(true)}
+            />
+          </div>
         </div>
       </div>
-      <div className="flex justify-center items-center">
-        <div className="grid grid-cols-2 gap-x-4">
-          <MatchCard
-            text="⚫ Public Match ⚪"
-            onClick={() => createMatch(false)}
-          />
-          <MatchCard
-            text="👥 Private Match 🔐"
-            onClick={() => createMatch(true)}
-          />
-        </div>
-      </div>
-    </div>
+    </RequireAuthn>
   );
 }

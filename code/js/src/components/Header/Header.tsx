@@ -42,7 +42,7 @@ export default function Header() {
   }
 
   return (
-    <header className="items-center bg-theme-color border-b border-dark-theme-color flex px-2 fixed w-full h-14 shadow-2xl">
+    <header className="items-center bg-theme-color border-b border-dark-theme-color flex px-2 fixed z-50 w-full h-14 shadow-2xl">
       <HeaderBrand />
       <div className="header-sac relative flex flex-grow flex-shrink-0 basis-28"></div>
 

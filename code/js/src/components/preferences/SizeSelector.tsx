@@ -10,7 +10,7 @@ export function SizeSelector({ sizeSelected, onClick }) {
     <div className="inline-flex rounded-md shadow-sm" role="group">
       {sizes.map((it) => {
         return (
-          <div>
+          <div key={it}>
             <button
               className={sizeSelected == it ? selectedColor : defaultColor}
               onClick={() => {

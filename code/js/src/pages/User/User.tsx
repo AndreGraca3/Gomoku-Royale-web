@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import userData from "../../data/userData";
 import { UserDetailsView } from "../../components/User/UserDetails";
 import { UserStatsView } from "../../components/User/UserStats";
-import { Loading } from "../Loading/Loading";
+import { Loading } from "../../components/Loading";
 import { fetchAPI } from "../../utils/http";
 import { UserRankView } from "../../components/User/UserRankView";
 import ScaledButton from "../../components/ScaledButton";
@@ -50,7 +50,7 @@ export function User() {
       return async () => {
         const deleteUserAction = userData.getDeleteUserAction(userSiren);
         await fetchAPI(deleteUserAction.href, deleteUserAction.method);
-        userData.logout()
+        userData.logout();
         setRedirect(true);
       };
     });
@@ -69,7 +69,7 @@ export function User() {
   if (isLoading) {
     return (
       <div>
-        <Loading message="Loading..." onCancel={undefined} />
+        <Loading message="Loading..." />
       </div>
     );
   }

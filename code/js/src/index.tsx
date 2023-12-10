@@ -8,20 +8,25 @@ import Logout from "./pages/Login/Logout";
 import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
-import {User} from "./pages/User/User";
-import {HomeData} from "./data/homeData";
-import {Match} from "./pages/Match/Match";
-import {Preferences} from "./pages/Preferences/Preferences";
+import { User } from "./pages/User/User";
+import { HomeData } from "./data/homeData";
+import { Match } from "./pages/Match/Match";
+import { Preferences } from "./pages/Preferences/Preferences";
 import About from "./pages/About/About";
+import Error from "./pages/Error";
 
 export let homeLinks: HomeData;
 
 fetchAPI("/api")
-    .then((res) => {
-      homeLinks = new HomeData(res);
-      const root = createRoot(document.getElementById("container"));
-      root.render(<RouterProvider router={router} />);
-    });
+  .then((res) => {
+    homeLinks = new HomeData(res);
+    const root = createRoot(document.getElementById("container"));
+    root.render(<RouterProvider router={router} />);
+  })
+  .catch(() => {
+    const root = createRoot(document.getElementById("container"));
+    root.render(<Error />);
+  });
 
 const router = createBrowserRouter([
   {
@@ -34,7 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <About />
+        element: <About />,
       },
       {
         path: "login",
@@ -50,20 +55,20 @@ const router = createBrowserRouter([
       },
       {
         path: "top",
-        element: <Leaderboard/>,
+        element: <Leaderboard />,
       },
       {
         path: "me",
-        element: <User />
+        element: <User />,
       },
       {
         path: "play",
-        element: <Preferences />
+        element: <Preferences />,
       },
       {
         path: "match/:id",
-        element: <Match/>
-      }
+        element: <Match />,
+      },
     ],
   },
 ]);

@@ -41,11 +41,8 @@ export function requestBuilder(UriTemplate: string, args: Array<any>): string {
     })
     .toString();
 
-  console.log(url);
-
   while (url.indexOf(",") != -1) {
     url = url.replace(",", "/");
   }
-  console.log("request builder called!");
   return url;
 }

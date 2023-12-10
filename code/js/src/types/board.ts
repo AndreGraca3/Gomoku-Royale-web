@@ -10,17 +10,29 @@ export type Stone = {
 };
 
 export type Dot = {
-  rowIdx: number;
-  colIdx: number;
+  row: Row;
+  column: Column;
+};
+
+export type Row = {
+  number: number;
+};
+
+export type Column = {
+  symbol: string;
 };
 
 export type Player = {
-  symbol: "b" | "w";
+  symbol: "BLACK" | "WHITE";
 };
 
-export function getStoneOrNull(board: BoardType, dot: Dot) {
+export function getStoneOrNull(
+  board: BoardType,
+  rowNum: number,
+  columnSymbol: string
+) {
   return board.stones.find(
-    (it) => it.dot.rowIdx == dot.rowIdx && it.dot.colIdx == dot.colIdx
+    (it) => it.dot.row.number == rowNum && it.dot.column.symbol == columnSymbol
   );
 }
 

@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
@@ -25,6 +25,8 @@ function reducer(state: State, action: any): State {
 }
 
 export function Login() {
+  const location = useLocation();
+
   const [state, dispatch] = useReducer(reducer, {
     type: "valid",
     inputs: { email: "", password: "" },
@@ -53,7 +55,9 @@ export function Login() {
         dispatch({ type: "success", inputs: state.inputs });
         setLoggedIn(true);
         setTimeout(() => {
-          navigate("/me");
+          navigate(location.state?.source?.pathname || "/me", {
+            replace: true,
+          });
         }, 1000);
       })
       .catch((error) => {
@@ -63,7 +67,7 @@ export function Login() {
   }
 
   return (
-    <div className="flex flex-col space-y-4 bg-dark-theme-color p-10 rounded-3xl">
+    <div className="flex flex-col items-center space-y-4 bg-dark-theme-color p-10 rounded-3xl">
       <h1 className="text-3xl font-bold text-center">Welcome back! 👋</h1>
       <form
         onSubmit={handleSubmit}

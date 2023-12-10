@@ -8,7 +8,6 @@ import { homeLinks } from "../index";
 // }
 
 async function top(limit: number): Promise<SirenEntity<any>>  {
-  console.log("HEREEE")
   var ret = await fetchAPI(`api/stats/users/top?limit=${limit}`, "GET");
   return ret;
 }

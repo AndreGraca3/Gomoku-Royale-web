@@ -1,62 +1,110 @@
 import { PlayerCard } from "../../components/players/PlayerCard";
-import { ReversedPlayerCard } from "../../components/players/ReversedPlayerCard";
 import Board from "../../components/board/Board";
-import { useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useEffect, useReducer, useState } from "react";
+import { useParams } from "react-router-dom";
 import { homeLinks } from "../../index";
 import { fetchAPI, requestBuilder } from "../../utils/http";
 import { SirenEntity } from "../../types/siren";
 import { Match } from "../../types/match";
 import userData from "../../data/userData";
 import { UserInfo } from "../../types/user";
-import { Loading } from "../Loading/Loading";
+import { Loading } from "../../components/Loading";
 import matchData from "../../data/matchData";
+import ScaledButton from "../../components/ScaledButton";
+import { useNavigate } from "react-router-dom";
+import { BoardType } from "../../types/board";
+import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
+
+type State =
+  | { type: "LOADING"; board: BoardType }
+  | { type: "MY_TURN"; board: BoardType }
+  | { type: "OPPONENT_TURN"; board: BoardType }
+  | { type: "FINISHED"; board: BoardType }
+  | { type: "ERROR"; error: string };
 
 export function Match() {
+  const navigate = useNavigate();
   const { id } = useParams();
+  const getMatchUrl = requestBuilder(homeLinks.matchById().href, [id]);
 
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [board, setBoard] = useState(undefined);
-
+  const [sirenMatch, setSirenMatch] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
-  const [oppositeUser, setOppositeUser] = useState(undefined);
+  const [opponentUser, setOppositeUser] = useState(undefined);
 
-  const [deleteMatch, setDeleteMatch] = useState(undefined);
-  const [playMatch, setPlayMatch] = useState(undefined);
+  function getTurn() {
+    if (
+      (currentUser.id == sirenMatch.entities[0].id &&
+        sirenMatch.properties.turn == "b") ||
+      (currentUser.id == sirenMatch.entities[1].id &&
+        sirenMatch.properties.turn == "w")
+    )
+      return "MY_TURN";
+    else return "OPPONENT_TURN";
+  }
 
-  const [redirect, setRedirect] = useState(undefined);
+  function reducer(state: State, action: any): State {
+    switch (action.type) {
+      case "OPPONENT_JOINED":
+        console.log("OPPONENT_JOINED");
+        console.log(getTurn());
+        return { type: getTurn(), board: action.board };
 
-  async function polling(request: string) {
-    const matchSiren: SirenEntity<Match> = await fetchAPI(request);
+      case "PLAY":
+        if (state.type != "MY_TURN") {
+          alert("Not your turn");
+          return state;
+        }
+
+        const playMatchUrl = matchData.getPlayMatchAction(sirenMatch); // TODO: make the play request
+
+        return {
+          type: state.type == "MY_TURN" ? "OPPONENT_TURN" : "MY_TURN",
+          board: {
+            ...state.board,
+            stones: [...action.board.stones, action.newStone],
+          },
+        };
+
+      case "FINISHED":
+        return { type: "FINISHED", board: action.board };
+
+      case "MATCH_NOT_FOUND":
+        return { type: "ERROR", error: "Match Not found" };
+    }
+  }
+
+  const [state, dispatch] = useReducer(reducer, {
+    type: "LOADING",
+    board: undefined,
+  });
+
+  const deleteMatch = async () => {
+    const deleteMatchAction = matchData.getDeleteMatchAction(sirenMatch);
+    await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
+    navigate("/play", { replace: true });
+  };
+
+  const playMatch = async (rowNumber: number, columnSymbol: string) => {
+    dispatch({
+      type: "PLAY",
+      newStone: {
+        row: {
+          number: rowNumber,
+        },
+        column: {
+          symbol: columnSymbol,
+        },
+      },
+    });
+  };
+
+  async function polling() {
+    const matchSiren = await getMatch();
+    setSirenMatch(matchSiren);
+    if (!matchSiren) return;
     const match = matchSiren.properties;
-    const currentBoard = match.board;
-    setBoard((prev) => {
-      return currentBoard;
-    });
-    setDeleteMatch((prev) => {
-      return async () => {
-        const deleteMatchAction = matchData.getDeleteMatchAction(matchSiren);
-        await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
-        setRedirect("/play");
-      };
-    });
 
-    setPlayMatch((prev) => {
-      return async (rowNumber, columnSymbol) => {
-        const playMatchAction = matchData.getPlayMatchAction(matchSiren);
-        return await fetchAPI(playMatchAction.href, playMatchAction.method, {
-          row: {
-            number: rowNumber,
-          },
-          column: {
-            symbol: columnSymbol,
-          },
-        });
-      };
-    });
-
-    if (match.state == "ONGOING") {
+    if (state.type == "LOADING" && match.state == "ONGOING") {
       const fetchedCurrentUser = await userData.getAuthenticatedUser();
       const blackPlayer: UserInfo = (
         await fetchAPI<UserInfo>(matchData.getBlackPlayerHref(matchSiren))
@@ -71,43 +119,49 @@ export function Match() {
         setOppositeUser(blackPlayer);
         setCurrentUser(whitePlayer);
       }
-
-      setIsLoading(false);
+      dispatch({ type: "OPPONENT_JOINED", board: match.board });
     }
-    console.log(matchSiren)
-    console.log(match)
-    console.log(currentBoard)
-    console.log(board)
   }
 
+  const getMatch: () => Promise<SirenEntity<Match>> = async () => {
+    try {
+      return await fetchAPI(getMatchUrl);
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          dispatch({ type: "MATCH_NOT_FOUND", error: "Match Not found" });
+      }
+    }
+  };
+
   useEffect(() => {
-    const url = requestBuilder(homeLinks.matchById().href, [id]);
     const tid = setInterval(() => {
-      console.log("I'm polling");
-      polling(url);
-    }, 2000);
+      polling();
+    }, 3000);
     return () => clearInterval(tid);
   }, []);
 
-  if (redirect) {
-    return <Navigate to={redirect} replace={true} />;
+  if (state.type == "ERROR") {
+    return <p>Error</p>;
   }
 
-  if (isLoading) {
+  if (state.type == "LOADING") {
     return (
-      <Loading message="Searching for other player..." onCancel={deleteMatch} />
+      <RequireAuthn>
+        <Loading message="Waiting for opponent" />
+        <ScaledButton onClick={deleteMatch} color="red" text="Cancel" />
+      </RequireAuthn>
     );
   }
 
   return (
-    <div className="grid gap-y-4">
-      <div className="flex justify-center items-center">
-        <div className="grid grid-cols-2 gap-x-120">
-          <PlayerCard user={currentUser}></PlayerCard>
-          <ReversedPlayerCard user={oppositeUser}></ReversedPlayerCard>
-        </div>
+    <div className="flex flex-col w-full gap-y-8">
+      <div className="flex justify-center gap-24 items-center">
+        <PlayerCard user={currentUser} />
+        <p className="text-3xl text-center">VS</p>
+        <PlayerCard user={opponentUser} reverseOrder={true} />
       </div>
-      <Board board={board} play={playMatch}></Board>
+      <Board board={state.board} onPlay={playMatch} />
     </div>
   );
 }
