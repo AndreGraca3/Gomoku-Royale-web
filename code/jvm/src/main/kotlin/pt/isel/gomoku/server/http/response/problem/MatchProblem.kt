@@ -87,7 +87,7 @@ sealed class MatchProblem(
     )
 
     class InvalidPlay(reason: String, data: MatchPlayError.InvalidPlay) : MatchProblem(
-        403,
+        400,
         "invalid-play",
         "Invalid play",
         reason,

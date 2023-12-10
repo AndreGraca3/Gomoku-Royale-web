@@ -16,13 +16,23 @@ module.exports = {
         "theme-color": "var(--theme-color)",
         "dark-theme-color": "var(--dark-theme-color)",
         "gr-yellow": "var(--gr-yellow)",
+        "dark-green": "rgb(12, 78, 1)",
       },
       animation: {
         "heart-beat": "heart-beat 2s infinite",
         "pop-up": "pop-up 0.2s forwards",
-        "shine": "shine 3s infinite alternate linear",
+        shine: "shine 3s infinite alternate linear",
+        "pulse-scale": "pulse-scale 400ms alternate infinite",
       },
       keyframes: {
+        "pulse-scale": {
+          "0%": {
+            transform: "scale(1)",
+          },
+          "100%": {
+            transform: "scale(1.3)",
+          },
+        },
         shine: {
           "0%": {
             "box-shadow": "0 0 5px rgba(255, 255, 255, 0.5)",

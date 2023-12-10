@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
-import { useLogin } from "../../hooks/Auth/AuthnStatus";
+import { useSetCurrentUser } from "../../hooks/Auth/AuthnStatus";
 
 type State =
   | { type: "valid"; inputs: { email: string; password: string } }
@@ -31,7 +31,7 @@ export function Login() {
     type: "valid",
     inputs: { email: "", password: "" },
   });
-  const setLoggedIn = useLogin();
+  const setLoggedIn = useSetCurrentUser();
   const navigate = useNavigate();
 
   function handleChange(ev: React.FormEvent<HTMLInputElement>) {
@@ -46,24 +46,24 @@ export function Login() {
     dispatch(action);
   }
 
-  function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     dispatch({ type: "submitting", inputs: state.inputs });
-    userData
-      .login(state.inputs.email, state.inputs.password)
-      .then(() => {
-        dispatch({ type: "success", inputs: state.inputs });
-        setLoggedIn(true);
-        setTimeout(() => {
-          navigate(location.state?.source?.pathname || "/me", {
-            replace: true,
-          });
-        }, 1000);
-      })
-      .catch((error) => {
-        console.log(error);
-        dispatch({ type: "error", inputs: state.inputs, error: error.detail });
-      });
+    try {
+      await userData.login(state.inputs.email, state.inputs.password);
+      const authUser = await userData.getAuthenticatedUser();
+      setLoggedIn(authUser.properties);
+
+      dispatch({ type: "success", inputs: state.inputs });
+      setTimeout(() => {
+        navigate(location.state?.source?.pathname || "/me", {
+          replace: true,
+        });
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      dispatch({ type: "error", inputs: state.inputs, error: error.detail });
+    }
   }
 
   return (

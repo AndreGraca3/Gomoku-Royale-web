@@ -21,11 +21,6 @@ async function getAuthenticatedUser(): Promise<SirenEntity<UserDetails>> {
   return await fetchAPI(userLink.href);
 }
 
-async function verifyAuthentication() : Promise<SirenEntity<any>> {
-  const authLink = homeLinks.verifyAuth();
-  return await fetchAPI(authLink.href)
-}
-
 async function signUp(user: UserCreationInput) {
   const signUpAction = homeLinks.createUser();
   return await fetchAPI(signUpAction.href, signUpAction.method, user);
@@ -54,7 +49,6 @@ function getDeleteUserAction(siren): SirenAction {
 export default {
   login,
   getAuthenticatedUser,
-  verifyAuthentication,
   signUp,
   getStatsHref,
   getUpdateUserAction,

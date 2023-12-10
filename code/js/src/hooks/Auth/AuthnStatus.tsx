@@ -1,19 +1,19 @@
 import * as React from "react";
-import { useState, createContext, useContext, useEffect } from "react";
-import userData from "../../data/userData";
-import { initiallyLogged } from "../..";
+import { useState, createContext, useContext } from "react";
+import { authUser } from "../..";
+import { UserDetails } from "../../types/user";
 
 // The state that will be in the context
 type AuthnContextType = {
-  loggedIn: boolean;
-  setLoggedIn: (v: boolean) => void;
+  currentUser: UserDetails;
+  setCurrentUser: (v: UserDetails) => void;
 };
 
 // Create a context for the defined types
 // This happens only once
 const AuthnContext = createContext<AuthnContextType>({
-  loggedIn: false,
-  setLoggedIn: () => {},
+  currentUser: undefined,
+  setCurrentUser: () => {},
 });
 
 export function AuthnStatusProvider({
@@ -21,21 +21,21 @@ export function AuthnStatusProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [observedLoggedIn, setLoggedIn] = useState(initiallyLogged);
+  const [currUser, setCurrUser] = useState(authUser);
 
   return (
     <AuthnContext.Provider
-      value={{ loggedIn: observedLoggedIn, setLoggedIn: setLoggedIn }}
+      value={{ currentUser: currUser, setCurrentUser: setCurrUser }}
     >
       {children}
     </AuthnContext.Provider>
   );
 }
 
-export function useLoggedIn(): boolean {
-  return useContext(AuthnContext).loggedIn;
+export function useCurrentUser(): UserDetails {
+  return useContext(AuthnContext).currentUser;
 }
 
-export function useLogin() {
-  return useContext(AuthnContext).setLoggedIn;
+export function useSetCurrentUser() {
+  return useContext(AuthnContext).setCurrentUser;
 }

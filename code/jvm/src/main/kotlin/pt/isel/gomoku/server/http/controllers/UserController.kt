@@ -163,11 +163,4 @@ class UserController(private val service: UserService) {
             Siren<Nothing>()
         )
     }
-
-    @GetMapping(Uris.Users.AUTH_VERIFY)
-    fun getAuthenticated(authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
-        return ResponseEntity.status(200).body(
-            Siren<Nothing>()
-        )
-    }
 }

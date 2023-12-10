@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import Avatar from "../Avatar";
-import { useLoggedIn } from "../../hooks/Auth/AuthnStatus";
+import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import userData from "../../data/userData";
@@ -51,25 +51,23 @@ const UserMenuLinks = ({ loggedIn }) => {
 };
 
 export default function UserMenu() {
-  const loggedIn = useLoggedIn();
+  const authUser = useCurrentUser();
   const [avatar, setAvatar] = useState(undefined);
 
   useEffect(() => {
-    if (loggedIn) {
-      userData.getAuthenticatedUser().then((res) => {
-        setAvatar(res.properties.avatarUrl);
-      });
+    if (authUser) {
+      setAvatar(authUser.avatarUrl);
     } else {
       setAvatar(undefined);
     }
-  }, [loggedIn]);
+  }, [authUser]);
 
   return (
     <Menu as="div" className="h-full">
       <Menu.Button className="h-full focus:outline-0 hover:scale-105 transition-all duration-200">
         <Avatar url={avatar} />
       </Menu.Button>
-      <UserMenuLinks loggedIn={loggedIn} />
+      <UserMenuLinks loggedIn={authUser} />
     </Menu>
   );
 }

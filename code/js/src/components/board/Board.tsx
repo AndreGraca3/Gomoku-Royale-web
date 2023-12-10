@@ -1,12 +1,12 @@
 import Cell from "./Cell";
-import { BoardType, getStoneOrNull, toSymbol } from "../../types/board";
+import { BoardType, Dot, getStoneOrNull, toSymbol } from "../../types/board";
 
 export default function Board({
   board,
   onPlay,
 }: {
   board: BoardType;
-  onPlay: any;
+  onPlay: (rowNumber: number, columnSymbol: string) => void;
 }) {
   const boardTemplate = {
     15: "grid grid-cols-15",

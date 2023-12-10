@@ -85,11 +85,4 @@ object UserActions {
         method = HttpMethod.DELETE,
         type = INPUT_CONTENT_TYPE
     )
-
-    fun getVerifyAuthAction() : SirenAction = SirenAction(
-        name = "verify-auth",
-        href = URI(Uris.Users.AUTH_VERIFY),
-        method = HttpMethod.GET,
-        type = INPUT_CONTENT_TYPE
-    )
 }

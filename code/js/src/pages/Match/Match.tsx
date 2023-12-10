@@ -6,7 +6,6 @@ import { homeLinks } from "../../index";
 import { fetchAPI, requestBuilder } from "../../utils/http";
 import { SirenEntity } from "../../types/siren";
 import { Match } from "../../types/match";
-import userData from "../../data/userData";
 import { UserInfo } from "../../types/user";
 import { Loading } from "../../components/Loading";
 import matchData from "../../data/matchData";
@@ -14,22 +13,23 @@ import ScaledButton from "../../components/ScaledButton";
 import { useNavigate } from "react-router-dom";
 import { BoardType } from "../../types/board";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
+import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
 
 type State =
   | { type: "LOADING"; board: BoardType }
   | { type: "MY_TURN"; board: BoardType }
   | { type: "OPPONENT_TURN"; board: BoardType }
   | { type: "FINISHED"; board: BoardType }
-  | { type: "ERROR"; error: string };
+  | { type: "ERROR"; board?: undefined; error: string };
 
 export function Match() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const currentUser = useCurrentUser();
   const getMatchUrl = requestBuilder(homeLinks.matchById().href, [id]);
 
   const [sirenMatch, setSirenMatch] = useState(undefined);
 
-  const [currentUser, setCurrentUser] = useState(undefined);
   const [blackUser, setBlackUser] = useState(undefined);
   const [whiteUser, setWhiteUser] = useState(undefined);
 
@@ -48,26 +48,26 @@ export function Match() {
     switch (action.type) {
       case "OPPONENT_JOINED":
         console.log("OPPONENT_JOINED");
-        console.log("actual state", state);
         return { type: getTurn(), board: action.board };
 
+      case "CHANGE_TURN":
+        console.log("CHANGE_TURN");
+        return { type: action.turn, board: action.board };
+
       case "PLAY":
-        if (state.type != "MY_TURN") {
-          alert("Not your turn");
-          return state;
+        console.log("PLAY");
+        const board = {
+          ...state.board,
+          stones: [...state.board.stones, action.newStone],
         }
-
-        const playMatchUrl = matchData.getPlayMatchAction(sirenMatch); // TODO: make the play request
-
+        console.log("While play", board)
         return {
-          type: state.type == "MY_TURN" ? "OPPONENT_TURN" : "MY_TURN",
-          board: {
-            ...state.board,
-            stones: [...action.board.stones, action.newStone],
-          },
+          type: "OPPONENT_TURN",
+          board,
         };
 
       case "FINISHED":
+        console.log("FINISHED");
         return { type: "FINISHED", board: action.board };
 
       case "MATCH_NOT_FOUND":
@@ -87,17 +87,36 @@ export function Match() {
   };
 
   const playMatch = async (rowNumber: number, columnSymbol: string) => {
-    dispatch({
-      type: "PLAY",
-      newStone: {
-        row: {
-          number: rowNumber,
+    const playMatchUrl = matchData.getPlayMatchAction(sirenMatch);
+    try {
+      const newStone = {
+        dot: {
+          row: {
+            number: rowNumber,
+          },
+          column: {
+            symbol: columnSymbol,
+          },
+          player: blackUser.id == currentUser.id ? "BLACK" : "WHITE",
         },
-        column: {
-          symbol: columnSymbol,
-        },
-      },
-    });
+      };
+
+      await fetchAPI(playMatchUrl.href, playMatchUrl.method, newStone.dot);
+      dispatch({ type: "PLAY", newStone });
+      console.log("AFTER PLAYED", state.board);
+    } catch (e) {
+      switch (e.status) {
+        case 400:
+          alert("Invalid move");
+          break;
+        case 403:
+          alert("Not your turn");
+          break;
+        case 409:
+          alert("Invalid move");
+          break;
+      }
+    }
   };
 
   const polling = async () => {
@@ -106,7 +125,6 @@ export function Match() {
     if (!matchSiren) return;
     const match = matchSiren.properties;
 
-    console.log("before if:", state);
     if (state.type == "LOADING" && match.state == "ONGOING") {
       const blackPlayer: UserInfo = (
         await fetchAPI<UserInfo>(matchData.getBlackPlayerHref(matchSiren))
@@ -117,6 +135,10 @@ export function Match() {
       setBlackUser(blackPlayer);
       setWhiteUser(whitePlayer);
       dispatch({ type: "OPPONENT_JOINED", board: match.board });
+    }
+
+    if (state.type == "OPPONENT_TURN" && getTurn() == "MY_TURN") {
+      dispatch({ type: "CHANGE_TURN", board: match.board });
     }
   };
 
@@ -132,15 +154,9 @@ export function Match() {
   };
 
   useEffect(() => {
-    userData.getAuthenticatedUser().then((authUserSiren) => {
-      setCurrentUser(authUserSiren.properties);
-    });
-
-    const tid = setInterval(() => {
-      polling();
-    }, 3000);
+    const tid = setInterval(polling, 3000);
     return () => clearInterval(tid);
-  }, []);
+  }, [state]);
 
   if (state.type == "ERROR") {
     return <p>Error</p>;

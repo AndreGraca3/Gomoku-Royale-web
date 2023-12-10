@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
-import { useLogin } from "../../hooks/Auth/AuthnStatus";
+import { useSetCurrentUser } from "../../hooks/Auth/AuthnStatus";
 
 export function SignUp() {
   const [inputs, setInputs] = useState({
@@ -16,7 +16,7 @@ export function SignUp() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(undefined);
   const [redirect, setRedirect] = useState(undefined);
-  const setLoggedIn = useLogin();
+  const setLoggedIn = useSetCurrentUser();
 
   const handleChange = (ev) => {
     const { name, value } = ev.target;
@@ -45,7 +45,7 @@ export function SignUp() {
       input.click();
     });
   };
-  
+
   const handleImageClick = async () => {
     try {
       const selectedImageUrl = await selectImage();

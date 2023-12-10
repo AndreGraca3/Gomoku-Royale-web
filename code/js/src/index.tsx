@@ -15,9 +15,10 @@ import { Preferences } from "./pages/Preferences/Preferences";
 import About from "./pages/About/About";
 import Error from "./pages/Error";
 import userData from "./data/userData";
+import { UserDetails } from "./types/user";
 
 export let homeLinks: HomeData;
-export let initiallyLogged: boolean;
+export let authUser: UserDetails;
 
 async function initializeApp() {
   try {
@@ -34,10 +35,10 @@ async function initializeApp() {
 
 async function verifyLogin() {
   try {
-    await userData.verifyAuthentication();
-    initiallyLogged = true;
+    const res = await userData.getAuthenticatedUser();
+    authUser = res.properties;
   } catch (e) {
-    initiallyLogged = false;
+    console.log("Not logged in");
   }
 }
 

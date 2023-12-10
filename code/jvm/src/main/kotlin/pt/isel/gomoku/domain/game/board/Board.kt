@@ -48,7 +48,7 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
     }
 
     fun play(dst: Dot, player: Player): Board {
-        requireOrThrow(turn == player, GomokuGameException.InvalidPlay(dst) {
+        requireOrThrow(turn == player, GomokuGameException.InvalidTurn(turn) {
             "It's not $player's turn."
         })
         requireOrThrow(isIdxInBoard(dst.row.index) && isIdxInBoard(dst.column.index),
