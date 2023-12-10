@@ -28,15 +28,17 @@ export function Match() {
   const getMatchUrl = requestBuilder(homeLinks.matchById().href, [id]);
 
   const [sirenMatch, setSirenMatch] = useState(undefined);
+
   const [currentUser, setCurrentUser] = useState(undefined);
-  const [opponentUser, setOppositeUser] = useState(undefined);
+  const [blackUser, setBlackUser] = useState(undefined);
+  const [whiteUser, setWhiteUser] = useState(undefined);
 
   function getTurn() {
     if (
-      (currentUser.id == sirenMatch.entities[0].id &&
-        sirenMatch.properties.turn == "b") ||
-      (currentUser.id == sirenMatch.entities[1].id &&
-        sirenMatch.properties.turn == "w")
+      (currentUser.id == blackUser.id &&
+        sirenMatch.properties.board.turn == "BLACK") ||
+      (currentUser.id == whiteUser.id &&
+        sirenMatch.properties.board.turn == "WHITE")
     )
       return "MY_TURN";
     else return "OPPONENT_TURN";
@@ -46,7 +48,7 @@ export function Match() {
     switch (action.type) {
       case "OPPONENT_JOINED":
         console.log("OPPONENT_JOINED");
-        console.log(getTurn());
+        console.log("actual state", state);
         return { type: getTurn(), board: action.board };
 
       case "PLAY":
@@ -98,30 +100,25 @@ export function Match() {
     });
   };
 
-  async function polling() {
+  const polling = async () => {
     const matchSiren = await getMatch();
     setSirenMatch(matchSiren);
     if (!matchSiren) return;
     const match = matchSiren.properties;
 
+    console.log("before if:", state);
     if (state.type == "LOADING" && match.state == "ONGOING") {
-      const fetchedCurrentUser = await userData.getAuthenticatedUser();
       const blackPlayer: UserInfo = (
         await fetchAPI<UserInfo>(matchData.getBlackPlayerHref(matchSiren))
       ).properties;
       const whitePlayer: UserInfo = (
         await fetchAPI<UserInfo>(matchData.getWhitePlayerHref(matchSiren))
       ).properties;
-      if (fetchedCurrentUser.properties.id == blackPlayer.id) {
-        setCurrentUser(blackPlayer);
-        setOppositeUser(whitePlayer);
-      } else {
-        setOppositeUser(blackPlayer);
-        setCurrentUser(whitePlayer);
-      }
+      setBlackUser(blackPlayer);
+      setWhiteUser(whitePlayer);
       dispatch({ type: "OPPONENT_JOINED", board: match.board });
     }
-  }
+  };
 
   const getMatch: () => Promise<SirenEntity<Match>> = async () => {
     try {
@@ -135,6 +132,10 @@ export function Match() {
   };
 
   useEffect(() => {
+    userData.getAuthenticatedUser().then((authUserSiren) => {
+      setCurrentUser(authUserSiren.properties);
+    });
+
     const tid = setInterval(() => {
       polling();
     }, 3000);
@@ -157,9 +158,14 @@ export function Match() {
   return (
     <div className="flex flex-col w-full gap-y-8">
       <div className="flex justify-center gap-24 items-center">
-        <PlayerCard user={currentUser} />
+        <PlayerCard
+          user={blackUser.id == currentUser.id ? blackUser : whiteUser}
+        />
         <p className="text-3xl text-center">VS</p>
-        <PlayerCard user={opponentUser} reverseOrder={true} />
+        <PlayerCard
+          user={blackUser.id == currentUser.id ? whiteUser : blackUser}
+          reverseOrder={true}
+        />
       </div>
       <Board board={state.board} onPlay={playMatch} />
     </div>

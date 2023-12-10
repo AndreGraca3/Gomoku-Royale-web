@@ -14,19 +14,32 @@ import { Match } from "./pages/Match/Match";
 import { Preferences } from "./pages/Preferences/Preferences";
 import About from "./pages/About/About";
 import Error from "./pages/Error";
+import userData from "./data/userData";
 
 export let homeLinks: HomeData;
+export let initiallyLogged: boolean;
 
-fetchAPI("/api")
-  .then((res) => {
+async function initializeApp() {
+  try {
+    const res = await fetchAPI("/api");
     homeLinks = new HomeData(res);
+    await verifyLogin();
     const root = createRoot(document.getElementById("container"));
     root.render(<RouterProvider router={router} />);
-  })
-  .catch(() => {
+  } catch (e) {
     const root = createRoot(document.getElementById("container"));
     root.render(<Error />);
-  });
+  }
+}
+
+async function verifyLogin() {
+  try {
+    await userData.verifyAuthentication();
+    initiallyLogged = true;
+  } catch (e) {
+    initiallyLogged = false;
+  }
+}
 
 const router = createBrowserRouter([
   {
@@ -72,3 +85,5 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+initializeApp();

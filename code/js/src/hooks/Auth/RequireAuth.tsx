@@ -6,9 +6,10 @@ export function RequireAuthn({
 }: {
   children: React.ReactNode;
 }): React.ReactElement {
-  const currentUser = useLoggedIn();
+  const isLoggedIn = useLoggedIn();
   const location = useLocation();
-  if (currentUser) {
+
+  if (isLoggedIn) {
     return <>{children}</>;
   } else {
     return (
