@@ -6,10 +6,10 @@ const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [selectedTop, setSelectedTop] = useState(10);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = async (topValue) => {
     try {
       // Fetch actual data from the API with the selected top limit
-      const data = await statsData.top(selectedTop);
+      const data = await statsData.top(topValue);
 
       setLeaderboard(data.properties.ranks);
     } catch (error) {
@@ -19,11 +19,13 @@ const Leaderboard = () => {
 
   useEffect(() => {
     // Initial fetch
-    fetchLeaderboard();
+    fetchLeaderboard(selectedTop);
   }, [selectedTop]);
 
   const handleTopChange = (e) => {
-    setSelectedTop(parseInt(e.target.value, 10));
+    const newTopValue = parseInt(e.target.value, 10);
+    setSelectedTop(newTopValue);
+    fetchLeaderboard(newTopValue);
   };
 
   return (
