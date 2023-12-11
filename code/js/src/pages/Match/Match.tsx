@@ -14,6 +14,18 @@ import { useNavigate } from "react-router-dom";
 import { BoardType, Player } from "../../types/board";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
+import toast from "react-hot-toast";
+import confetti from "canvas-confetti";
+
+const placeSounds = [
+  new Audio("audio/place_piece_1.mp3"),
+  new Audio("audio/place_piece_2.mp3"),
+];
+
+function playPlaceSound() {
+  const idx = Math.floor(Math.random() * placeSounds.length);
+  placeSounds[idx].play();
+}
 
 type State =
   | { type: "LOADING"; board: BoardType }
@@ -51,7 +63,8 @@ export function Match() {
         console.log("PLAY");
         switch (action.matchState) {
           case "FINISHED":
-            alert("You won!")
+            toast("You won!");
+            confetti();
             return {
               type: "FINISHED",
               winner: action.board.turn,
@@ -105,6 +118,8 @@ export function Match() {
         playMatchUrl.method,
         newStone.dot
       );
+
+      playPlaceSound();
       dispatch({
         type: "PLAY",
         matchState: playSiren.properties.matchState,
@@ -118,7 +133,7 @@ export function Match() {
         case 400:
         case 403:
         case 409:
-          alert(e.detail);
+          toast.error(e.detail);
           break;
       }
     }
@@ -141,7 +156,11 @@ export function Match() {
       setBlackUser(blackPlayer);
       setWhiteUser(whitePlayer);
       setMyColor(() => (blackPlayer.id == currentUser.id ? "BLACK" : "WHITE"));
-      dispatch({ type: "OPPONENT_JOINED", board: match.board });
+      if (match.state == "ONGOING") {
+        dispatch({ type: "OPPONENT_JOINED", board: match.board });
+      } else {
+        dispatch({ type: "FINISHED", winner: match.board.turn, board: match.board });
+      }
     }
 
     // if already in game
@@ -194,7 +213,7 @@ export function Match() {
 
   return (
     <div className="flex flex-col w-full gap-y-8">
-      <div className="flex justify-center gap-24 items-center p-6">
+      <div className="flex justify-center gap-24 items-center p-4">
         <PlayerCard
           user={blackUser.id == currentUser.id ? blackUser : whiteUser}
           isActive={
