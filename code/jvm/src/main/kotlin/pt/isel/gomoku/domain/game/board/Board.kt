@@ -28,11 +28,11 @@ sealed class Board(val size: Int, val stones: List<Stone>, val turn: Player) {
     }
 
     /**
-     * Counts the stones of a player in a given direction (including current dot)
+     * Counts the stones of a player in a given direction
      */
     fun countStones(dot: Dot, player: Player, dx: Int, dy: Int): Int {
         var currentDot = dot
-        var count = 1
+        var count = 0
 
         while (isIdxInBoard(currentDot.row.index) && isIdxInBoard(currentDot.column.index)) {
             val nextRowIdx = currentDot.row.index + dy
