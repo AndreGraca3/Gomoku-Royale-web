@@ -22,9 +22,7 @@ export type Column = {
   symbol: string;
 };
 
-export type Player = {
-  symbol: "BLACK" | "WHITE";
-};
+export type Player = "BLACK" | "WHITE";
 
 export function getStoneOrNull(
   board: BoardType,

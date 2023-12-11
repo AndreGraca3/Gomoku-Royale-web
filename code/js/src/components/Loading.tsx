@@ -8,7 +8,7 @@ export function Loading({
   delayTime?: number;
 }) {
   const initial = 1;
-  const final = 4;
+  const final = 5;
   const [count, setCount] = useState(initial);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function Loading({
 
   return (
     <div className="flex flex-col items-center h-fit">
-      <div className={`grid grid-cols-4`}>
+      <div className={`grid grid-cols-5`}>
         {Array.from({ length: count }).map((_, idx) => {
           return (
             <img

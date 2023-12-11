@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export default function Cell({ stone, onClick }) {
+export default function Cell({ stone, canPlay, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
 
   function getPiecePng() {
@@ -25,7 +25,7 @@ export default function Cell({ stone, onClick }) {
       <div className="relative">
         <img className="relative" src="/cross.png" alt="Cross" />
         {getPiecePng()}
-        {isHovered && !stone && (
+        {canPlay && isHovered && !stone && (
           <img
             className="absolute top-0 left-0 z-50 animate-pulse-scale"
             src="/selector.png"

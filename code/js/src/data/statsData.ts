@@ -2,11 +2,14 @@ import { fetchAPI, requestBuilder } from "../utils/http";
 import { SirenEntity } from "../types/siren";
 import { homeLinks } from "../index";
 
-async function top(limit: number = 10, skip: number = 0): Promise<SirenEntity<any>> {
+async function top(
+  limit: number = 10,
+  skip: number = 0
+): Promise<SirenEntity<any>> {
   const leaderBoardLink = homeLinks.leaderboard().href;
-  console.log(leaderBoardLink)
-  var path = requestBuilder(leaderBoardLink, { skip: skip, limit: limit });
-  console.log(path)
+  console.log(leaderBoardLink);
+  var path = requestBuilder(leaderBoardLink, [limit]);
+  console.log(path);
   return await fetchAPI(path);
 }
 

@@ -1,8 +1,10 @@
 package pt.isel.gomoku.domain.variants
 
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import pt.isel.gomoku.domain.game.Player
+import pt.isel.gomoku.domain.game.board.Board
 import pt.isel.gomoku.domain.game.board.FreeStyleBoard
 import pt.isel.gomoku.domain.game.board.BoardWinner
 import pt.isel.gomoku.domain.game.cell.Dot

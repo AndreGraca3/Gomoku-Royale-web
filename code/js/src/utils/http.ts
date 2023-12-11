@@ -33,20 +33,20 @@ export async function fetchAPI<T>(
   return content;
 }
 
-// export function requestBuilder(UriTemplate: string, args: Array<any>): string {
-//   let url = UriTemplate.split("/")
-//     .map((it) => {
-//       if (it.indexOf(":") != -1) return args.shift();
-//       return it;
-//     })
-//     .toString();
+export function requestBuilder(UriTemplate: string, args: Array<any>): string {
+  let url = UriTemplate.split("/")
+    .map((it) => {
+      if (it.indexOf(":") != -1) return args.shift();
+      return it;
+    })
+    .toString();
+  while (url.indexOf(",") != -1) {
+    url = url.replace(",", "/");
+  }
+  return url;
+}
 
-//   while (url.indexOf(",") != -1) {
-//     url = url.replace(",", "/");
-//   }
-//   return url;
-
-export function requestBuilder(UriTemplate: string, args: Record<string, any>): string {
+/* export function requestBuilder(UriTemplate: string, args: Record<string, any>): string {
   let urlParts = UriTemplate.split("/");
   let path = urlParts.map((it) => {
     if (it.indexOf(":") !== -1) {
@@ -74,18 +74,4 @@ export function requestBuilder(UriTemplate: string, args: Record<string, any>): 
   }
 
   return path;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+} */
