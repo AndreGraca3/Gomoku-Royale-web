@@ -40,6 +40,7 @@ class HomeController {
             ),
             links = listOf(
                 SirenLink(listOf("authenticatedUser"), URI(Uris.Users.AUTHENTICATED_USER)),
+                SirenLink(listOf("nonAuthenticatedUser"), URI("${Uris.Users.BASE}/:id")),
                 SirenLink(listOf("token"), URI(Uris.Users.TOKEN)),
                 SirenLink(listOf("user"), URI(Uris.Users.BASE)),
                 SirenLink(listOf("leaderboard"), URI("${Uris.Stats.TOP}?skip=:skip&limit=:limit")),

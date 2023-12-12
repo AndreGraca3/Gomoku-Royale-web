@@ -9,6 +9,7 @@ import { fetchAPI } from "./utils/http";
 import { SignUp } from "./pages/SignUp/SignUp";
 import Leaderboard from "./pages/Leaderboard/Leaderboard";
 import { User } from "./pages/User/User";
+import { UserNoAuth } from "./pages/User/UserNoAuth";
 import { HomeData } from "./data/homeData";
 import { Match } from "./pages/Match/Match";
 import { Preferences } from "./pages/Preferences/Preferences";
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "me",
         element: <User />,
+      },
+      {
+        path: "user/:id",
+        element: <UserNoAuth/>
       },
       {
         path: "play",
