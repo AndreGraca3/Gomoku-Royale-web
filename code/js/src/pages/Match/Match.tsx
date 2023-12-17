@@ -1,6 +1,6 @@
 import { PlayerCard } from "../../components/players/PlayerCard";
 import Board from "../../components/board/Board";
-import { useEffect, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
 import { homeLinks } from "../../index";
 import { fetchAPI, requestBuilder } from "../../utils/http";
@@ -22,7 +22,12 @@ const placeSounds = [
   new Audio("audio/place_piece_2.mp3"),
 ];
 
-function playPlaceSound() {
+function playPlaceSound(isWinningSound = false) {
+  if (isWinningSound) {
+    const winSound = new Audio("audio/place_piece_winner.mp3");
+    winSound.play();
+    return;
+  }
   const idx = Math.floor(Math.random() * placeSounds.length);
   placeSounds[idx].play();
 }
@@ -64,12 +69,14 @@ export function Match() {
 
       case "CHANGE_TURN":
         console.log("CHANGE_TURN");
+        playPlaceSound();
         return { type: "MY_TURN", board: action.board };
 
       case "PLAY":
         console.log("PLAY");
         switch (action.matchState) {
           case "FINISHED":
+            playPlaceSound(true);
             toast("You won!");
             confetti();
             return {
@@ -78,6 +85,7 @@ export function Match() {
               board: action.board,
             };
           default:
+            playPlaceSound();
             return {
               type: "OPPONENT_TURN",
               board: action.board,
@@ -98,11 +106,12 @@ export function Match() {
     board: undefined,
   });
 
-  const deleteMatch = async () => {
+  const deleteMatch = useCallback(async () => {
+    console.log("delete match", sirenMatch);
     const deleteMatchAction = matchData.getDeleteMatchAction(sirenMatch);
     await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
     navigate("/play", { replace: true });
-  };
+  }, [sirenMatch]);
 
   const playMatch = async (rowNumber: number, columnSymbol: string) => {
     if (state.type != "MY_TURN") return;
@@ -126,7 +135,6 @@ export function Match() {
         newStone.dot
       );
 
-      playPlaceSound();
       dispatch({
         type: "PLAY",
         matchState: playSiren.properties.matchState,
@@ -205,7 +213,7 @@ export function Match() {
 
   useEffect(() => {
     if (state.type == "FINISHED") return;
-    const tid = setInterval(polling, 3000);
+    const tid = setInterval(polling, 2000);
     return () => clearInterval(tid);
   }, [state]);
 
@@ -216,8 +224,14 @@ export function Match() {
   if (state.type == "LOADING") {
     return (
       <RequireAuthn>
-        <Loading message="Waiting for opponent" />
-        <ScaledButton onClick={deleteMatch} color="red" text="Cancel" />
+        <div className="flex flex-col space-y-2 items-center">
+          <Loading message="Waiting for opponent" />
+          {sirenMatch && (
+            <span className="animate-pop-up">
+              <ScaledButton onClick={deleteMatch} color="red" text="Cancel" />
+            </span>
+          )}
+        </div>
       </RequireAuthn>
     );
   }

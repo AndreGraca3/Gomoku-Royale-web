@@ -50,7 +50,7 @@ sealed class MatchProblem(
         409,
         "already-in-queue",
         "User already in queue",
-        "User with id ${data.playerId} is already waiting in queue, exit to join another",
+        "User is already waiting in queue, exit to join another",
         data
     )
 

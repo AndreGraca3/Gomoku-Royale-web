@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import userData from "../../data/userData";
 import { UserDetailsView } from "../../components/User/UserDetails";
 import { UserStatsView } from "../../components/User/UserStats";
@@ -16,7 +16,6 @@ export function User() {
   const [redirect, setRedirect] = useState(false);
 
   const [updateUser, setUpdateUser] = useState(undefined);
-  const [deleteUser, setDeleteUser] = useState(undefined);
 
   const fetchUser = async () => {
     const userSiren = await userData.getAuthenticatedUser();
@@ -45,15 +44,6 @@ export function User() {
         setUser(newUser);
       };
     });
-
-    setDeleteUser((prev) => {
-      return async () => {
-        const deleteUserAction = userData.getDeleteUserAction(userSiren);
-        await fetchAPI(deleteUserAction.href, deleteUserAction.method);
-        userData.logout();
-        setRedirect(true);
-      };
-    });
   };
 
   useEffect(() => {
@@ -76,18 +66,13 @@ export function User() {
 
   return (
     <div>
+      <h1 className="text-3xl">User Profile</h1>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-3 gap-x-20">
-          <UserDetailsView
-            user={user}
-            updateUser={updateUser}
-          ></UserDetailsView>
+          <UserDetailsView user={user} updateUser={updateUser} />
           <UserStatsView userStats={userStats}></UserStatsView>
           <UserRankView rank={userStats.rank}></UserRankView>
         </div>
-      </div>
-      <div className="flex justify-center items-center">
-        <ScaledButton onClick={deleteUser} text="Delete" color="red" />
       </div>
     </div>
   );

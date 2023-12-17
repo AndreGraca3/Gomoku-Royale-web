@@ -29,8 +29,9 @@ class MatchService(private val trManager: TransactionManager) {
         variant: String?,
     ): Either<MatchCreationError, MatchCreationOutputModel> {
         return trManager.run {
-            when (it.matchRepository.getMatchStatusFromUser(userId)?.state) {
-                MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId))
+            val currentMatchStatus = it.matchRepository.getMatchStatusFromUser(userId)
+            when (currentMatchStatus?.state) {
+                MatchState.SETUP -> return@run failure(MatchCreationError.AlreadyInQueue(userId, currentMatchStatus.id))
                 MatchState.ONGOING -> return@run failure(MatchCreationError.UserAlreadyPlaying(userId))
                 else -> Unit
             }
@@ -85,7 +86,7 @@ class MatchService(private val trManager: TransactionManager) {
                     if (currentMatchStatus.id == id) return@run success(
                         MatchCreationOutputModel(currentMatchStatus.id, MatchState.SETUP)
                     )
-                    return@run failure(MatchCreationError.AlreadyInQueue(userId))
+                    return@run failure(MatchCreationError.AlreadyInQueue(userId, currentMatchStatus.id))
                 }
 
                 MatchState.ONGOING, MatchState.FINISHED ->

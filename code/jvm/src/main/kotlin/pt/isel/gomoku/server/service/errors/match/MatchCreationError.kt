@@ -6,7 +6,7 @@ sealed class MatchCreationError : MatchError() {
 
     class InvalidBoardSize(val variant:String, val size: Int, val sizes: List<Int>) : MatchCreationError()
 
-    class AlreadyInQueue(val playerId: Int) : MatchCreationError()
+    class AlreadyInQueue(val playerId: Int, val matchId: String) : MatchCreationError()
 
     class UserAlreadyPlaying(val playerId: Int): MatchCreationError()
 

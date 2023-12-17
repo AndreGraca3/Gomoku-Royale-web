@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import statsData from "../../data/statsData";
 import LeaderBoardItem from "./LeaderBoardItem";
 
@@ -6,10 +6,10 @@ const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [selectedTop, setSelectedTop] = useState(10);
 
-  const fetchLeaderboard = async (topValue) => {
+  const fetchLeaderboard = async (limit: number) => {
     try {
       // Fetch actual data from the API with the selected top limit
-      const data = await statsData.top(topValue);
+      const data = await statsData.top(limit);
 
       setLeaderboard(data.properties.ranks);
     } catch (error) {
@@ -25,7 +25,6 @@ const Leaderboard = () => {
   const handleTopChange = (e) => {
     const newTopValue = parseInt(e.target.value, 10);
     setSelectedTop(newTopValue);
-    fetchLeaderboard(newTopValue);
   };
 
   return (

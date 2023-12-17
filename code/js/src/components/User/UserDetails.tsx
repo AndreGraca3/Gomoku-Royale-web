@@ -53,7 +53,10 @@ export function UserDetailsView({ user, updateUser }) {
     <div className="flex justify-center items-center">
       <div className="grid grid-cols-1 gap-y-4">
         <button className="w-40 h-40" onClick={handleImageClick}>
-          <img className="w-full h-full rounded-full" src={userAvatar} />
+          <img
+            className="w-full h-full rounded-full object-cover"
+            src={userAvatar}
+          />
         </button>
         <div>
           <UnderlinedHeader>Name :</UnderlinedHeader>

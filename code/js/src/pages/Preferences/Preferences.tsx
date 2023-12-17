@@ -4,6 +4,7 @@ import { MatchCard } from "../../components/preferences/MatchCard";
 import { SizeSelector } from "../../components/preferences/SizeSelector";
 import matchData from "../../data/matchData";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
+import toast from "react-hot-toast";
 
 export function Preferences() {
   const [redirect, setRedirect] = useState(undefined);
@@ -11,13 +12,23 @@ export function Preferences() {
   const [selectedSize, setSelectedSize] = useState(15);
 
   async function createMatch(isPrivate: boolean) {
-    const sirenMatch = await matchData.createMatch({
-      isPrivate: isPrivate,
-      size: selectedSize,
-      variant: "FreeStyle",
-    });
-    const matchId = sirenMatch.properties.id;
-    setRedirect("/match/" + matchId);
+    try {
+      const sirenMatch = await matchData.createMatch({
+        isPrivate: isPrivate,
+        size: selectedSize,
+        variant: "FreeStyle",
+      });
+      const matchId = sirenMatch.properties.id;
+      setRedirect("/match/" + matchId);
+    } catch (e) {
+      toast.error(e.detail);
+      if (e.status == 409) {
+        setTimeout(() => {
+          toast.error("Match already exists, redirecting...");
+          setRedirect("/match/" + e.data.matchId);
+        }, 1000);
+      }
+    }
   }
 
   if (redirect) {
