@@ -1,6 +1,6 @@
 import { PlayerCard } from "../../components/players/PlayerCard";
 import Board from "../../components/board/Board";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
 import { homeLinks } from "../../index";
 import { fetchAPI, requestBuilder } from "../../utils/http";
@@ -11,7 +11,7 @@ import { Loading } from "../../components/Loading";
 import matchData from "../../data/matchData";
 import ScaledButton from "../../components/ScaledButton";
 import { useNavigate } from "react-router-dom";
-import { BoardType, Player } from "../../types/board";
+import { BoardType, Player, Stone } from "../../types/board";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
 import toast from "react-hot-toast";
@@ -34,6 +34,13 @@ type State =
   | { type: "FINISHED"; winner: Player; board: BoardType }
   | { type: "ERROR"; board?: undefined; error: string };
 
+type Action =
+  | { type: "OPPONENT_JOINED"; board: BoardType }
+  | { type: "CHANGE_TURN"; board: BoardType }
+  | { type: "PLAY"; matchState: string; board: BoardType }
+  | { type: "FINISHED"; winner: Player; board: BoardType }
+  | { type: "MATCH_NOT_FOUND"; error: string };
+
 export function Match() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -46,7 +53,7 @@ export function Match() {
   const [whiteUser, setWhiteUser] = useState(undefined);
   const [myColor, setMyColor] = useState(undefined);
 
-  function reducer(state: State, action: any): State {
+  function reducer(state: State, action: Action): State {
     switch (action.type) {
       case "OPPONENT_JOINED":
         console.log("OPPONENT_JOINED");
@@ -101,7 +108,7 @@ export function Match() {
     if (state.type != "MY_TURN") return;
     const playMatchUrl = matchData.getPlayMatchAction(sirenMatch);
     try {
-      const newStone = {
+      const newStone: Stone = {
         player: blackUser.id == currentUser.id ? "BLACK" : "WHITE",
         dot: {
           row: {
@@ -159,7 +166,11 @@ export function Match() {
       if (match.state == "ONGOING") {
         dispatch({ type: "OPPONENT_JOINED", board: match.board });
       } else {
-        dispatch({ type: "FINISHED", winner: match.board.turn, board: match.board });
+        dispatch({
+          type: "FINISHED",
+          winner: match.board.turn,
+          board: match.board,
+        });
       }
     }
 

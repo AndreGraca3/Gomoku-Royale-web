@@ -22,7 +22,7 @@ sealed class UserProblem(
         400,
         "insecure-password",
         "Insecure password",
-        "The password ${data.password} must have at least 4 characters and one digit",
+        "Passwords must have at least 4 characters and one digit",
         data
     )
 

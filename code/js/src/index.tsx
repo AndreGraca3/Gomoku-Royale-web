@@ -12,7 +12,6 @@ import { User } from "./pages/User/User";
 import { HomeData } from "./data/homeData";
 import { Match } from "./pages/Match/Match";
 import { Preferences } from "./pages/Preferences/Preferences";
-import About from "./pages/About/About";
 import Error from "./pages/Error";
 import userData from "./data/userData";
 import { UserDetails } from "./types/user";
@@ -50,10 +49,6 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
-      },
-      {
-        path: "about",
-        element: <About />,
       },
       {
         path: "login",

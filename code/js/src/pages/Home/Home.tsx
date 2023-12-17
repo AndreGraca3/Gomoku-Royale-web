@@ -1,7 +1,46 @@
 export default function Home() {
   return (
-    <h1 className="text-red-600 text-3xl font-bold underline">
-      Home Page using TAILWIND CSS!!
-    </h1>
+    <div style={{ textAlign: "center", padding: "20px" }}>
+      <div
+        className="name-row"
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <div style={{ margin: "0 10px" }}>
+          <p style={{ fontSize: "1.2em" }}>Daniel 46052</p>
+        </div>
+        <div style={{ margin: "0 10px" }}>
+          <p style={{ fontSize: "1.2em" }}>Diogo 48459</p>
+        </div>
+        <div style={{ margin: "0 10px" }}>
+          <p style={{ fontSize: "1.2em" }}>André 47224</p>
+        </div>
+      </div>
+      <div style={{ marginTop: "20px" }}>
+        <p style={{ fontSize: "1em" }}>
+          Gomoku is a classic strategy board game that involves two players
+          taking turns placing their pieces on a board. The objective is to
+          create a row of five consecutive pieces either horizontally,
+          vertically, or diagonally.
+        </p>
+        <p style={{ fontSize: "1em", marginTop: "10px" }}>
+          For more information, check out the official{" "}
+          <a
+            href="https://en.wikipedia.org/wiki/Gomoku"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              textDecoration: "underline",
+              color: "#007BFF",
+              fontSize: "1.2em",
+              transition: "color 0.3s",
+            }}
+          >
+            {""}
+            Gomoku Wiki
+          </a>
+          .
+        </p>
+      </div>
+    </div>
   );
 }
