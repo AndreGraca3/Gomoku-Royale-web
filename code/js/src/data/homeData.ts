@@ -23,6 +23,14 @@ export class HomeData {
     });
   }
 
+  nonAuthenticatedUser(): SirenLink {
+    return this.homeContent.links.find((it) => {
+      return it.rel.find((it) => {
+        return it == "nonAuthenticatedUser";
+      });
+    });
+  }
+
   matchById(): SirenLink {
     return this.homeContent.links.find((it) => {
       return it.rel.find((it) => {

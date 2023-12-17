@@ -1,6 +1,6 @@
 import { SirenAction, SirenEntity } from "../types/siren";
-import { fetchAPI } from "../utils/http";
-import { UserCreationInput, UserDetails } from "../types/user";
+import { fetchAPI, requestBuilder } from "../utils/http";
+import { UserCreationInput, UserDetails, UserInfo } from "../types/user";
 import { homeLinks } from "../index";
 
 async function login(email: string, password: string): Promise<any> {
@@ -19,6 +19,11 @@ async function logout() : Promise<any> {
 async function getAuthenticatedUser(): Promise<SirenEntity<UserDetails>> {
   const userLink = homeLinks.authenticatedUser();
   return await fetchAPI(userLink.href);
+}
+
+async function getNonAuthenticatedUser(id: number): Promise<SirenEntity<UserInfo>> {
+  const userLink = homeLinks.nonAuthenticatedUser();
+  return await fetchAPI(requestBuilder(userLink.href, [id]));
 }
 
 async function signUp(user: UserCreationInput) {
@@ -49,6 +54,7 @@ function getDeleteUserAction(siren): SirenAction {
 export default {
   login,
   getAuthenticatedUser,
+  getNonAuthenticatedUser,
   signUp,
   getStatsHref,
   getUpdateUserAction,
