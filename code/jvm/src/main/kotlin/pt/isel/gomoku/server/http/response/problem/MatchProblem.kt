@@ -17,7 +17,7 @@ sealed class MatchProblem(
         404,
         "board-id-not-found",
         "Match not found",
-        "The match with id ${data.id} was not found",
+        "The match with id ${data.id} not found",
         data
     )
 
@@ -25,7 +25,7 @@ sealed class MatchProblem(
         403,
         "user-not-found-in-match",
         "User not found in match",
-        "The user with id ${data.playerId} was not found in match with id ${data.matchId}",
+        "The user doesn't belong to this match",
         data
     )
 

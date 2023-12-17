@@ -44,7 +44,7 @@ type Action =
   | { type: "CHANGE_TURN"; board: BoardType }
   | { type: "PLAY"; matchState: string; board: BoardType }
   | { type: "FINISHED"; winner: Player; board: BoardType }
-  | { type: "MATCH_NOT_FOUND"; error: string };
+  | { type: "ERROR"; error: string };
 
 export function Match() {
   const navigate = useNavigate();
@@ -96,8 +96,8 @@ export function Match() {
         console.log("FINISHED");
         return { type: "FINISHED", winner: action.winner, board: action.board };
 
-      case "MATCH_NOT_FOUND":
-        return { type: "ERROR", error: "Match Not found" };
+      case "ERROR":
+        return { type: "ERROR", error: action.error };
     }
   }
 
@@ -107,7 +107,6 @@ export function Match() {
   });
 
   const deleteMatch = useCallback(async () => {
-    console.log("delete match", sirenMatch);
     const deleteMatchAction = matchData.getDeleteMatchAction(sirenMatch);
     await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
     navigate("/play", { replace: true });
@@ -205,20 +204,26 @@ export function Match() {
         case 401:
           navigate("/login");
           break;
-        case 404:
-          dispatch({ type: "MATCH_NOT_FOUND", error: "Match Not found" });
+        default:
+          dispatch({ type: "ERROR", error: e.detail });
+          break;
       }
     }
   };
 
   useEffect(() => {
-    if (state.type == "FINISHED") return;
+    if (state.type == "FINISHED" || state.type == "ERROR") return;
     const tid = setInterval(polling, 2000);
     return () => clearInterval(tid);
   }, [state]);
 
   if (state.type == "ERROR") {
-    return <p>{state.error}</p>;
+    return (
+      <div className="flex flex-col items-center space-y-2">
+        <span className="animate-pop-up text-8xl">⚠️</span>
+        <p className="text-red-600 text-xl">{state.error}</p>
+      </div>
+    );
   }
 
   if (state.type == "LOADING") {
