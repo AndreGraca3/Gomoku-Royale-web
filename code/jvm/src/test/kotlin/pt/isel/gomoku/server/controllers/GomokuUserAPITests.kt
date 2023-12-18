@@ -8,7 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
+import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.*
+import pt.isel.gomoku.server.http.response.siren.Siren
+import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails
 
 
 @ActiveProfiles("test")
@@ -25,7 +28,8 @@ class GomokuUserAPITests {
     @BeforeAll
     fun setup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        idDummy = client.post().uri("/users")
+
+        val responseBody : Siren<UserIdOutputModel> = client.post().uri(Uris.Users.BASE)
             .bodyValue(
                 UserCreationInputModel(
                     "Dummy",
@@ -35,36 +39,42 @@ class GomokuUserAPITests {
                 )
             ).exchange()
             .expectStatus().isCreated
-            .expectBody(UserIdOutputModel::class.java)
-            .returnResult().responseBody!!.id
+            .expectBody(Siren::class.java)  // Expect a Siren response
+            .returnResult().responseBody?.properties as Siren<UserIdOutputModel>
 
-        idToken = client.put().uri("/users/token")
+        idDummy = responseBody.properties?.id!!
+        
+        val response = client.put().uri(Uris.Users.TOKEN)
             .bodyValue(
                 UserCredentialsInput(
-                "dummy@gmail.com",
-                "dummy123"
-            )
+                    "dummy@gmail.com",
+                    "dummy123"
+                )
             ).exchange()
-            .expectStatus().isCreated
-            .expectBody(TokenCreationOutput::class.java)
-            .returnResult().responseBody!!.token
+            .expectStatus().isOk
+            .expectCookie().exists("Authorization")
+            .expectBody(Void::class.java)
+            .returnResult()
+
+        idToken = response.responseCookies["Authorization"]!!.first()!!.value
     }
+
 
     @AfterAll
     fun teardown() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
-        client.delete().uri("/users")
-            .header("Authorization", "Bearer $idToken")
+        client.delete().uri(Uris.Users.BASE)
+            .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idToken)
             .exchange()
-            .expectStatus().isNoContent
+            .expectStatus().isOk
     }
 
     @Test
     fun updateUser_OK(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val user = client.patch().uri("/users")
-            .header("Authorization", "Bearer $idToken")
+        val user = client.patch().uri(Uris.Users.BASE)
+            .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idToken)
             .bodyValue(
                 UserUpdateInputModel(
                     "DummyChanged",
@@ -73,14 +83,28 @@ class GomokuUserAPITests {
             )
             .exchange()
             .expectStatus().isOk
-            .expectBody(UserInfoOutputModel::class.java)
+    }
+
+    @Test
+    fun updateUser_Unauthorized(){
+        val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
+
+        val user = client.patch().uri(Uris.Users.BASE)
+            .bodyValue(
+                UserUpdateInputModel(
+                    "DummyChanged",
+                    null
+                )
+            )
+            .exchange()
+            .expectStatus().isUnauthorized
     }
 
     @Test
     fun createDeleteUser() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val userInternal = client.post().uri("/users")
+        val userInternal = client.post().uri(Uris.Users.BASE)
             .bodyValue(
                 UserCreationInputModel(
                     "Dummy1",
@@ -93,29 +117,28 @@ class GomokuUserAPITests {
             .expectStatus().isCreated
             .expectBody(UserIdOutputModel::class.java)
 
-        val idTokenInternal = client.put().uri("/users/token")
+        val idTokenInternal = client.put().uri(Uris.Users.TOKEN)
             .bodyValue(
                 UserCredentialsInput(
                 "dummy1@gmail.com",
                 "dummy123"
             )
             ).exchange()
-            .expectStatus().isCreated
-            .expectBody(TokenCreationOutput::class.java)
-            .returnResult().responseBody!!.token
+            .expectStatus().isOk
+            .expectBody(Void::class.java)
+            .returnResult().responseCookies["Authorization"]!!.first()!!.value
 
-        client.delete().uri("/users")
-            .header("Authorization", "Bearer $idTokenInternal"
-            ).exchange()
-            .expectStatus().isNoContent
-
+        client.delete().uri(Uris.Users.BASE)
+            .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idTokenInternal)
+            .exchange()
+            .expectStatus().isOk
     }
 
     @Test
     fun createUser_BadRequest() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        client.post().uri("/users")
+        client.post().uri(Uris.Users.BASE)
             .bodyValue(
                 UserCreationInputModel(
                     "Dummy",
@@ -131,21 +154,18 @@ class GomokuUserAPITests {
     fun getUser_OK(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val user = client.get().uri("/users/${idDummy}")
-            .header("Authorization", "Bearer $idToken"
-            ).exchange()
+        val user = client.get().uri("${Uris.Users.BASE}/${idDummy}")
+            .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idToken)
+            .exchange()
             .expectStatus().isOk
-            .expectBody(UserInfoOutputModel::class.java)
     }
 
     @Test
     fun getUser_NotFound(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val user = client.get().uri("/users/9999")
-            .header("Authorization", "Bearer $idToken"
-            ).exchange()
+        val user = client.get().uri("${Uris.Users.BASE}/9999")
+            .exchange()
             .expectStatus().isNotFound
-            .expectBody(UserInfoOutputModel::class.java)
     }
 }
