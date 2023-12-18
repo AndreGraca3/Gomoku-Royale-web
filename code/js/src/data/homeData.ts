@@ -68,4 +68,10 @@ export class HomeData {
       return it.name == "create-public-match";
     });
   }
+
+  joinMatch(matchId: string): SirenAction {
+    return this.homeContent.actions.find((it) => {
+      return it.name == "join-private-match"
+    });
+  }
 }

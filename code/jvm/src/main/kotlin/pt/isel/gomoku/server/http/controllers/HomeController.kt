@@ -36,7 +36,8 @@ class HomeController {
                 UserActions.getCreateUserAction(),
                 UserActions.getCreateTokenAction(),
                 UserActions.getDeleteTokenAction(),
-                MatchActions.getCreatePublicMatchAction()
+                MatchActions.getCreatePublicMatchAction(),
+                MatchActions.getJoinPrivateMatchAction(":id"),
             ),
             links = listOf(
                 SirenLink(listOf("authenticatedUser"), URI(Uris.Users.AUTHENTICATED_USER)),

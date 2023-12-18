@@ -45,20 +45,11 @@ sealed class MatchProblem(
         data
     )
 
-
-    class AlreadyInQueue(data: MatchCreationError.AlreadyInQueue) : MatchProblem(
-        409,
-        "already-in-queue",
-        "User already in queue",
-        "User is already waiting in queue, exit to join another",
-        data
-    )
-
     class AlreadyInMatch(data: MatchCreationError.UserAlreadyPlaying) : MatchProblem(
         409,
         "already-in-match",
         "User already in match",
-        "User with id ${data.playerId} is already in a match",
+        "User is already in a match",
         data
     )
 

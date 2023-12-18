@@ -1,15 +1,19 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MatchCard } from "../../components/preferences/MatchCard";
 import { SizeSelector } from "../../components/preferences/SizeSelector";
 import matchData from "../../data/matchData";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 import toast from "react-hot-toast";
+import InputField from "../../components/InputField";
+import { Icons } from "../../components/Icons";
 
 export function Preferences() {
-  const [redirect, setRedirect] = useState(undefined);
+  const navigate = useNavigate();
 
   const [selectedSize, setSelectedSize] = useState(15);
+
+  const [privateMatchId, setPrivateMatchId] = useState("");
 
   async function createMatch(isPrivate: boolean) {
     try {
@@ -19,20 +23,28 @@ export function Preferences() {
         variant: "FreeStyle",
       });
       const matchId = sirenMatch.properties.id;
-      setRedirect("/match/" + matchId);
+      navigate("/match/" + matchId);
     } catch (e) {
       toast.error(e.detail);
       if (e.status == 409) {
         setTimeout(() => {
           toast.error("Match already exists, redirecting...");
-          setRedirect("/match/" + e.data.matchId);
+          navigate("/match/" + e.data.matchId);
         }, 1000);
       }
     }
   }
 
-  if (redirect) {
-    return <Navigate to={redirect} replace={true} />;
+  async function handleJoinMatch(ev: React.FormEvent<HTMLFormElement>) {
+    ev.preventDefault();
+    try {
+      const sirenMatch = await matchData.joinMatch(privateMatchId);
+      const matchId = sirenMatch.properties.id;
+      navigate(`/match/${matchId}`);
+    } catch (e) {
+      console.log(e);
+      toast.error(e.detail);
+    }
   }
 
   return (
@@ -52,10 +64,28 @@ export function Preferences() {
               text="⚫ Public Match ⚪"
               onClick={() => createMatch(false)}
             />
-            <MatchCard
-              text="👥 Private Match 🔐"
-              onClick={() => createMatch(true)}
-            />
+            <div className="flex flex-col gap-1">
+              <MatchCard
+                text="👥 Private Match 🔐"
+                onClick={() => createMatch(true)}
+              />
+              <form className="flex gap-1" onSubmit={handleJoinMatch}>
+                <InputField
+                  name="matchId"
+                  placeholder="Private Match ID"
+                  value={privateMatchId}
+                  handleChange={(e) => {
+                    setPrivateMatchId(e.currentTarget.value);
+                  }}
+                />
+                <button
+                  type="submit"
+                  className="h-full w-full border rounded-xl p-2 bg-dark-green hover:scale-105 duration-100 text-xs rotate-180"
+                >
+                  <Icons.arrowLeft />
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

@@ -5,7 +5,6 @@ import { UserStatsView } from "../../components/User/UserStats";
 import { Loading } from "../../components/Loading";
 import { fetchAPI } from "../../utils/http";
 import { UserRankView } from "../../components/User/UserRankView";
-import ScaledButton from "../../components/ScaledButton";
 import { Navigate } from "react-router-dom";
 
 export function User() {

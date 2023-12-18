@@ -230,9 +230,18 @@ export function Match() {
     return (
       <RequireAuthn>
         <div className="flex flex-col space-y-2 items-center">
-          <Loading message="Waiting for opponent" />
+          <Loading message={"Waiting for oponent..."} />
           {sirenMatch && (
-            <span className="animate-pop-up">
+            <span className="items-center animate-pop-up flex flex-col">
+              {sirenMatch.properties.isPrivate && (
+                <p
+                  onClick={() => {
+                    navigator.clipboard.writeText(sirenMatch.properties.id);
+                    toast("Copied to clipboard");
+                  }}
+                  className="text-gr-yellow text-xl cursor-pointer opacity-90 hover:opacity-100"
+                >{`Match id: ${sirenMatch.properties.id}`}</p>
+              )}
               <ScaledButton onClick={deleteMatch} color="red" text="Cancel" />
             </span>
           )}

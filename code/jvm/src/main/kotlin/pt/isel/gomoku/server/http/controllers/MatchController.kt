@@ -54,7 +54,6 @@ class MatchController(private val service: MatchService) {
             is Failure -> when (res.value) {
                 is MatchCreationError.InvalidVariant -> MatchProblem.InvalidVariant(res.value).toResponseEntity()
                 is MatchCreationError.InvalidBoardSize -> MatchProblem.InvalidBoardSize(res.value).toResponseEntity()
-                is MatchCreationError.AlreadyInQueue -> MatchProblem.AlreadyInQueue(res.value).toResponseEntity()
                 is MatchCreationError.UserAlreadyPlaying -> MatchProblem.AlreadyInMatch(res.value).toResponseEntity()
                 is MatchCreationError.InvalidPrivateMatch -> MatchProblem.InvalidPrivateMatch(res.value)
                     .toResponseEntity()

@@ -17,6 +17,12 @@ async function createMatch(
   );
 }
 
+async function joinMatch(matchId: string): Promise<SirenEntity<any>> {
+  const joinMatchAction = homeLinks.joinMatch(matchId);
+  return await fetchAPI(`/api/matches/${matchId}`, "PUT");
+//  return await fetchAPI(joinMatchAction.href, joinMatchAction.method); // TODO: fix RequestBuilder
+}
+
 function getBlackPlayerHref(siren: SirenEntity<any>) {
   return siren.entities.find((it) => {
     return it.rel.find((it) => {
@@ -47,6 +53,7 @@ function getPlayMatchAction(siren: SirenEntity<any>) {
 
 export default {
   createMatch,
+  joinMatch,
   getPlayMatchAction,
   getDeleteMatchAction,
   getWhitePlayerHref,
