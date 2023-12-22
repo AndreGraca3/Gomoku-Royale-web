@@ -1,12 +1,12 @@
 import { Navigate, useLocation } from "react-router-dom";
-import { useCurrentUser } from "./AuthnStatus";
+import { useSession } from "./AuthnStatus";
 
 export function RequireAuthn({
   children,
 }: {
   children: React.ReactNode;
 }): React.ReactElement {
-  const isLoggedIn = useCurrentUser();
+  const isLoggedIn = useSession();
   const location = useLocation();
 
   if (isLoggedIn) {

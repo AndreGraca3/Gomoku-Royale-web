@@ -1,5 +1,4 @@
 import { IndentedParagraph } from "../IndentedParagraph";
-import { UnderlinedHeader } from "../UnderlinedHeader";
 
 export function UserStatsView({ userStats }) {
   const winStats = userStats.winStats;
@@ -8,7 +7,7 @@ export function UserStatsView({ userStats }) {
   return (
     <div className="vertical-align:middle">
       <div>
-        <UnderlinedHeader>🏆 Win Stats</UnderlinedHeader>
+        <h1 className="underline">🏆 Win Stats</h1>
         <IndentedParagraph>{`📈 Wins: ${winStats.totalWins}`}</IndentedParagraph>
         <IndentedParagraph>{`📉 Loses: ${winStats.loses}`}</IndentedParagraph>
         <IndentedParagraph>{`🤝 Draws: ${winStats.draws}`}</IndentedParagraph>
@@ -17,7 +16,7 @@ export function UserStatsView({ userStats }) {
         <IndentedParagraph>{`📊 Win rate: ${winStats.winRate}`}</IndentedParagraph>
       </div>
       <div>
-        <UnderlinedHeader>📊 Matches Stats</UnderlinedHeader>
+        <h1 className="underline">📊 Matches Stats</h1>
         <IndentedParagraph>{`📝 Total matches: ${matchesStats.totalMatches}`}</IndentedParagraph>
         <IndentedParagraph>{`⚫ Matches as black: ${matchesStats.matchesAsBlack}`}</IndentedParagraph>
         <IndentedParagraph>{`⚪ Matches as white: ${matchesStats.matchesAsWhite}`}</IndentedParagraph>

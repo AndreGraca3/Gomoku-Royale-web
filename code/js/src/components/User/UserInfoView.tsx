@@ -1,5 +1,3 @@
-import { UnderlinedHeader } from "../UnderlinedHeader";
-
 export function UserInfoView({ user }) {
   console.log(user);
   return (
@@ -10,11 +8,11 @@ export function UserInfoView({ user }) {
           src={user.avatarUrl ?? "/user_icon.png"}
         />
         <div>
-          <UnderlinedHeader>Name :</UnderlinedHeader>
+          <h1 className="underline">Name :</h1>
           <h1 className="inline-flex">{user.name}</h1>
         </div>
         <div>
-          <UnderlinedHeader>Rank :</UnderlinedHeader>
+          <h1 className="underline">Rank :</h1>
           <p className="text-sm">{user.rank.name}</p>
           <div className="flex justify-center items-center">
             {user.rank.iconUrl && (
@@ -27,7 +25,7 @@ export function UserInfoView({ user }) {
           </div>
         </div>
         <div>
-          <UnderlinedHeader>Created At :</UnderlinedHeader>
+          <h1 className="underline">Created At :</h1>
           <p>{new Date(user.createdAt).toDateString()}</p>
         </div>
       </div>

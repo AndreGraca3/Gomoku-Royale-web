@@ -13,7 +13,7 @@ import ScaledButton from "../../components/ScaledButton";
 import { useNavigate } from "react-router-dom";
 import { BoardType, Player, Stone } from "../../types/board";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
-import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
+import { useSession } from "../../hooks/Auth/AuthnStatus";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
 
@@ -49,7 +49,7 @@ type Action =
 export function Match() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const currentUser = useCurrentUser();
+  const [currentUser] = useSession();
   const getMatchUrl = requestBuilder(homeLinks.matchById().href, [id]);
 
   const [sirenMatch, setSirenMatch] = useState(undefined);
@@ -236,10 +236,15 @@ export function Match() {
               {sirenMatch.properties.isPrivate && (
                 <p
                   onClick={() => {
-                    navigator.clipboard.writeText(sirenMatch.properties.id);
+                    const clipboard = navigator.clipboard;
+                    if (!clipboard) {
+                      toast.error("Failed copying to clipboard");
+                      return;
+                    }
+                    clipboard.writeText(sirenMatch.properties.id);
                     toast("Copied to clipboard");
                   }}
-                  className="text-gr-yellow text-xl cursor-pointer opacity-90 hover:opacity-100"
+                  className="text-gr-yellow text-xl cursor-pointer opacity-50 hover:opacity-100"
                 >{`Match id: ${sirenMatch.properties.id}`}</p>
               )}
               <ScaledButton onClick={deleteMatch} color="red" text="Cancel" />

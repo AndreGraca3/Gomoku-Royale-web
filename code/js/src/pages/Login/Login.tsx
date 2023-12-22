@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
-import { useSetCurrentUser } from "../../hooks/Auth/AuthnStatus";
+import { useSession } from "../../hooks/Auth/AuthnStatus";
 
 type State =
   | { type: "valid"; inputs: { email: string; password: string } }
@@ -31,7 +31,7 @@ export function Login() {
     type: "valid",
     inputs: { email: "", password: "" },
   });
-  const setLoggedIn = useSetCurrentUser();
+  const [_, setCurrentUser] = useSession();
   const navigate = useNavigate();
 
   function handleChange(ev: React.FormEvent<HTMLInputElement>) {
@@ -52,7 +52,7 @@ export function Login() {
     try {
       await userData.login(state.inputs.email, state.inputs.password);
       const authUser = await userData.getAuthenticatedUser();
-      setLoggedIn(authUser.properties);
+      setCurrentUser(authUser.properties);
 
       dispatch({ type: "success", inputs: state.inputs });
       setTimeout(() => {

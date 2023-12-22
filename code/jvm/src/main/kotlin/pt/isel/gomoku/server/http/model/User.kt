@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.http.model
 
+import org.springframework.web.bind.annotation.RequestParam
 import pt.isel.gomoku.domain.Rank
 import pt.isel.gomoku.server.http.response.siren.SirenClass
 import pt.isel.gomoku.server.repository.dto.UserInfo
@@ -65,12 +66,14 @@ class UserDetailsOutputModel(
     override fun getSirenClasses() = listOf(SirenClass.user, SirenClass.info)
 }
 
-data class UserCreationInputModel(
+class UserCreationInputModel(
     val name: String,
     val email: String,
     val password: String,
-    val avatarUrl: String?,
-)
+    avatarUrl: String?,
+) {
+    val avatarUrl: String? = avatarUrl?.takeIf { it.isNotBlank() } // scuffed way to make it optional
+}
 
 data class TokenCreationOutput(
     val token: String,

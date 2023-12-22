@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 import ScaledButton from "../../components/ScaledButton";
 import userData from "../../data/userData";
-import { useSetCurrentUser } from "../../hooks/Auth/AuthnStatus";
 
 export function SignUp() {
   const [inputs, setInputs] = useState({
@@ -16,7 +15,6 @@ export function SignUp() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(undefined);
   const [redirect, setRedirect] = useState(undefined);
-  const setLoggedIn = useSetCurrentUser();
 
   const handleChange = (ev) => {
     const { name, value } = ev.target;
@@ -92,7 +90,7 @@ export function SignUp() {
             <img
               src={inputs.avatarUrl}
               alt="User Avatar"
-              className="border rounded-full w-32 h-32 cursor-pointer transition-all duration-200 ease-in-out"
+              className="border rounded-full w-32 h-32 cursor-pointer transition-all duration-200 ease-in-out object-cover"
             />
           ) : (
             <img

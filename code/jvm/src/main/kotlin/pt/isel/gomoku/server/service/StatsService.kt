@@ -24,11 +24,21 @@ class StatsService(private val trManager: TransactionManager) {
                 totalWins,
                 rawWinStats.winsAsBlack,
                 rawWinStats.winsAsWhite,
-                totalWins / rawWinStats.totalMatches.toDouble(),
+                calculateWinrate(totalWins, rawWinStats.totalMatches),
                 rawWinStats.draws,
                 rawWinStats.totalMatches - totalWins - rawWinStats.draws
             ),
             matchStats
         )
+    }
+
+    private fun calculateWinrate(wins: Int, matches: Int): Double {
+        if (matches == 0) {
+            return 0.toDouble()
+        }
+
+        val winRate = wins.toDouble() / matches
+        // Format the double to have two decimal places
+        return String.format("%.2f", winRate).toDouble()
     }
 }

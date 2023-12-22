@@ -32,10 +32,9 @@ export function AuthnStatusProvider({
   );
 }
 
-export function useCurrentUser(): UserDetails {
-  return useContext(AuthnContext).currentUser;
-}
-
-export function useSetCurrentUser() {
-  return useContext(AuthnContext).setCurrentUser;
+export function useSession(): [UserDetails, (v: UserDetails) => void] {
+  return [
+    useContext(AuthnContext).currentUser,
+    useContext(AuthnContext).setCurrentUser,
+  ];
 }

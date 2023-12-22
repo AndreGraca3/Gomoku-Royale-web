@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server
 
+import com.cloudinary.Cloudinary
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.beans.factory.annotation.Value
@@ -53,6 +54,11 @@ class GomokuApplication {
         return Jdbi.create(dataSource).configureWithAppRequirements()
     }
 
+    @Value("\${CLOUDINARY_URL}")
+    private lateinit var cloudinaryUrl: String
+
+    @Bean
+    fun cloudinary() = Cloudinary(cloudinaryUrl)
 }
 
 @Component

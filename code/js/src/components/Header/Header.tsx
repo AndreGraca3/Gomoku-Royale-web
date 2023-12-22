@@ -4,11 +4,11 @@ import Nprogress from "../../../dist/nprogress/nprogress";
 import NavItem from "./NavItem";
 import HeaderBrand from "./HeaderBrand";
 import UserMenu from "./UserMenu";
-import { useCurrentUser } from "../../hooks/Auth/AuthnStatus";
+import { useSession } from "../../hooks/Auth/AuthnStatus";
 
 export default function Header() {
   const location = useLocation();
-  const isLoggedIn = useCurrentUser();
+  const isLoggedIn = useSession();
 
   useEffect(() => {
     Nprogress.done();

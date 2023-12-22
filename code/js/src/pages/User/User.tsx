@@ -1,66 +1,43 @@
 import { useEffect, useState } from "react";
 import userData from "../../data/userData";
-import { UserDetailsView } from "../../components/User/UserDetails";
+import { UserDetailsView } from "../../components/User/UserDetailsView";
 import { UserStatsView } from "../../components/User/UserStats";
 import { Loading } from "../../components/Loading";
 import { fetchAPI } from "../../utils/http";
 import { UserRankView } from "../../components/User/UserRankView";
-import { Navigate } from "react-router-dom";
+import { useSession } from "../../hooks/Auth/AuthnStatus";
 
 export function User() {
-  const [user, setUser] = useState(undefined);
+  const [currentUser, setCurrentUser] = useSession();
   const [userStats, setUserStats] = useState(undefined);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [redirect, setRedirect] = useState(false);
 
   const [updateUser, setUpdateUser] = useState(undefined);
 
   const fetchUser = async () => {
     const userSiren = await userData.getAuthenticatedUser();
-    const user = userSiren.properties;
-    setUser(user);
 
     const statsSiren = await fetchAPI(userData.getStatsHref(userSiren));
     setUserStats(statsSiren.properties);
 
-    setUpdateUser((prev) => {
-      return async (name, avatarUrl) => {
+    setUpdateUser(() => {
+      return async (name: string, avatarUrl: string) => {
         const updateUserAction = userData.getUpdateUserAction(userSiren);
         const body = {
-          name: name,
-          avatarUrl: avatarUrl,
+          name,
+          avatarUrl,
         };
         await fetchAPI(updateUserAction.href, updateUserAction.method, body);
-        const newUser = {
-          id: user.id,
-          name: name,
-          email: user.email,
-          avatarUrl: avatarUrl ? user.avatarUrl : avatarUrl,
-          role: user.role,
-          createdAt: user.created_at,
-        };
-        setUser(newUser);
+        setCurrentUser({ ...currentUser, name, avatarUrl });
       };
     });
   };
 
   useEffect(() => {
-    fetchUser().then((r) => {
-      setIsLoading(false);
-    });
+    fetchUser();
   }, []);
 
-  if (redirect) {
-    return <Navigate to="/" replace={true} />;
-  }
-
-  if (isLoading) {
-    return (
-      <div>
-        <Loading message="Loading..." />
-      </div>
-    );
+  if (!userStats) {
+    return <Loading message="Fetching Stats..." />;
   }
 
   return (
@@ -68,7 +45,7 @@ export function User() {
       <h1 className="text-3xl">User Profile</h1>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-3 gap-x-20">
-          <UserDetailsView user={user} updateUser={updateUser} />
+          <UserDetailsView user={currentUser} updateUser={updateUser} />
           <UserStatsView userStats={userStats}></UserStatsView>
           <UserRankView rank={userStats.rank}></UserRankView>
         </div>

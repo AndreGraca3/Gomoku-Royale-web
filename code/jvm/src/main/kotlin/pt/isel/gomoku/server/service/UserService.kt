@@ -1,5 +1,6 @@
 package pt.isel.gomoku.server.service
 
+import com.cloudinary.Cloudinary
 import org.springframework.stereotype.Component
 import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
@@ -20,6 +21,7 @@ import java.time.LocalDateTime
 class UserService(
     private val trManager: TransactionManager,
     private val securityManager: SecurityManager,
+    private val cloudinary: Cloudinary,
 ) {
 
     fun createUser(
@@ -34,12 +36,19 @@ class UserService(
         if (verifyEmail(email))
             return failure(UserCreationError.InvalidEmail(email))
 
-        return trManager.run {
-            if (it.userRepository.getUserByEmail(email) != null)
+        return trManager.run { transaction ->
+            if (transaction.userRepository.getUserByEmail(email) != null)
                 return@run failure(UserCreationError.EmailAlreadyInUse(email))
 
-            val id = it.userRepository.createUser(name, email, password, avatar)
-            it.statsRepository.createStatsEntry(id)
+            val id = transaction.userRepository.createUser(
+                name,
+                email,
+                password,
+                avatar?.let {
+                    cloudinary.uploader().upload(it, mapOf("folder" to "gomoku/avatars"))
+                        .get("url") as String
+                })
+            transaction.statsRepository.createStatsEntry(id)
             success(UserIdOutputModel(id))
         }
     }
@@ -67,7 +76,11 @@ class UserService(
             return failure(UserUpdateError.InvalidValues)
 
         return trManager.run {
-            success(it.userRepository.updateUser(id, newName, newAvatar))
+            success(it.userRepository.updateUser(id, newName, newAvatar?.let {
+                cloudinary.uploader().upload(it, mapOf("folder" to "gomoku/avatars"))
+                    .get("url") as String
+            }
+            ))
         }
     }
 

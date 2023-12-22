@@ -35,5 +35,5 @@ export type UserDetails = {
   email: string;
   avatarUrl: string | null;
   role: string;
-  created_at: string;
+  createdAt: string;
 };

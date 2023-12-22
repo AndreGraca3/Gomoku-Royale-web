@@ -1,19 +1,23 @@
 import { useState } from "react";
-import { UnderlinedHeader } from "../UnderlinedHeader";
+import { UserDetails } from "../../types/user";
 
-export function UserDetailsView({ user, updateUser }) {
+export function UserDetailsView({
+  user,
+  updateUser,
+}: {
+  user: UserDetails;
+  updateUser: (name?: string, avatarUrl?: string) => Promise<void>;
+}) {
   const [userName, setUserName] = useState(user.name);
-  const [userAvatar, setUserAvatar] = useState(user.avatarUrl);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleChange = (ev) => {
-    const newUserName = ev.target.value;
-    setUserName(newUserName);
+  const handleNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(ev.target.value);
   };
 
-  const handleSubmit = async (ev) => {
+  const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    await updateUser(userName, userAvatar);
+    await updateUser(userName);
     setIsEditing(false);
   };
 
@@ -43,7 +47,6 @@ export function UserDetailsView({ user, updateUser }) {
     try {
       const selectedImageUrl = await selectImage();
       await updateUser(userName, selectedImageUrl);
-      setUserAvatar(selectedImageUrl);
     } catch (error) {
       console.error(error);
     }
@@ -55,11 +58,11 @@ export function UserDetailsView({ user, updateUser }) {
         <button className="w-40 h-40" onClick={handleImageClick}>
           <img
             className="w-full h-full rounded-full object-cover"
-            src={userAvatar}
+            src={user.avatarUrl ?? "/user_icon.png"}
           />
         </button>
         <div>
-          <UnderlinedHeader>Name :</UnderlinedHeader>
+          <h1 className="underline">Name :</h1>
           {isEditing ? (
             <form onSubmit={handleSubmit}>
               <div className="relative">
@@ -67,7 +70,7 @@ export function UserDetailsView({ user, updateUser }) {
                   className="w-32 text-gray-900 inline-flex rounded"
                   type="text"
                   placeholder="new name..."
-                  onChange={handleChange}
+                  onChange={handleNameChange}
                   value={userName}
                 ></input>
                 <button className="absolute inset-y-0 right-0" type="submit">
@@ -90,8 +93,9 @@ export function UserDetailsView({ user, updateUser }) {
           )}
         </div>
         <div>
-          <UnderlinedHeader>Email :</UnderlinedHeader>
+          <h1 className="underline">Email :</h1>
           <h1 className="inline-flex">{user.email}</h1>
+          <h1>Created at: {new Date(user.createdAt).toDateString()}</h1>
         </div>
       </div>
     </div>
