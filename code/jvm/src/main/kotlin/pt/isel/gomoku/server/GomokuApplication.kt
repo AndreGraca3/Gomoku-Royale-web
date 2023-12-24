@@ -27,7 +27,7 @@ class GomokuApplication {
     @Bean
     fun userDomainConfig() =
         SecurityManager(
-            Duration.ofDays(1),
+            Duration.ofHours(2),
             256 / 8,
             BCryptPasswordEncoder()
         )

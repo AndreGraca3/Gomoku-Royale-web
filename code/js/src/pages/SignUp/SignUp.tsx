@@ -78,7 +78,7 @@ export function SignUp() {
   return (
     <div className="flex flex-col space-y-4">
       <h1 className="text-3xl font-bold text-center mb-4">
-        Be a New Royale! 👑
+        Be a New Royal Member! 👑
       </h1>
       <div className="flex items-center justify-center">
         <button

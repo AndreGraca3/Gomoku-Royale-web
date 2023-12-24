@@ -46,7 +46,7 @@ class GomokuUserAPITests {
         
         val response = client.put().uri(Uris.Users.TOKEN)
             .bodyValue(
-                UserCredentialsInput(
+                UserCredentialsInputModel(
                     "dummy@gmail.com",
                     "dummy123"
                 )
@@ -119,7 +119,7 @@ class GomokuUserAPITests {
 
         val idTokenInternal = client.put().uri(Uris.Users.TOKEN)
             .bodyValue(
-                UserCredentialsInput(
+                UserCredentialsInputModel(
                 "dummy1@gmail.com",
                 "dummy123"
             )
