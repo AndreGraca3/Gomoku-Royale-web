@@ -114,6 +114,8 @@ class MatchController(private val service: MatchService) {
 
                 MatchOutputModel(
                     res.value.id,
+                    res.value.blackId,
+                    res.value.whiteId,
                     res.value.isPrivate,
                     res.value.variant.toString(),
                     res.value.state,

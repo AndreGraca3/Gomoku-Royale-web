@@ -18,6 +18,8 @@ class MatchCreationOutputModel(
 
 class MatchOutputModel(
     val id: String,
+    val blackId: Int,
+    val whiteId: Int?,
     val isPrivate: Boolean,
     val variant: String,
     @JsonSerialize(using = ToStringSerializer::class) val state: MatchState,

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { UserDetails } from "../../types/user";
+import { timeSince } from "../../utils/time";
 
 export function UserDetailsView({
   user,
@@ -95,7 +96,7 @@ export function UserDetailsView({
         <div>
           <h1 className="underline">Email :</h1>
           <h1 className="inline-flex">{user.email}</h1>
-          <h1>Created at: {new Date(user.createdAt).toDateString()}</h1>
+          <h1>Joined: {timeSince(new Date(user.createdAt).toDateString())}</h1>
         </div>
       </div>
     </div>

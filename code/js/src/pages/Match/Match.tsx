@@ -1,4 +1,4 @@
-import { PlayerCard } from "../../components/players/PlayerCard";
+import { PlayerCard } from "./PlayerCard";
 import Board from "../../components/board/Board";
 import { useCallback, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";

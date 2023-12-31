@@ -74,6 +74,7 @@ class UserService(
     fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, Unit> {
         if (newName?.isBlank() == true || newAvatar?.isBlank() == true)
             return failure(UserUpdateError.InvalidValues)
+        // TODO: check if avatar is a valid url
 
         return trManager.run {
             success(it.userRepository.updateUser(id, newName, newAvatar?.let {

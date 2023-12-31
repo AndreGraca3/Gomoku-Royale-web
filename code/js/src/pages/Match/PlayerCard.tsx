@@ -19,9 +19,9 @@ export function PlayerCard({ user, reverseOrder = false, isActive }) {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center w-16 h-16 overflow-hidden">
+      <div className="flex items-center justify-center w-16 h-16 overflow-hidden p-1">
         <img
-          className="w-full object-cover rounded-full"
+          className="rounded-full w-full h-full object-cover border"
           src={user.avatarUrl}
           alt={`${user.name}'s avatar`}
         />

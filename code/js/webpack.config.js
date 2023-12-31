@@ -20,6 +20,7 @@ module.exports = {
     ],
   },
   devServer: {
+    allowedHosts: "gomoku.serveo.net",
     static: path.resolve(__dirname, "dist"),
     historyApiFallback: true,
     proxy: {

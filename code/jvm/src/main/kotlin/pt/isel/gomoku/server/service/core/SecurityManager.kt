@@ -28,8 +28,8 @@ class SecurityManager(
 
     fun isTokenTimeValid(token: Token): Boolean {
         val now = LocalDateTime.now()
-        return token.createdAt <= now &&
-                (Duration.between(now, token.createdAt)) <= tokenTtl
+        return token.createdAt.isBefore(now) &&
+                (Duration.between(token.createdAt, now)) <= tokenTtl
     }
 
     fun getTokenExpiration(token: Token): LocalDateTime {

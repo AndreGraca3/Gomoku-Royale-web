@@ -19,7 +19,7 @@ data class UserItem(
     val name: String,
     val role: String,
     val count: Int? = null,
-    val rank: Rank
+    val rank: Rank,
 )
 
 data class AuthenticatedUser(
@@ -42,12 +42,7 @@ data class UserAndToken(
 ) {
     val userAndToken: AuthenticatedUser
         get() = AuthenticatedUser(
-            User(id, name, email, password, role, avatarUrl, rank, tokenCreatedAt),
-            Token(
-                tokenValue,
-                id,
-                tokenCreatedAt,
-                lastUsed
-            )
+            User(id, name, email, password, role, avatarUrl, rank, userCreatedAt),
+            Token(tokenValue, id, tokenCreatedAt, lastUsed)
         )
 }
