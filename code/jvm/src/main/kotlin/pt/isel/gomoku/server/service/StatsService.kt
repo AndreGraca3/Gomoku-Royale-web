@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component
 import pt.isel.gomoku.server.http.model.UserStatsOutputModel
 import pt.isel.gomoku.server.repository.dto.WinStats
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
+import kotlin.math.round
 
 @Component
 class StatsService(private val trManager: TransactionManager) {
@@ -24,7 +25,7 @@ class StatsService(private val trManager: TransactionManager) {
                 totalWins,
                 rawWinStats.winsAsBlack,
                 rawWinStats.winsAsWhite,
-                calculateWinrate(totalWins, rawWinStats.totalMatches),
+                calculateWinRate(totalWins, rawWinStats.totalMatches),
                 rawWinStats.draws,
                 rawWinStats.totalMatches - totalWins - rawWinStats.draws
             ),
@@ -32,13 +33,13 @@ class StatsService(private val trManager: TransactionManager) {
         )
     }
 
-    private fun calculateWinrate(wins: Int, matches: Int): Double {
+    private fun calculateWinRate(wins: Int, matches: Int): Double {
         if (matches == 0) {
             return 0.toDouble()
         }
 
         val winRate = wins.toDouble() / matches
         // Format the double to have two decimal places
-        return String.format("%.2f", winRate).toDouble()
+        return round(winRate * 100) / 100
     }
 }
