@@ -8,7 +8,7 @@ import { useSession } from "../../hooks/Auth/AuthnStatus";
 
 export default function Header() {
   const location = useLocation();
-  const isLoggedIn = useSession();
+  const [authUser] = useSession();
 
   useEffect(() => {
     Nprogress.done();
@@ -29,7 +29,7 @@ export default function Header() {
     },
   ];
 
-  if (isLoggedIn) {
+  if (authUser) {
     links.push({
       to: "/play",
       title: "Play",

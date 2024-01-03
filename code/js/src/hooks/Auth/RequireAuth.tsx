@@ -4,12 +4,12 @@ import { useSession } from "./AuthnStatus";
 export function RequireAuthn({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }): React.ReactElement {
-  const isLoggedIn = useSession();
+  const [authUser] = useSession();
   const location = useLocation();
 
-  if (isLoggedIn) {
+  if (authUser) {
     return <>{children}</>;
   } else {
     return (

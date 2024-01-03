@@ -55,6 +55,7 @@ object UserStatements {
         update "user"
         set name = coalesce(:name, name), avatar_url = coalesce(:avatar_url, avatar_url)
         where id = :id
+        returning id, name, email, avatar_url, role, created_at
         """
 
     const val DELETE_USER =

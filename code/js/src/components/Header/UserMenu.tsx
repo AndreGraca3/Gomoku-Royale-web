@@ -3,7 +3,6 @@ import Avatar from "../Avatar";
 import { useSession } from "../../hooks/Auth/AuthnStatus";
 import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import userData from "../../data/userData";
 
 const UserMenuLinks = ({ loggedIn }) => {
   const userLinks = loggedIn

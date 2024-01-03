@@ -57,12 +57,14 @@ class JdbiUserRepository(private val handle: Handle) : UserRepository {
         )
     }
 
-    override fun updateUser(id: Int, name: String?, avatarUrl: String?) {
-        handle.createUpdate(UserStatements.UPDATE_USER)
+    override fun updateUser(id: Int, name: String?, avatarUrl: String?): UserDetails {
+        return handle.createUpdate(UserStatements.UPDATE_USER)
             .bind("id", id)
             .bind("name", name)
             .bind("avatar_url", avatarUrl)
-            .execute()
+            .executeAndReturnGeneratedKeys()
+            .mapTo<UserDetails>()
+            .one()
     }
 
     override fun deleteUser(id: Int) {

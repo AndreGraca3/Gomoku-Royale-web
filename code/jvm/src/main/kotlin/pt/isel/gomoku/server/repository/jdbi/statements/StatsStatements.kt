@@ -12,7 +12,7 @@ object StatsStatements {
     """
 
     const val GET_WINS_BY_USER = """
-        SELECT (matches_as_black + matches_as_white) as total_matches, wins_as_black, wins_as_white, draws
+        SELECT wins_as_black, wins_as_white, draws
         FROM stats
         WHERE user_id = :userId;
     """
@@ -29,5 +29,18 @@ object StatsStatements {
         INNER JOIN stats s on u.id = s.user_id
         INNER JOIN rank r on s.rank = r.name
         where user_id = :userId;
+    """
+
+    const val UPDATE_WIN_STATS = """
+        UPDATE stats
+        SET wins_as_black = CASE WHEN user_id = :user_id AND :player = 'B' THEN wins_as_black + 1 ELSE wins_as_black END,
+            wins_as_white = CASE WHEN user_id = :user_id AND :player = 'W' THEN wins_as_white + 1 ELSE wins_as_white END;
+    """
+
+    const val UPDATE_MMR = """
+        UPDATE "user"
+        SET mmr = CASE WHEN (:mmrChange < 0 AND mmr < ABS(:mmrChange)) THEN 0 ELSE mmr + :mmrChange END
+        WHERE id = :userId
+        RETURNING mmr;
     """
 }

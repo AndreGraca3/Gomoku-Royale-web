@@ -12,11 +12,11 @@ class FreeStyleBoard(size: Int, stones: List<Stone> = emptyList(), turn: Player 
     }
 
     override fun applyRules(dst: Dot, player: Player): Board {
-        val m = Stone(player, dst)
-        val newStones = stones + m
+        val stone = Stone(player, dst)
+        val newStones = stones + stone
         return when {
-            checkDraw(m) -> BoardDraw(size, newStones, player)
-            checkWinner(m) -> BoardWinner(size, newStones, player)
+            checkDraw(stone) -> BoardDraw(size, newStones, player)
+            checkWinner(stone) -> BoardWinner(size, newStones, player)
             else -> FreeStyleBoard(size, newStones, player.opposite())
         }
     }

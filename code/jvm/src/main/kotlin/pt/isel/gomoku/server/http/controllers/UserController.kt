@@ -93,10 +93,9 @@ class UserController(private val service: UserService) {
         authenticatedUser: AuthenticatedUser,
         @RequestBody userInput: UserUpdateInputModel,
     ): ResponseEntity<*> {
-        return when (val res =
-            service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
+        return when (val res = service.updateUser(authenticatedUser.user.id, userInput.name, userInput.avatarUrl)) {
             is Success -> Siren(
-                properties = null,
+                properties = res.value,
                 links = listOf(
                     SirenLink.self(href = Uris.Users.buildUserByIdUri(authenticatedUser.user.id)),
                     SirenLink(href = Uris.Stats.buildStatsByUserIdUri(authenticatedUser.user.id), rel = listOf("stats"))
@@ -123,10 +122,8 @@ class UserController(private val service: UserService) {
 
     @PutMapping(Uris.Users.TOKEN)
     fun createToken(@RequestBody input: UserCredentialsInputModel, response: HttpServletResponse): ResponseEntity<*> {
-        println("Creating token for user ${input.email}")
         return when (val res = service.createToken(input.email, input.password)) {
             is Success -> {
-                println("Created token ${res.value.tokenValue}")
                 response.addCookie(
                     Cookie(
                         AuthenticationDetails.NAME_AUTHORIZATION_COOKIE,

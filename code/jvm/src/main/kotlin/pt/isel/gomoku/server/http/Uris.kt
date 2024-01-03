@@ -23,8 +23,14 @@ object Uris {
     object Matches {
         const val BASE = "$API_BASE/matches"
         const val MATCH_BY_ID = "$BASE/{id}"
+        const val PLAY = "$MATCH_BY_ID/play"
+        const val JOIN_PRIVATE_MATCH = "$MATCH_BY_ID/join"
+        const val FORFEIT = "$MATCH_BY_ID/forfeit"
 
         fun buildMatchByIdUri(id: String) = UriTemplate(MATCH_BY_ID).expand(id)
+        fun buildPlayMatchUri(id: String) = UriTemplate(PLAY).expand(id)
+        fun buildJoinPrivateMatchUri(id: String) = UriTemplate(JOIN_PRIVATE_MATCH).expand(id)
+        fun buildForfeitMatchUri(id: String) = UriTemplate(FORFEIT).expand(id)
     }
 
     object Stats {

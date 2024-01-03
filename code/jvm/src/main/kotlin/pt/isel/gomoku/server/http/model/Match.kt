@@ -49,6 +49,10 @@ class PlayOutputModel(val stone: Stone, val matchState: String, val turn: Player
     override fun getSirenClasses() = listOf(SirenClass.match)
 }
 
+class ForfeitOutputModel(val winner: Player, matchState: String) : OutputModel() {
+    override fun getSirenClasses() = listOf(SirenClass.match)
+}
+
 data class MatchCreationInputModel(
     val isPrivate: Boolean,
     val size: Int?,

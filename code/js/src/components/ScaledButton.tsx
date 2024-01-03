@@ -1,3 +1,5 @@
+import { useSound } from "../hooks/Sound/Sound";
+
 const colors = {
   yellow: "text-black bg-gr-yellow hover:text-gr-yellow hover:border-gr-yellow",
   green: "text-black bg-green-600 hover:text-green-600 hover:border-green-600",
@@ -18,9 +20,19 @@ export default function ScaledButton({
   text: string;
   color?: "yellow" | "green" | "black" | "red";
 }) {
+  const [sounds, playSound] = useSound();
   return (
     <button
-      onClick={onClick}
+      onMouseEnter={() => {
+        playSound(sounds.ui_highlight);
+      }}
+      onClick={() => {
+        playSound(sounds.ui_highlight);
+        if (onClick) {
+          playSound(sounds.ui_click_2);
+          onClick();
+        }
+      }}
       type={type || "button"}
       disabled={disabled || false}
       className={

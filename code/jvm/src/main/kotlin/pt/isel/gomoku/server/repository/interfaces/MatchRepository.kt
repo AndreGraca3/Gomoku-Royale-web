@@ -12,7 +12,7 @@ interface MatchRepository {
         isPrivate: Boolean,
         serializedVariant: String,
         size: Int,
-        type: String
+        type: String,
     ): String
 
     fun getMatchesFromUser(userId: Int, skip: Int, limit: Int): PaginationResult<MatchItem>
@@ -21,17 +21,17 @@ interface MatchRepository {
 
     fun getPublicMatchByPreferences(
         size: Int,
-        variant: String
+        variant: String,
     ): Match?
 
     /**
-     * Updates the specified match with new values, selectively replacing non-null properties.
+     * Updates the specified match with new values, selectively replacing non-null properties, returns id of updated match.
      */
     fun updateMatch(
         id: String,
         blackId: Int? = null,
         whiteId: Int? = null,
-        state: String? = null
+        state: String? = null,
     ): String
 
     /**
@@ -40,6 +40,6 @@ interface MatchRepository {
     fun getMatchStatusFromUser(userId: Int): MatchStatus?
 
     fun deleteMatch(
-        userId: Int
+        userId: Int,
     )
 }

@@ -10,15 +10,17 @@ import pt.isel.gomoku.server.http.model.MatchCreationInputModel
 import pt.isel.gomoku.server.http.model.MatchOutputModel
 import pt.isel.gomoku.server.http.model.PaginationInputs
 import pt.isel.gomoku.server.http.response.problem.MatchProblem
+import pt.isel.gomoku.server.http.response.problem.ServerProblem
 import pt.isel.gomoku.server.http.response.siren.*
 import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getDeleteMatchAction
+import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getForfeitMatchAction
 import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getJoinPrivateMatchAction
 import pt.isel.gomoku.server.http.response.siren.actions.MatchActions.getPlayMatchAction
 import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.service.MatchService
 import pt.isel.gomoku.server.service.errors.match.MatchCreationError
 import pt.isel.gomoku.server.service.errors.match.MatchFetchingError
-import pt.isel.gomoku.server.service.errors.match.MatchJoiningError
+import pt.isel.gomoku.server.service.errors.match.MatchStateError
 import pt.isel.gomoku.server.utils.Failure
 import pt.isel.gomoku.server.utils.Success
 import java.net.URI
@@ -61,7 +63,7 @@ class MatchController(private val service: MatchService) {
         }
     }
 
-    @PutMapping(Uris.Matches.MATCH_BY_ID)
+    @PutMapping(Uris.Matches.JOIN_PRIVATE_MATCH)
     fun joinPrivateMatch(@PathVariable id: String, authenticatedUser: AuthenticatedUser): ResponseEntity<*> {
         return when (val res = service.joinPrivateMatch(id, authenticatedUser.user.id)) {
             is Success -> res.value.toSirenObject(
@@ -75,9 +77,9 @@ class MatchController(private val service: MatchService) {
 
             is Failure -> when (res.value) {
                 is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
-                is MatchJoiningError.AlreadyStarted -> MatchProblem.AlreadyStarted(res.value).toResponseEntity()
-                is MatchJoiningError.MatchIsNotPrivate -> MatchProblem.IsNotPrivate(res.value).toResponseEntity()
-                else -> throw IllegalStateException("Unexpected error: " + res.value::class.java.simpleName)
+                is MatchStateError.AlreadyStarted -> MatchProblem.AlreadyStarted(res.value).toResponseEntity()
+                is MatchStateError.MatchIsNotPrivate -> MatchProblem.IsNotPrivate(res.value).toResponseEntity()
+                else -> ServerProblem.InternalServerError().toResponseEntity()
             }
         }
     }
@@ -93,7 +95,11 @@ class MatchController(private val service: MatchService) {
                         if (res.value.isPrivate) actions.add(getJoinPrivateMatchAction(res.value.id))
                     }
 
-                    MatchState.ONGOING -> actions.add(getPlayMatchAction(res.value.id))
+                    MatchState.ONGOING -> {
+                        actions.add(getPlayMatchAction(res.value.id))
+                        actions.add(getForfeitMatchAction(res.value.id))
+                    }
+
                     else -> Unit
                 }
 
@@ -154,7 +160,7 @@ class MatchController(private val service: MatchService) {
         ).toResponseEntity(200)
     }
 
-    @PostMapping(Uris.Matches.MATCH_BY_ID)
+    @PostMapping(Uris.Matches.PLAY)
     fun play(
         authenticatedUser: AuthenticatedUser,
         @PathVariable id: String,
@@ -171,6 +177,29 @@ class MatchController(private val service: MatchService) {
             is Failure -> when (res.value) {
                 is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
                 is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).toResponseEntity()
+                is MatchStateError.MatchIsNotOngoing -> MatchProblem.NotOngoing(res.value).toResponseEntity()
+                else -> ServerProblem.InternalServerError().toResponseEntity()
+            }
+        }
+    }
+
+    @PutMapping(Uris.Matches.FORFEIT)
+    fun forfeit(
+        authenticatedUser: AuthenticatedUser,
+        @PathVariable id: String,
+    ): ResponseEntity<*> {
+        return when (val res = service.forfeit(authenticatedUser.user.id, id)) {
+            is Success -> res.value.toSirenObject(
+                links = listOf(
+                    SirenLink.self(href = Uris.Matches.buildMatchByIdUri(id))
+                ),
+            ).toResponseEntity(200)
+
+            is Failure -> when (res.value) {
+                is MatchFetchingError.MatchByIdNotFound -> MatchProblem.MatchNotFound(res.value).toResponseEntity()
+                is MatchFetchingError.UserNotInMatch -> MatchProblem.UserNotInMatch(res.value).toResponseEntity()
+                is MatchStateError.MatchIsNotOngoing -> MatchProblem.NotOngoing(res.value).toResponseEntity()
+                else -> ServerProblem.InternalServerError().toResponseEntity()
             }
         }
     }

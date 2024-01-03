@@ -10,7 +10,7 @@ sealed class ServerProblem(
     class InternalServerError() : ServerProblem(
         500,
         "internal-server-error",
-        "Something went wrong",
+        "Something went wrong, please try again later.",
         null
     )
 }

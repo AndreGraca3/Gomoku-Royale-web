@@ -18,7 +18,6 @@ class AuthenticationInterceptor(val tokenProcessor: RequestTokenProcessor) : Han
     private val objectMapper = ObjectMapper()
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        println("Got request to ${request.requestURI} with method ${request.method} from ${request.remoteAddr} with content type ${request.contentType}")
         if (handler is HandlerMethod && handler.methodParameters.any {
                 it.parameterType == AuthenticatedUser::class.java
             }) {

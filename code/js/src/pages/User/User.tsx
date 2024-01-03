@@ -6,6 +6,7 @@ import { Loading } from "../../components/Loading";
 import { fetchAPI } from "../../utils/http";
 import { UserRankView } from "../../components/User/UserRankView";
 import { useSession } from "../../hooks/Auth/AuthnStatus";
+import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 
 export function User() {
   const [currentUser, setCurrentUser] = useSession();
@@ -31,6 +32,10 @@ export function User() {
       };
     });
   };
+
+  if (!currentUser) {
+    return <RequireAuthn />;
+  }
 
   useEffect(() => {
     fetchUser();

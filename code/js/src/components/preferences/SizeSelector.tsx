@@ -1,4 +1,7 @@
+import { useSound } from "../../hooks/Sound/Sound";
+
 export function SizeSelector({ sizeSelected, onClick }) {
+  const [sounds, playSound] = useSound();
   const sizes = [15, 19];
 
   const defaultColor =
@@ -7,13 +10,19 @@ export function SizeSelector({ sizeSelected, onClick }) {
     "scale-105 bg-blue-700 hover:bg-blue-600 font-bold border-blue-900 hover:border-blue-700";
 
   return (
-    <div className="inline-flex rounded-md shadow-sm" role="group">
+    <div className="inline-flex rounded-md shadow-sm outline-none" role="group">
       {sizes.map((size) => {
         return (
           <div key={size}>
             <button
-              className={`py-2 px-4 border-b-4 transition-all duration-100 ${size == sizeSelected ? selectedColor : defaultColor }`}
+              onMouseEnter={() => {
+                playSound(sounds.ui_highlight);
+              }}
+              className={`py-2 px-4 border-b-4 transition-all duration-100 ${
+                size == sizeSelected ? selectedColor : defaultColor
+              }`}
               onClick={() => {
+                playSound(sounds.ui_click_1);
                 onClick(size);
               }}
             >

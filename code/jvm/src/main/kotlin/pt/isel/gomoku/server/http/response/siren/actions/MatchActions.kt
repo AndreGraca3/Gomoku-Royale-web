@@ -33,7 +33,7 @@ object MatchActions {
 
     fun getJoinPrivateMatchAction(id: String) = SirenAction(
         name = "join-private-match",
-        href = Uris.Matches.buildMatchByIdUri(id),
+        href = Uris.Matches.buildJoinPrivateMatchUri(id),
         method = HttpMethod.PUT,
         type = INPUT_CONTENT_TYPE,
         fields = listOf(
@@ -46,7 +46,7 @@ object MatchActions {
 
     fun getPlayMatchAction(id: String) = SirenAction(
         name = "play-match",
-        href = Uris.Matches.buildMatchByIdUri(id),
+        href = Uris.Matches.buildPlayMatchUri(id),
         method = HttpMethod.POST,
         type = INPUT_CONTENT_TYPE,
         fields = listOf(
@@ -63,6 +63,13 @@ object MatchActions {
                 type = SirenActionFieldType.text
             )
         )
+    )
+
+    fun getForfeitMatchAction(id: String) = SirenAction(
+        name = "forfeit-match",
+        href = Uris.Matches.buildForfeitMatchUri(id),
+        method = HttpMethod.PUT,
+        type = INPUT_CONTENT_TYPE,
     )
 
     fun getDeleteMatchAction() = SirenAction(

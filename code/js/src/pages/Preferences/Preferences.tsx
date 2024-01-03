@@ -38,12 +38,13 @@ export function Preferences() {
   async function handleJoinMatch(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
+      if(privateMatchId.length < 1) throw new Error("Please enter a match ID");
       const sirenMatch = await matchData.joinMatch(privateMatchId);
       const matchId = sirenMatch.properties.id;
       navigate(`/match/${matchId}`);
     } catch (e) {
       console.log(e);
-      toast.error(e.detail);
+      toast.error(e.detail || e.message);
     }
   }
 
@@ -64,7 +65,7 @@ export function Preferences() {
               text="⚫ Public Match ⚪"
               onClick={() => createMatch(false)}
             />
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <MatchCard
                 text="👥 Private Match 🔐"
                 onClick={() => createMatch(true)}
@@ -80,7 +81,7 @@ export function Preferences() {
                 />
                 <button
                   type="submit"
-                  className="h-full w-full border rounded-xl p-2 bg-dark-green hover:scale-105 duration-100 text-xs rotate-180"
+                  className="h-full w-full border rounded-xl p-2 bg-dark-green hover:bg-green-600 hover:scale-105 transition-all text-xs rotate-180"
                 >
                   <Icons.arrowLeft />
                 </button>

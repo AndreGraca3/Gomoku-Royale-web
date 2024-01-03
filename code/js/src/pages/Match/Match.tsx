@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { homeLinks } from "../../index";
 import { fetchAPI, requestBuilder } from "../../utils/http";
 import { SirenEntity } from "../../types/siren";
-import { Match, PlayOutputModel } from "../../types/match";
+import { ForfeitOutputModel, Match, PlayOutputModel } from "../../types/match";
 import { UserInfo } from "../../types/user";
 import { Loading } from "../../components/Loading";
 import matchData from "../../data/matchData";
@@ -16,21 +16,7 @@ import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
 import { useSession } from "../../hooks/Auth/AuthnStatus";
 import toast from "react-hot-toast";
 import confetti from "canvas-confetti";
-
-const placeSounds = [
-  new Audio("audio/place_piece_1.mp3"),
-  new Audio("audio/place_piece_2.mp3"),
-];
-
-function playPlaceSound(isWinningSound = false) {
-  if (isWinningSound) {
-    const winSound = new Audio("audio/place_piece_winner.mp3");
-    winSound.play();
-    return;
-  }
-  const idx = Math.floor(Math.random() * placeSounds.length);
-  placeSounds[idx].play();
-}
+import { useSound } from "../../hooks/Sound/Sound";
 
 type State =
   | { type: "LOADING"; board: BoardType }
@@ -50,18 +36,24 @@ export function Match() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [currentUser] = useSession();
+  const [sounds, playSound, playRandomSound] = useSound();
   const getMatchUrl = requestBuilder(homeLinks.matchById().href, [id]);
 
-  const [sirenMatch, setSirenMatch] = useState(undefined);
+  const [sirenMatch, setSirenMatch] = useState<SirenEntity<Match>>(undefined);
 
-  const [blackUser, setBlackUser] = useState(undefined);
-  const [whiteUser, setWhiteUser] = useState(undefined);
-  const [myColor, setMyColor] = useState(undefined);
+  const [blackUser, setBlackUser] = useState<UserInfo>(undefined);
+  const [whiteUser, setWhiteUser] = useState<UserInfo>(undefined);
+  const [myColor, setMyColor] = useState<Player>(undefined);
+
+  const playPlaceSound = () => {
+    playRandomSound([sounds.place_piece_1, sounds.place_piece_2]);
+  };
 
   function reducer(state: State, action: Action): State {
     switch (action.type) {
       case "OPPONENT_JOINED":
         console.log("OPPONENT_JOINED");
+        playSound(sounds.opponent_found);
         return {
           type: action.board.turn == myColor ? "MY_TURN" : "OPPONENT_TURN",
           board: action.board,
@@ -76,7 +68,6 @@ export function Match() {
         console.log("PLAY");
         switch (action.matchState) {
           case "FINISHED":
-            playPlaceSound(true);
             toast("You won!");
             confetti();
             return {
@@ -93,7 +84,10 @@ export function Match() {
         }
 
       case "FINISHED":
+        if (state.type == "FINISHED") return state;
         console.log("FINISHED");
+        playSound(sounds.place_piece_winner);
+        toast(action.winner == myColor ? "You won!" : "You lost!");
         return { type: "FINISHED", winner: action.winner, board: action.board };
 
       case "ERROR":
@@ -107,6 +101,7 @@ export function Match() {
   });
 
   const deleteMatch = useCallback(async () => {
+    setSirenMatch(undefined);
     const deleteMatchAction = matchData.getDeleteMatchAction(sirenMatch);
     await fetchAPI(deleteMatchAction.href, deleteMatchAction.method);
     navigate("/play", { replace: true });
@@ -117,7 +112,7 @@ export function Match() {
     const playMatchUrl = matchData.getPlayMatchAction(sirenMatch);
     try {
       const newStone: Stone = {
-        player: blackUser.id == currentUser.id ? "BLACK" : "WHITE",
+        player: myColor,
         dot: {
           row: {
             number: rowNumber,
@@ -150,6 +145,23 @@ export function Match() {
           toast.error(e.detail);
           break;
       }
+    }
+  };
+
+  const forfeitMatch = async () => {
+    const forfeitMatchUrl = matchData.getForfeitMatchAction(sirenMatch);
+    try {
+      const forfeitSiren = await fetchAPI<ForfeitOutputModel>(
+        forfeitMatchUrl.href,
+        forfeitMatchUrl.method
+      );
+      dispatch({
+        type: "FINISHED",
+        winner: forfeitSiren.properties.winner,
+        board: sirenMatch.properties.board,
+      });
+    } catch (e) {
+      toast.error(e.detail);
     }
   };
 
@@ -187,7 +199,7 @@ export function Match() {
       dispatch({ type: "CHANGE_TURN", board: match.board });
     }
 
-    if (state.type == "OPPONENT_TURN" && match.state == "FINISHED") {
+    if (match.state == "FINISHED") {
       dispatch({
         type: "FINISHED",
         winner: match.board.turn,
@@ -213,6 +225,7 @@ export function Match() {
 
   useEffect(() => {
     if (state.type == "FINISHED" || state.type == "ERROR") return;
+    polling();
     const tid = setInterval(polling, 2000);
     return () => clearInterval(tid);
   }, [state]);
@@ -264,8 +277,14 @@ export function Match() {
             state.type == "MY_TURN" ||
             (state.type == "FINISHED" && myColor == state.winner)
           }
+          isWinner={state.type == "FINISHED" && myColor == state.winner}
         />
-        <p className="text-3xl text-center">VS</p>
+        <div className="flex-col gap-y-4">
+          <p className="text-3xl text-center">VS</p>
+          {state.type != "FINISHED" && (
+            <ScaledButton text="FORFEIT" onClick={forfeitMatch} color="red" />
+          )}
+        </div>
         <PlayerCard
           user={blackUser.id == currentUser.id ? whiteUser : blackUser}
           reverseOrder={true}
@@ -273,6 +292,7 @@ export function Match() {
             state.type == "OPPONENT_TURN" ||
             (state.type == "FINISHED" && myColor != state.winner)
           }
+          isWinner={state.type == "FINISHED" && myColor != state.winner}
         />
       </div>
       <Board

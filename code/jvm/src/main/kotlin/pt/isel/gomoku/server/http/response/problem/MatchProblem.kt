@@ -2,7 +2,7 @@ package pt.isel.gomoku.server.http.response.problem
 
 import pt.isel.gomoku.server.service.errors.match.MatchCreationError
 import pt.isel.gomoku.server.service.errors.match.MatchFetchingError
-import pt.isel.gomoku.server.service.errors.match.MatchJoiningError
+import pt.isel.gomoku.server.service.errors.match.MatchStateError
 import pt.isel.gomoku.server.service.errors.match.MatchPlayError
 
 sealed class MatchProblem(
@@ -61,7 +61,7 @@ sealed class MatchProblem(
         data
     )
 
-    class AlreadyStarted(data: MatchJoiningError.AlreadyStarted) : MatchProblem(
+    class AlreadyStarted(data: MatchStateError.AlreadyStarted) : MatchProblem(
         409,
         "match-already-started",
         "Match already started",
@@ -69,7 +69,15 @@ sealed class MatchProblem(
         data
     )
 
-    class IsNotPrivate(data: MatchJoiningError.MatchIsNotPrivate) : MatchProblem(
+    class NotOngoing(data: MatchStateError.MatchIsNotOngoing) : MatchProblem(
+        409,
+        "match-not-ongoing",
+        "Match not ongoing",
+        "Match with id ${data.matchId} is not ongoing",
+        data
+    )
+
+    class IsNotPrivate(data: MatchStateError.MatchIsNotPrivate) : MatchProblem(
         400,
         "match-is-not-private",
         "Match is not private",

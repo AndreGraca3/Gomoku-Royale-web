@@ -23,36 +23,11 @@ begin
             set draws = draws + 1
             where user_id = new.white_id
                or user_id = new.black_id;
-        else --match ended with a winner, who?
-            if ((select turn from board b where b.match_id = new.id) = 'B') then --black player won
-                update stats
-                set wins_as_black = wins_as_black + 1
-                where user_id = new.black_id;
-
-                update "user"
-                set mmr = mmr + 10
-                where id = new.black_id;
-                update "user"
-                set mmr = mmr - 10
-                where id = new.white_id;
-            else --white player won
-                update stats
-                set wins_as_white = wins_as_white + 1
-                where user_id = new.white_id;
-
-                update "user"
-                set mmr = mmr + 10
-                where id = new.white_id;
-                update "user"
-                set mmr = mmr - 10
-                where id = new.black_id;
-            end if;
-
         end if;
 
     end if;
 
-    return null;
+    return new;
 end;
 $$;
 

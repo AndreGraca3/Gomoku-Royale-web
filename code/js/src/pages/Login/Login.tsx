@@ -56,7 +56,7 @@ export function Login() {
 
       dispatch({ type: "success", inputs: state.inputs });
       setTimeout(() => {
-        navigate(location.state?.source?.pathname || "/me", {
+        navigate(location.state?.source?.pathname || "/", {
           replace: true,
         });
       }, 1000);

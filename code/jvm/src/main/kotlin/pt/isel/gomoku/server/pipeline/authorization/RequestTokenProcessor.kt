@@ -7,10 +7,6 @@ import pt.isel.gomoku.server.service.UserService
 @Component
 class RequestTokenProcessor(val userService: UserService) {
     fun processAuthorizationHeaderValue(authorizationValue: String?): AuthenticatedUser? {
-        println("Processing authorization header value $authorizationValue")
-        if (authorizationValue == null) {
-            return null
-        }
-        return userService.getUserByTokenValue(authorizationValue)
+        return authorizationValue?.let { userService.getUserByTokenValue(it) }
     }
 }

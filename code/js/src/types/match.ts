@@ -26,3 +26,8 @@ export type PlayOutputModel = {
   matchState: string;
   turn: Player;
 };
+
+export type ForfeitOutputModel = {
+  winner: Player;
+  matchState: string;
+};

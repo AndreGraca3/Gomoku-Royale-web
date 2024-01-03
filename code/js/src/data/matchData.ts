@@ -1,5 +1,5 @@
 import { homeLinks } from "../index";
-import { fetchAPI } from "../utils/http";
+import { fetchAPI, requestBuilder } from "../utils/http";
 import {
   MatchCreationInputModel,
   MatchCreationOutPutModel,
@@ -19,8 +19,8 @@ async function createMatch(
 
 async function joinMatch(matchId: string): Promise<SirenEntity<any>> {
   const joinMatchAction = homeLinks.joinMatch(matchId);
-  return await fetchAPI(`/api/matches/${matchId}`, "PUT");
-//  return await fetchAPI(joinMatchAction.href, joinMatchAction.method); // TODO: fix RequestBuilder
+  const joinMatchUrl = requestBuilder(joinMatchAction.href, [matchId]);
+  return await fetchAPI(joinMatchUrl, joinMatchAction.method);
 }
 
 function getBlackPlayerHref(siren: SirenEntity<any>) {
@@ -51,11 +51,18 @@ function getPlayMatchAction(siren: SirenEntity<any>) {
   });
 }
 
+function getForfeitMatchAction(siren: SirenEntity<any>) {
+  return siren.actions.find((it) => {
+    return it.name == "forfeit-match";
+  });
+}
+
 export default {
   createMatch,
   joinMatch,
   getPlayMatchAction,
   getDeleteMatchAction,
+  getForfeitMatchAction,
   getWhitePlayerHref,
   getBlackPlayerHref,
 };

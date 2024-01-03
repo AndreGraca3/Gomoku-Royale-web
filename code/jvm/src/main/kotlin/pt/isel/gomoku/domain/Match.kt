@@ -20,6 +20,11 @@ data class Match(
     }
 
     fun getPlayer(userId: Int) = if (blackId == userId) Player.BLACK else Player.WHITE
+
+    fun getPlayerId(player: Player): Int {
+        require(state == MatchState.ONGOING && whiteId != null) { "Match didn't start yet." }
+        return if (player == Player.BLACK) blackId else whiteId
+    }
 }
 
 enum class MatchState {
@@ -30,5 +35,6 @@ enum class MatchState {
     companion object {
         fun fromString(state: String): MatchState = valueOf(state)
     }
+
     override fun toString() = name
 }

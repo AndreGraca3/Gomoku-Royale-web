@@ -16,4 +16,8 @@ interface StatsRepository {
     fun getMatchesStatsByUser(userId: Int): MatchesStats
 
     fun getUserRank(userId: Int): Rank
+
+    fun updateWinStats(userId: Int, player: Char)
+
+    fun updateMMR(userId: Int, mmrChange: Int): Int
 }

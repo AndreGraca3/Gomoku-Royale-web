@@ -49,4 +49,20 @@ class JdbiStatsRepository(private val handle: Handle) : StatsRepository {
             .mapTo(Rank::class.java)
             .one()
     }
+
+    override fun updateWinStats(userId: Int, player: Char) {
+        handle.createUpdate(StatsStatements.UPDATE_WIN_STATS)
+            .bind("user_id", userId)
+            .bind("player", player)
+            .execute()
+    }
+
+    override fun updateMMR(userId: Int, mmrChange: Int): Int {
+        return handle.createUpdate(StatsStatements.UPDATE_MMR)
+            .bind("userId", userId)
+            .bind("mmrChange", mmrChange)
+            .executeAndReturnGeneratedKeys()
+            .mapTo(Int::class.java)
+            .one()
+    }
 }

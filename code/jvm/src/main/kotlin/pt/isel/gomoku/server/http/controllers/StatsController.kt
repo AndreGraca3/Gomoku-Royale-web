@@ -6,8 +6,11 @@ import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.PaginationInputs
 import pt.isel.gomoku.server.http.model.TopRanksOutputModel
 import pt.isel.gomoku.server.http.model.toOutputModel
+import pt.isel.gomoku.server.http.response.problem.UserProblem
 import pt.isel.gomoku.server.http.response.siren.SirenLink
 import pt.isel.gomoku.server.service.StatsService
+import pt.isel.gomoku.server.utils.Failure
+import pt.isel.gomoku.server.utils.Success
 import java.net.URI
 
 @RestController
@@ -28,11 +31,15 @@ class StatsController(private val service: StatsService) {
 
     @GetMapping(Uris.Stats.STATS_BY_USER_ID)
     fun getUserStats(@PathVariable id: Int): ResponseEntity<*> {
-        return service.getUserStats(id).toSirenObject(
-            links = listOf(
-                SirenLink.self(href = Uris.Stats.buildStatsByUserIdUri(id)),
-                SirenLink(listOf("user"), href = Uris.Users.buildUserByIdUri(id))
-            )
-        ).toResponseEntity(200)
+        return when (val res = service.getUserStats(id)) {
+            is Success -> res.value.toSirenObject(
+                links = listOf(
+                    SirenLink.self(href = Uris.Stats.buildStatsByUserIdUri(id)),
+                    SirenLink(listOf("user"), href = Uris.Users.buildUserByIdUri(id))
+                )
+            ).toResponseEntity(200)
+
+            is Failure -> UserProblem.UserByIdNotFound(res.value).toResponseEntity()
+        }
     }
 }

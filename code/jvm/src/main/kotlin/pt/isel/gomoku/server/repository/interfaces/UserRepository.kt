@@ -17,7 +17,7 @@ interface UserRepository {
 
     fun getUsers(role: String? = null, skip: Int, limit: Int): PaginationResult<UserItem>
 
-    fun updateUser(id: Int, name: String?, avatarUrl: String?)
+    fun updateUser(id: Int, name: String?, avatarUrl: String?): UserDetails
 
     fun deleteUser(id: Int)
 

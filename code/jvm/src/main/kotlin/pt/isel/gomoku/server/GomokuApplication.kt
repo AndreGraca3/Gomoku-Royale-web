@@ -18,6 +18,7 @@ import pt.isel.gomoku.server.pipeline.authorization.AuthenticatedUserArgumentRes
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationInterceptor
 import pt.isel.gomoku.server.pipeline.pagination.PaginationArgumentResolver
 import pt.isel.gomoku.server.repository.jdbi.configureWithAppRequirements
+import pt.isel.gomoku.server.service.core.MatchManager
 import java.time.Duration
 
 
@@ -31,6 +32,9 @@ class GomokuApplication {
             256 / 8,
             BCryptPasswordEncoder()
         )
+
+    @Bean
+    fun matchManagerConfig() = MatchManager(mmrPerWin = 10, mmrPerLoss = -10)
 
     @Value("\${JDBI_DATABASE_URL}")
     private lateinit var defaultJdbiDatabaseURL: String

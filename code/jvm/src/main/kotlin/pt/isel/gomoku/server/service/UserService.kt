@@ -9,6 +9,7 @@ import pt.isel.gomoku.server.http.model.UsersOutputModel
 import pt.isel.gomoku.server.http.model.toOutputModel
 import pt.isel.gomoku.server.repository.dto.AuthenticatedUser
 import pt.isel.gomoku.server.repository.dto.UserInfo
+import pt.isel.gomoku.server.repository.dto.UserDetails
 import pt.isel.gomoku.server.repository.transaction.managers.TransactionManager
 import pt.isel.gomoku.server.service.core.SecurityManager
 import pt.isel.gomoku.server.service.errors.user.*
@@ -71,17 +72,20 @@ class UserService(
         }
     }
 
-    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, Unit> {
+    fun updateUser(id: Int, newName: String?, newAvatar: String?): Either<UserUpdateError.InvalidValues, UserDetails> {
         if (newName?.isBlank() == true || newAvatar?.isBlank() == true)
             return failure(UserUpdateError.InvalidValues)
-        // TODO: check if avatar is a valid url
+
+        val cloudinaryAvatarUrl = newAvatar?.let {
+            try {
+                cloudinary.uploader().upload(it, mapOf("folder" to "gomoku/avatars"))["url"] as String
+            } catch (e: Exception) {
+                return failure(UserUpdateError.InvalidValues)
+            }
+        }
 
         return trManager.run {
-            success(it.userRepository.updateUser(id, newName, newAvatar?.let {
-                cloudinary.uploader().upload(it, mapOf("folder" to "gomoku/avatars"))
-                    .get("url") as String
-            }
-            ))
+            success(it.userRepository.updateUser(id, newName, cloudinaryAvatarUrl))
         }
     }
 

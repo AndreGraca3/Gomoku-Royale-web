@@ -20,7 +20,7 @@ begin
         update stats set rank = newRank where user_id = new.id;
     end if;
 
-    return null;
+    return new;
 end;
 $$;
 
