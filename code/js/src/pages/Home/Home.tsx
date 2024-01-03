@@ -25,13 +25,14 @@ export default function Home() {
         Gomoku Royale Devs
       </h1>
       <div className="flex justify-evenly name-row">
-        {authors.map((author) => (
+        {authors.map((author, i) => (
           <Author
             key={author.number}
             name={author.name}
             avatarUrl={author.avatarUrl}
             number={author.number}
             email={`A${author.number}@alunos.isel.pt`}
+            index={i}
           />
         ))}
       </div>
@@ -55,7 +56,10 @@ export default function Home() {
             </a>
           </p>
         </div>
-        <img src="/icon.png" className="w-20 h-20 justify-center items-center" />
+        <img
+          src="/icon.png"
+          className="w-20 h-20 justify-center items-center"
+        />
       </div>
     </div>
   );

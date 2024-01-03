@@ -16,16 +16,18 @@ import { Preferences } from "./pages/Preferences/Preferences";
 import Error from "./pages/Error";
 import userData from "./data/userData";
 import { UserDetails } from "./types/user";
+import SplashScreen from "./components/Splash/SplashScreen";
 
 export let homeLinks: HomeData;
 export let authUser: UserDetails;
 
 async function initializeApp() {
   try {
+    const root = createRoot(document.getElementById("container"));
     const res = await fetchAPI("/api");
+    root.render(<SplashScreen />);
     homeLinks = new HomeData(res);
     await verifyLogin();
-    const root = createRoot(document.getElementById("container"));
     root.render(<RouterProvider router={router} />);
   } catch (e) {
     const root = createRoot(document.getElementById("container"));
@@ -73,7 +75,7 @@ const router = createBrowserRouter([
       },
       {
         path: "user/:id",
-        element: <UserNoAuth/>
+        element: <UserNoAuth />,
       },
       {
         path: "play",
