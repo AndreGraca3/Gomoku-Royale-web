@@ -20,7 +20,8 @@ module.exports = {
       },
       animation: {
         "heart-beat": "heart-beat 2s infinite",
-        "pop-up": "pop-up 0.2s forwards",
+        "pop-up": "pop-up 0.5s forwards",
+        "pop-up-scale": "pop-up-scale 0.2s forwards",
         shine: "shine 3s infinite alternate linear",
         "pulse-scale": "pulse-scale 400ms alternate infinite",
       },
@@ -53,6 +54,14 @@ module.exports = {
           "100%": { transform: "scale(1)" },
         },
         "pop-up": {
+          "0%": {
+            opacity: "0",
+          },
+          "100%": {
+            opacity: "1",
+          },
+        },
+        "pop-up-scale": {
           "0%": {
             opacity: "0",
             transform: "scale(0%)",

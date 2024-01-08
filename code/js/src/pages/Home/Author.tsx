@@ -17,7 +17,7 @@ export default function Author({
         animationDelay: `${index * 0.1}s`,
       }}
       href={`mailTo:${email}`}
-      className="flex items-center p-4 border opacity-0 rounded-md shadow-md hover:scale-110 transition-all duration-150 animate-pop-up"
+      className="flex items-center p-4 border opacity-0 rounded-md shadow-md hover:scale-110 transition-all animate-pop-up"
     >
       <img
         src={avatarUrl}

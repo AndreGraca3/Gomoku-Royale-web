@@ -7,6 +7,7 @@ import { fetchAPI } from "../../utils/http";
 import { UserRankView } from "../../components/User/UserRankView";
 import { useSession } from "../../hooks/Auth/AuthnStatus";
 import { RequireAuthn } from "../../hooks/Auth/RequireAuth";
+import { UserDetails } from "../../types/user";
 
 export function User() {
   const [currentUser, setCurrentUser] = useSession();
@@ -27,8 +28,12 @@ export function User() {
           name,
           avatarUrl,
         };
-        await fetchAPI(updateUserAction.href, updateUserAction.method, body);
-        setCurrentUser({ ...currentUser, name, avatarUrl });
+        const newUser = await fetchAPI<UserDetails>(
+          updateUserAction.href,
+          updateUserAction.method,
+          body
+        );
+        setCurrentUser(newUser.properties);
       };
     });
   };

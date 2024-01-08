@@ -24,8 +24,8 @@ export let authUser: UserDetails;
 async function initializeApp() {
   try {
     const root = createRoot(document.getElementById("container"));
-    const res = await fetchAPI("/api");
     root.render(<SplashScreen />);
+    const res = await fetchAPI("/api");
     homeLinks = new HomeData(res);
     await verifyLogin();
     root.render(<RouterProvider router={router} />);

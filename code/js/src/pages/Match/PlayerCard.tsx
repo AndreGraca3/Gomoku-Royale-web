@@ -26,7 +26,7 @@ export function PlayerCard({
       <div className="avatar flex-col items-center">
         <img
           className="rounded-full w-14 h-14 object-cover border"
-          src={user.avatarUrl}
+          src={user.avatarUrl || "/user_icon.png"}
           alt={`${user.name}'s avatar`}
         />
         {isWinner && (
