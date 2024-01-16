@@ -4,15 +4,30 @@ export type BoardType = {
   turn: Player;
 };
 
-export type Stone = {
+export class Stone {
+  constructor(player: Player, dot: Dot) {
+    this.player = player;
+    this.dot = dot;
+  }
   player: Player;
   dot: Dot;
-};
+}
 
-export type Dot = {
+export class Dot {
+  constructor(rowNum: number, columnSymbol: string) {
+    this.row = { number: rowNum };
+    this.column = { symbol: columnSymbol };
+  }
   row: Row;
   column: Column;
-};
+
+  equals(otherDot: Dot): boolean {
+    return (
+      this.row.number === otherDot.row.number &&
+      this.column.symbol === otherDot.column.symbol
+    );
+  }
+}
 
 export type Row = {
   number: number;

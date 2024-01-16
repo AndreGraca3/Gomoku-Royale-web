@@ -1,18 +1,18 @@
 package pt.isel.gomoku.server.controllers
 
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
 import pt.isel.gomoku.server.http.Uris
 import pt.isel.gomoku.server.http.model.*
 import pt.isel.gomoku.server.http.response.siren.Siren
 import pt.isel.gomoku.server.pipeline.authorization.AuthenticationDetails
-
 
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -25,11 +25,11 @@ class GomokuUserAPITests {
     @LocalServerPort
     var port: Int = 8080
 
-    @BeforeAll
+    @BeforeEach
     fun setup() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val responseBody : Siren<UserIdOutputModel> = client.post().uri(Uris.Users.BASE)
+        val responseBody = client.post().uri(Uris.Users.BASE)
             .bodyValue(
                 UserCreationInputModel(
                     "Dummy",
@@ -39,10 +39,10 @@ class GomokuUserAPITests {
                 )
             ).exchange()
             .expectStatus().isCreated
-            .expectBody(Siren::class.java)  // Expect a Siren response
-            .returnResult().responseBody?.properties as Siren<UserIdOutputModel>
+            .expectBody(object :ParameterizedTypeReference<Siren<UserIdOutputModel>>() {})  // Expect a Siren response
+            .returnResult().responseBody?.properties ?: throw IllegalStateException("User creation failed")
 
-        idDummy = responseBody.properties?.id!!
+        idDummy = responseBody.id
         
         val response = client.put().uri(Uris.Users.TOKEN)
             .bodyValue(
@@ -59,8 +59,7 @@ class GomokuUserAPITests {
         idToken = response.responseCookies["Authorization"]!!.first()!!.value
     }
 
-
-    @AfterAll
+    @AfterEach
     fun teardown() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
         client.delete().uri(Uris.Users.BASE)
@@ -104,7 +103,7 @@ class GomokuUserAPITests {
     fun createDeleteUser() {
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val userInternal = client.post().uri(Uris.Users.BASE)
+        client.post().uri(Uris.Users.BASE)
             .bodyValue(
                 UserCreationInputModel(
                     "Dummy1",
@@ -126,7 +125,9 @@ class GomokuUserAPITests {
             ).exchange()
             .expectStatus().isOk
             .expectBody(Void::class.java)
-            .returnResult().responseCookies["Authorization"]!!.first()!!.value
+            .returnResult()
+            .responseCookies["Authorization"]!!.first()!!.value
+
 
         client.delete().uri(Uris.Users.BASE)
             .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idTokenInternal)
@@ -154,7 +155,7 @@ class GomokuUserAPITests {
     fun getUser_OK(){
         val client = WebTestClient.bindToServer().baseUrl("http://localhost:$port").build()
 
-        val user = client.get().uri("${Uris.Users.BASE}/${idDummy}")
+        client.get().uri("${Uris.Users.BASE}/${idDummy}")
             .cookie(AuthenticationDetails.NAME_AUTHORIZATION_COOKIE, idToken)
             .exchange()
             .expectStatus().isOk

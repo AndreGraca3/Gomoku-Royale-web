@@ -28,9 +28,5 @@ export function UserNoAuth() {
     );
   }
 
-  return (
-    <div>
-      <UserInfoView user={user}></UserInfoView>
-    </div>
-  );
+  return <UserInfoView user={user}></UserInfoView>;
 }

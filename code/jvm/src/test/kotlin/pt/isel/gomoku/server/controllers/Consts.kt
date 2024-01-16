@@ -12,8 +12,7 @@ object user1 {
 var user2Id = 0
 
 /** TOKEN **/
-var token = ""
-const val invalidToken: String = "Invalid token"
+const val invalidToken: String = "InvalidToken"
 
 
 /** MATCH **/

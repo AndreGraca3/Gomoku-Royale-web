@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UserDetails } from "../../types/user";
 import { timeSince } from "../../utils/time";
+import Avatar from "../Avatar";
+import InputField from "../InputField";
 
 export function UserDetailsView({
   user,
@@ -10,19 +12,20 @@ export function UserDetailsView({
   updateUser: (name?: string, avatarUrl?: string) => Promise<void>;
 }) {
   const [userName, setUserName] = useState(user.name);
-  const [isEditing, setIsEditing] = useState(false);
 
   const handleNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     setUserName(ev.target.value);
   };
 
-  const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
-    await updateUser(userName);
-    setIsEditing(false);
-  };
+  const handleSubmit = useCallback(
+    async (ev: React.FormEvent<HTMLFormElement>) => {
+      ev.preventDefault();
+      await updateUser(userName);
+    },
+    [userName]
+  );
 
-  const selectImage = async (): Promise<string> => {
+  const selectImage = useCallback(async (): Promise<string> => {
     return new Promise((resolve, reject) => {
       const input = document.createElement("input");
       input.type = "file";
@@ -42,62 +45,37 @@ export function UserDetailsView({
       };
       input.click();
     });
-  };
+  }, []);
 
-  const handleImageClick = async () => {
+  const handleImageClick = useCallback(async () => {
     try {
       const selectedImageUrl = await selectImage();
       await updateUser(userName, selectedImageUrl);
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [selectImage, userName]);
 
   return (
-    <div className="flex justify-center items-center">
-      <div className="grid grid-cols-1 gap-y-4">
-        <button className="w-40 h-40" onClick={handleImageClick}>
-          <img
-            className="w-full h-full rounded-full object-cover"
-            src={user.avatarUrl ?? "/user_icon.png"}
+    <div className="flex flex-col justify-center items-center gap-y-8">
+      <Avatar
+        onClick={handleImageClick}
+        url={user.avatarUrl ?? "/user_icon.png"}
+        size="large"
+      />
+      <div>
+        <h1 className="underline">Name :</h1>
+        <form onSubmit={handleSubmit}>
+          <InputField
+            handleChange={handleNameChange}
+            value={userName}
+            isSubmittable
           />
-        </button>
-        <div>
-          <h1 className="underline">Name :</h1>
-          {isEditing ? (
-            <form onSubmit={handleSubmit}>
-              <div className="relative">
-                <input
-                  className="w-32 text-gray-900 inline-flex rounded"
-                  type="text"
-                  placeholder="new name..."
-                  onChange={handleNameChange}
-                  value={userName}
-                ></input>
-                <button className="absolute inset-y-0 right-0" type="submit">
-                  ✔️
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="relative">
-              <h1 className="inline-flex">{userName}</h1>
-              <button
-                className="absolute inset-y-0 right-0"
-                onClick={() => {
-                  setIsEditing(true);
-                }}
-              >
-                ✏️
-              </button>
-            </div>
-          )}
-        </div>
-        <div>
-          <h1 className="underline">Email :</h1>
-          <h1 className="inline-flex">{user.email}</h1>
-          <h1>Joined: {timeSince(new Date(user.createdAt).toDateString())}</h1>
-        </div>
+        </form>
+      </div>
+      <div>
+        <h1 className="inline-flex">{user.email}</h1>
+        <h1>Joined: {timeSince(new Date(user.createdAt).toDateString())}</h1>
       </div>
     </div>
   );

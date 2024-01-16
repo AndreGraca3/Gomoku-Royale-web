@@ -8,7 +8,7 @@ export function MatchCard({ text, onClick }) {
       onMouseEnter={() => {
         playSound(sounds.ui_highlight);
       }}
-      className="bg-blue-500 hover:bg-blue-400 hover:scale-105 transition-all text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded h-40 w-56"
+      className="bg-blue-500 hover:bg-blue-400 hover:scale-105 transition-all text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded h-40 w-56 animate-pop-up"
       onClick={() => {
         playSound(sounds.ui_click_3);
         onClick();

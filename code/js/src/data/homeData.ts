@@ -71,7 +71,7 @@ export class HomeData {
 
   joinMatch(matchId: string): SirenAction {
     return this.homeContent.actions.find((it) => {
-      return it.name == "join-private-match"
+      return it.name == "join-private-match";
     });
   }
 }

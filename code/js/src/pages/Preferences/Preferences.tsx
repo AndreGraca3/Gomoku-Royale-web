@@ -38,7 +38,7 @@ export function Preferences() {
   async function handleJoinMatch(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
-      if(privateMatchId.length < 1) throw new Error("Please enter a match ID");
+      if (privateMatchId.length < 1) throw new Error("Please enter a match ID");
       const sirenMatch = await matchData.joinMatch(privateMatchId);
       const matchId = sirenMatch.properties.id;
       navigate(`/match/${matchId}`);
@@ -78,13 +78,8 @@ export function Preferences() {
                   handleChange={(e) => {
                     setPrivateMatchId(e.currentTarget.value);
                   }}
+                  isSubmittable
                 />
-                <button
-                  type="submit"
-                  className="h-full w-full border rounded-xl p-2 bg-dark-green hover:bg-green-600 hover:scale-105 transition-all text-xs rotate-180"
-                >
-                  <Icons.arrowLeft />
-                </button>
               </form>
             </div>
           </div>

@@ -1,4 +1,7 @@
-import { Rank } from "./stats";
+import userData from "../data/userData";
+import { fetchAPI } from "../utils/http";
+import { SirenEntity } from "./siren";
+import { Rank, UserStats } from "./stats";
 
 export type UserCreationInput = {
   name: string;
@@ -37,3 +40,28 @@ export type UserDetails = {
   role: string;
   createdAt: string;
 };
+
+export class UserDetailsSiren {
+  constructor(userSiren: SirenEntity<UserDetails>) {
+    this.userSiren = userSiren;
+  }
+
+  private userSiren: SirenEntity<UserDetails>;
+
+  async updateUser(name: string, avatarUrl?: string): Promise<SirenEntity<UserDetails>> {
+    const updateUserAction = userData.getUpdateUserAction(this.userSiren);
+    const body = {
+      name,
+      avatarUrl,
+    };
+    return await fetchAPI<UserDetails>(
+      updateUserAction.href,
+      updateUserAction.method,
+      body
+    );
+  }
+
+  async fetchStats(): Promise<SirenEntity<UserStats>> {
+    return await fetchAPI(userData.getStatsHref(this.userSiren));
+  }
+}

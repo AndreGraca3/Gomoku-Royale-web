@@ -20,11 +20,10 @@ module.exports = {
     ],
   },
   devServer: {
-    allowedHosts: "gomoku.serveo.net",
     static: path.resolve(__dirname, "dist"),
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:2001',
+      '/api': 'http://entry:80',
     },
   },
 };

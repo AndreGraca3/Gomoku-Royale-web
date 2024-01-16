@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, createContext, useContext } from "react";
 import { authUser } from "../..";
 import { UserDetails } from "../../types/user";
@@ -21,11 +20,14 @@ export function AuthnStatusProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currUser, setCurrUser] = useState(authUser);
+  const [currentUser, setCurrentUser] = useState(authUser);
 
   return (
     <AuthnContext.Provider
-      value={{ currentUser: currUser, setCurrentUser: setCurrUser }}
+      value={{
+        currentUser,
+        setCurrentUser,
+      }}
     >
       {children}
     </AuthnContext.Provider>

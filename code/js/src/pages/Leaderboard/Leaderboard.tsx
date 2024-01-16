@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import statsData from "../../data/statsData";
 import LeaderBoardItem from "./LeaderBoardItem";
+import { Loading } from "../../components/Loading";
+import { UserItem } from "../../types/stats";
 
 const Leaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<UserItem[]>();
   const [selectedTop, setSelectedTop] = useState(10);
 
   const fetchLeaderboard = async (limit: number) => {
@@ -22,10 +24,14 @@ const Leaderboard = () => {
     fetchLeaderboard(selectedTop);
   }, [selectedTop]);
 
-  const handleTopChange = (e) => {
+  const handleTopChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTopValue = parseInt(e.target.value, 10);
     setSelectedTop(newTopValue);
   };
+
+  if(!leaderboard) {
+    return <Loading message="Getting the best of the best." />;
+  }
 
   return (
     <div className="h-full font-bold">

@@ -14,7 +14,8 @@ export default function LeaderBoardItem({ userItem, index }) {
       onMouseEnter={() => {
         playSound(sounds.ui_highlight);
       }}
-      className={`flex group items-center bg-dark-theme-color shadow-white shadow-inner border border-white hover:border-transparent hover:scale-105 transition-all duration-200 p-4 rounded-lg`}
+      className={`flex group items-center bg-dark-theme-color shadow-white shadow-inner border border-white hover:border-transparent hover:scale-105 transition-all duration-200 p-4 rounded-lg opacity-0 animate-pop-up`}
+      style={{ animationDelay: `${index * 50}ms` }}
     >
       <div className="truncate w-6">
         <span>{index + 1}</span>

@@ -1,4 +1,4 @@
-import { homeLinks } from "../index";
+import { homeData } from "../index";
 import { fetchAPI, requestBuilder } from "../utils/http";
 import {
   MatchCreationInputModel,
@@ -9,7 +9,7 @@ import { SirenEntity } from "../types/siren";
 async function createMatch(
   preferences: MatchCreationInputModel
 ): Promise<SirenEntity<MatchCreationOutPutModel>> {
-  const createMatchAction = homeLinks.createMatch();
+  const createMatchAction = homeData.createMatch();
   return await fetchAPI(
     createMatchAction.href,
     createMatchAction.method,
@@ -18,7 +18,7 @@ async function createMatch(
 }
 
 async function joinMatch(matchId: string): Promise<SirenEntity<any>> {
-  const joinMatchAction = homeLinks.joinMatch(matchId);
+  const joinMatchAction = homeData.joinMatch(matchId);
   const joinMatchUrl = requestBuilder(joinMatchAction.href, [matchId]);
   return await fetchAPI(joinMatchUrl, joinMatchAction.method);
 }

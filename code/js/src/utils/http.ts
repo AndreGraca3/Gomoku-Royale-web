@@ -16,6 +16,7 @@ export async function fetchAPI<T>(
 ): Promise<SirenEntity<T>> {
   const headers = {
     "Content-Type": "application/json",
+    Accept: "application/vnd.siren+json, application/problem+json",
   };
 
   const options = {
@@ -25,12 +26,21 @@ export async function fetchAPI<T>(
 
   if (body) options["body"] = JSON.stringify(body);
 
-  const rsp = await fetch(path, options);
-  const content = await rsp.json();
+  try {
+    const rsp = await fetch(path, options);
+    const content = await rsp.json();
 
-  if (!rsp.ok) throw content;
+    if (!rsp.ok) {
+      console.log(rsp);
+      throw content;
+    }
 
-  return content;
+    return content;
+  } catch (err) {
+    if (err instanceof Error)
+      throw { status: 500, detail: "Internal Server Error" };
+    else throw err;
+  }
 }
 
 export function requestBuilder(UriTemplate: string, args: Array<any>): string {
@@ -45,33 +55,3 @@ export function requestBuilder(UriTemplate: string, args: Array<any>): string {
   }
   return url;
 }
-
-/* export function requestBuilder(UriTemplate: string, args: Record<string, any>): string {
-  let urlParts = UriTemplate.split("/");
-  let path = urlParts.map((it) => {
-    if (it.indexOf(":") !== -1) {
-      const paramName = it.slice(1); // Remove the ":" from the placeholder
-      return args[paramName] !== undefined ? args[paramName] : it;
-    } else {
-      return it;
-    }
-  }).join('/'); // Join the array elements with '/'
-
-  // Handle the case where there are still arguments (for query parameters)
-  const queryParams = Object.keys(args)
-    .filter((paramName) => !urlParts.includes(`:${paramName}`) && args[paramName] !== undefined)
-    .map((paramName) => `${encodeURIComponent(paramName)}=${encodeURIComponent(args[paramName])}`)
-    .join('&');
-
-  if (queryParams) {
-    path += path.includes('?') ? `&${queryParams}` : `?${queryParams}`;
-  }
-
-  let substringToRemove = "skip=:skip&limit=:limit&";
-
-  if (path.includes(substringToRemove)) {
-    path = path.replace(substringToRemove, "");
-  }
-
-  return path;
-} */

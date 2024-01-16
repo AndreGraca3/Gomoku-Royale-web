@@ -18,19 +18,18 @@ import userData from "./data/userData";
 import { UserDetails } from "./types/user";
 import SplashScreen from "./components/Splash/SplashScreen";
 
-export let homeLinks: HomeData;
+export let homeData: HomeData;
 export let authUser: UserDetails;
 
 async function initializeApp() {
+  const root = createRoot(document.getElementById("container"));
   try {
-    const root = createRoot(document.getElementById("container"));
     root.render(<SplashScreen />);
     const res = await fetchAPI("/api");
-    homeLinks = new HomeData(res);
+    homeData = new HomeData(res);
     await verifyLogin();
     root.render(<RouterProvider router={router} />);
   } catch (e) {
-    const root = createRoot(document.getElementById("container"));
     root.render(<Error />);
   }
 }

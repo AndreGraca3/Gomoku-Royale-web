@@ -1,6 +1,6 @@
 import { fetchAPI, requestBuilder } from "../utils/http";
 import { SirenEntity } from "../types/siren";
-import { homeLinks } from "../index";
+import { homeData } from "../index";
 
 // async function top(
 //   limit: number = 10,
@@ -13,7 +13,7 @@ import { homeLinks } from "../index";
 //   return await fetchAPI(path);
 // }
 
-async function top(limit: number): Promise<SirenEntity<any>>  {
+async function top(limit: number): Promise<SirenEntity<any>> {
   var ret = await fetchAPI(`api/stats/users/top?limit=${limit}`, "GET");
   return ret;
 }

@@ -2,6 +2,7 @@ package pt.isel.gomoku.server.service
 
 import com.cloudinary.Cloudinary
 import org.springframework.stereotype.Component
+import pt.isel.gomoku.domain.MatchState
 import pt.isel.gomoku.domain.Token
 import pt.isel.gomoku.domain.User
 import pt.isel.gomoku.server.http.model.UserIdOutputModel
@@ -91,10 +92,11 @@ class UserService(
 
     fun deleteUser(id: Int): Either<UserDeleteError, Unit> {
         return trManager.run {
-            if (it.matchRepository.getMatchStatusFromUser(id) == null) {
-                return@run success(it.userRepository.deleteUser(id))
+            val matchStatus = it.matchRepository.getMatchStatusFromUser(id)
+            if (matchStatus?.state == MatchState.ONGOING) {
+                return@run failure(UserDeleteError.UserInAnOngoingMatch)
             }
-            failure(UserDeleteError.UserInAnOngoingMatch)
+            success(it.userRepository.deleteUser(id))
         }
     }
 

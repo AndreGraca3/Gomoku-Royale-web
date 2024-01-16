@@ -63,7 +63,7 @@ export default function UserMenu() {
 
   return (
     <Menu as="div" className="h-full">
-      <Menu.Button className="h-full focus:outline-0 hover:scale-105 transition-all duration-200">
+      <Menu.Button className="h-full focus:outline-0">
         <Avatar url={avatar} />
       </Menu.Button>
       <UserMenuLinks loggedIn={authUser} />
